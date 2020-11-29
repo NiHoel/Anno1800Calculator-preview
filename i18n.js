@@ -602,38 +602,7 @@ Siehe folgenden Link für weitere Informationen: `,
 <p>hoellerich.nico@freenet.de</p><br/>
 
 <h5>Bugs and improvements</h5>
-<span>If you encounter any bugs or inconveniences or if you want to suggest improvements, create an Issue on GitHub (</span><a href="https://github.com/NiHoel/Anno1800Calculator/issues">https://github.com/NiHoel/Anno1800Calculator/issues</a><span>)</span>`,
-
-        korean:
-            `사용법 : 레벨 당 현재 또는 원하는 주민 수를 최상위 행에 입력하십시오. 
-주민 이름 앞에 사각 괄호 안에 있는 알파벳은 입력필드 단축키 입니다. 그곳에 화살표 키를 사용해서 인구를 줄이거나 높일 수 있습니다.
-
-생산 체인은 입력 필드를 벗어나면 자동으로 업데이트됩니다. 필요한 건물만 표시됩니다.
-아래 행에는 모든 건물을 운영하는 데 필요한 인력이 표시됩니다 (다음 완전한 공장으로 반올림).
-그 후 두 개의 큰 섹션이 이어지고 더 작은 섹션으로 세분됩니다. 첫 번째는 필요한 건물의 유형을 생산 된 제품 유형별로 정렬하여 보여줍니다. 
-두 번째는 각 인구 수준에 대한 개별 생산 체인을 나열합니다. 제목을 클릭하면 각 섹션이 축소됩니다. 네모 확인란을 선택 취소하면 계산에서 제외됩니다. 
-각 카드에는 건물 이름, 생산 된 제품의 아이콘, 건물 유형에 대한 생산성, 필요한 건물 수 및 분당 생산률이 표시됩니다. 
-건물 수에는 과잉 용량을 직접 표시하기 위해 소수점 이하 두 자리로 표시되어 있습니다. 그리고 우측에 두 개의 버튼이 있습니다. 모든 건물이 최대 용량으로 작동하고 한 개 이상 (+) 또는 한 개 미만 (-)이 필요하도록 생산성 조정을 시도합니다.
-건설재는 소모품과 중간 제품을 공유하므로 광산 생산 계획을 개선하기 위해 명시 적으로 표시됩니다. 팩토리 수는 수동으로 입력해야합니다.
-
-화면 오른쪽 상단에있는 톱니 바퀴를 클릭하면 설정 대화 상자가 열립니다. 거기에서 언어를 선택하고 브라우저 탭에 이름을 지정하고 Anno1800 계산기가 제공하는 정보를 사용자 정의 할 수 있습니다.
-설정 대화 상자 옆에있는 3 개의 톱니 바퀴는 생산 체인을 수정하는 대화 상자를 엽니다. 상단에는 제품을 생산하기 생산건물의 지역을 선택할 수 있습니다. 하단에는 생산건물의 생산성을 변경하는 전문가를 적용할 수 있습니다. 
-기본값은 소비자와 동일한 지역 정책이 선택됩니다. 예를 들어, 이는 데시 빌리 용 목재가 신세계에서 생산되고 재봉틀 용 목재는 구세계에서 생산됨을 의미합니다.
-
-다운로드 버튼을 누르면 설정,Anno1800 계산기 및 추가 서버 프로그램을 다운로드 할 수 있습니다. 
-서버 프로그램은 게임의 통계 메뉴에서 인구, 생산 및 재정-생산 건물을 자동으로 가져옵니다. 구현에 도움을 준 동료 Josua Bloeß에게 감사드립니다.
-
-추신:
-Anno1800 계산기는 어떠한 종류의 보증도 제공되지 않습니다. 이 프로그램은 Ubisoft Blue Byte가 어떤 종류의 보증도 하지 않았습니다. Anno 1800 게임의 모든 것은 Ubsioft의 자산 입니다.
-특히 인구, 상품 및 품목의 아이콘과 생산 체인 데이터 및 인구의 소비 가치를 모두 포함하는 것은 아닙니다.
-이 소프트웨어는 MIT 에게 라이센스가 있습니다.
-
-개발자:
-Nico Höllerich
-hoellerich.nico@freenet.de
-
-버그 및 개선 사항 :
-버그 나 불편한 점이 있거나 개선을 제안하려면 GitHub (https://github.com/NiHoel/Anno1800Calculator/issues)에 문의하십시오`
+<span>If you encounter any bugs or inconveniences or if you want to suggest improvements, create an Issue on GitHub (</span><a href="https://github.com/NiHoel/Anno1800Calculator/issues">https://github.com/NiHoel/Anno1800Calculator/issues</a><span>)</span>`
     }
 }
 
