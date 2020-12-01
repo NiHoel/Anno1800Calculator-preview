@@ -7046,6 +7046,10 @@ params=
 {
 "AmountInPercent": -5,
 "ProvidedNeed": 120035
+},
+{
+"AmountInPercent": -5,
+"ProvidedNeed": 114410
 }
 ],
 "guid": 191133,
