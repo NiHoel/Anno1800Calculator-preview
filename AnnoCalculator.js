@@ -789,7 +789,7 @@ class Factory extends Consumer {
         });
 
         this.visible = ko.computed(() => {
-            if (Math.abs(this.amount()) > EPSILON || Math.abs(this.extraAmount()) > EPSILON || this.existingBuildings() > 0 || Math.abs(this.extraGoodProductionList.amount()) > EPSILON || Math.abs(this.tradeList.amount()) > EPSILON)
+            if (Math.abs(this.amount()) > EPSILON || Math.abs(this.extraAmount()) > EPSILON || this.existingBuildings() > 0 || !this.island.isAllIslands() && Math.abs(this.extraGoodProductionList.amount()) > EPSILON || Math.abs(this.tradeList.amount()) > EPSILON)
                 return true;
 
             if (this.region && this.island.region && this.region != this.island.region)
