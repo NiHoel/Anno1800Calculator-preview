@@ -1362,6 +1362,8 @@ class PopulationLevel extends NamedElement {
     }
 }
 
+
+
 class ProductCategory extends NamedElement {
     constructor(config, assetsMap) {
         super(config);
