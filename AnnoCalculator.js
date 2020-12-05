@@ -133,6 +133,7 @@ class Island {
         });
 
         this.populationLevels = [];
+        this.residenceBuildings = [];
         this.consumers = [];
         this.factories = [];
         this.categories = [];
@@ -317,6 +318,12 @@ class Island {
                 f.moduleDemand = new Demand({ guid: f.module.getInputs()[0].Product, region: f.region }, assetsMap);
         }
 
+
+        for (var building of (params.residenceBuildings || [])) {
+            var b = new ResidenceBuilding(building, assetsMap);
+            assetsMap.set(b.guid, b);
+            this.residenceBuildings.push(b);
+        }
 
         for (let level of params.populationLevels) {
 
@@ -1221,6 +1228,12 @@ class PowerPlantNeed extends Need {
     updateFixedProductFactory() { }
 }
 
+class ResidenceBuilding extends NamedElement {
+    constructor(config, assetsMap) {
+        super(config);
+    }
+}
+
 class PopulationLevel extends NamedElement {
     constructor(config, assetsMap) {
         super(config);
@@ -1254,6 +1267,9 @@ class PopulationLevel extends NamedElement {
             else
                 this.amount(Math.max(this.amount(), parseInt(this.existingBuildings()) / (config.fullHouse - 10)));
         });
+
+        if (this.residence)
+            this.residence = assetsMap.get(this.residence);
     }
 
     incrementAmount() {
@@ -1264,6 +1280,8 @@ class PopulationLevel extends NamedElement {
         this.amount(parseFloat(this.amount()) - 1);
     }
 }
+
+
 
 class ProductCategory extends NamedElement {
     constructor(config, assetsMap) {
