@@ -649,6 +649,14 @@ options = {
             "russian": "Дополнительные товары"
         }
     },
+    "contracts": {
+        "name": "Contracts",
+        //guid: 132271
+        "dialog": "contract-management-dialog",
+        "locaText": {
+            "english": "Trade Contracts"
+        }
+    },
     "autoApplyExtraNeed": {
         "name": "Automatically update extra need when trade routes or extra goods change",
         "locaText": {
