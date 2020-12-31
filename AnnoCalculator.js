@@ -2669,7 +2669,7 @@ function createFloatInput(init) {
     obs.subscribe(val => {
         var num = parseFloat(val);
 
-        if (typeof num == "number" && isFinite(num) && val != num)
+        if (typeof num == "number" && isFinite(num) && val !== num)
             obs(num);
         else if (typeof num != "number" || !isFinite(num))
             obs(init);
