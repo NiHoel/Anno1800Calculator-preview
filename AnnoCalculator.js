@@ -2003,6 +2003,12 @@ class TradeManager {
     }
 }
 
+class Pier extends NamedElement {
+    constructor(config) {
+        super(config);
+    }
+}
+
 class TradeContract {
     constructor(config) {
         $.extend(this, config);
@@ -2027,6 +2033,9 @@ class TradeContract {
             this.importAmount(config.importAmount);
         else
             this.exportAmount(config.exportAmount);
+
+        this.importCount = ko.observable(0);
+        this.exportCount = ko.observable(0);
     }
 
     delete() {
@@ -2062,13 +2071,14 @@ class ContractList {
 
 class ContractManager {
     constructor(island) {
-        this.key = "contracts";
+        this.key = "tradingContracts";
+        this.paramKey = "tradingContractParams";
         this.island = island;
         this.contracts = ko.observableArray();
 
-        if (island.storage) {
+        var localStorage = island.storage;
+        if (localStorage) {
             // trade routes
-            var localStorage = island.storage;
             var assetsMap = island.assetsMap;
 
             var text = localStorage.getItem(this.key);
@@ -2107,6 +2117,75 @@ class ContractManager {
             });
 
         }
+
+        this.traderLoadingSpeed = createIntInput(2 * 60);
+
+        if (localStorage) {
+            let id = "traderLoadingSpeed.amount";
+            if (localStorage.getItem(id) != null)
+                this.traderLoadingSpeed(parseInt(localStorage.getItem(id)));
+
+            this.traderLoadingSpeed.subscribe(val => localStorage.setItem(id, val));
+        }
+
+        this.traderLoadingDuration = ko.computed(() => {
+            var totalAmount = 0;
+            for (var c of this.contracts())
+                totalAmount += c.importAmount() + c.exportAmount();
+
+            var transferTime = params.tradeContracts.traderTransferMinutes + 2;
+
+            if (totalAmount >= this.traderLoadingSpeed()) {
+                for (var c of this.contracts()) {
+                    c.importCount(Infinity);
+                    c.exportCount(Infinity);
+                }
+
+                return Infinity;
+            }
+
+            var x = totalAmount / this.traderLoadingSpeed();
+            var loadingDuration = - transferTime * x / (x - 1);
+            var totalDuration = transferTime + loadingDuration;
+
+            for (var c of this.contracts()) {
+                c.importCount(Math.ceil(c.importAmount() * totalDuration));
+                c.exportCount(Math.ceil(c.exportAmount() * totalDuration));
+            }
+
+            return loadingDuration;
+        });
+
+        this.piers = [];
+        for (var p of params.tradeContracts.piers) {
+            this.piers.push(new Pier(p));
+        }
+
+        this.pier = ko.observable(this.piers[0]);
+        if (localStorage) {
+            let id = "traderPier.guid";
+            if (localStorage.getItem(id) != null) {
+                var guid = parseInt(localStorage.getItem(id));
+                for (var p of this.piers)
+                    if (p.guid == guid)
+                        this.pier(p);
+            }
+
+            this.pier.subscribe(val => localStorage.setItem(id, val.guid));
+        }
+
+        this.traderLoadingSpeedPercentBoost = createIntInput(0);
+
+        if (localStorage) {
+            let id = "traderLoadingSpeedPercentBoost.amount";
+            if (localStorage.getItem(id) != null)
+                this.traderLoadingSpeedPercentBoost(parseInt(localStorage.getItem(id)));
+
+            this.traderLoadingSpeedPercentBoost.subscribe(val => localStorage.setItem(id, val));
+        }
+
+        this.computedTraderLoadingSpeed =
+            ko.pureComputed(() => this.pier().loadingSpeed * (1 + this.traderLoadingSpeedPercentBoost() / 100));
     }
 
     add(contract) {
@@ -2120,6 +2199,10 @@ class ContractManager {
     }
 
     islandDeleted(island) {
+    }
+
+    apply() {
+        this.traderLoadingSpeed(this.computedTraderLoadingSpeed());
     }
 }
 

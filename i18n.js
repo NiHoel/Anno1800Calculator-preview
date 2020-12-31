@@ -336,6 +336,32 @@ texts = {
         english: "Export overproduction",
         german: "Überproduktion exportieren"
     },
+    loadingSpeed: {
+        "english": "Loading Speed",
+        "chinese": "装货速度",
+        "taiwanese": "裝貨速度",
+        "italian": "Velocità caricamento",
+        "spanish": "Velocidad de carga",
+        "german": "Ladegeschwindigkeit",
+        "polish": "Szybkość załadunku",
+        "french": "Vitesse de chargement",
+        "korean": "화물 선적 속도",
+        "japanese": "積み込み速度",
+        "russian": "Скорость погрузки"
+    },
+    duration: {
+        "english": "Duration",
+        "chinese": "持续时间",
+        "taiwanese": "持續時間",
+        "italian": "Durata",
+        "spanish": "Duración",
+        "german": "Dauer",
+        "polish": "Czas trwania",
+        "french": "Durée",
+        "korean": "지속 시간",
+        "japanese": "持続時間",
+        "russian": "Длительность"
+    },
     language: {
         "english": "Text Language",
         "chinese": "文本语言",
