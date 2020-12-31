@@ -2039,7 +2039,7 @@ class TradeContract {
     }
 
     delete() {
-        view.exchangeManager.remove(this);
+        this.importFactory.island.contractManager.remove(this);
     }
 }
 

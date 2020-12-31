@@ -1429,7 +1429,7 @@
                                                         <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.exportAmount, id: $data.exportFactory.guid + '-' + $data.importFactory.guid + '-export-amount-input' }}"></div>
                                                         <span class="input-group-text">
                                                             <span>t/min (</span>
-                                                            <span data-bind="text: $data.exportCount"></span>
+                                                            <span data-bind="text: formatNumber($data.exportCount())"></span>
                                                             <span> t)</span>
                                                         </span>
                                                     </div>
@@ -1453,7 +1453,7 @@
                                                         <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.importAmount, id: $data.exportFactory.guid + '-' + $data.importFactory.guid + '-import-amount-input' }}"></div>
                                                         <span class="input-group-text">
                                                             <span>t/min (</span>
-                                                            <span data-bind="text: $data.importCount"></span>
+                                                            <span data-bind="text: formatNumber($data.importCount())"></span>
                                                             <span> t)</span>
                                                         </span>
                                                     </div>
