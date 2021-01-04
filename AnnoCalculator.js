@@ -2133,7 +2133,7 @@ class ContractManager {
             for (var c of this.contracts())
                 totalAmount += c.importAmount() + c.exportAmount();
 
-            var transferTime = params.tradeContracts.traderTransferMinutes + 2;
+            var transferTime = params.tradeContracts.traderTransferMinutes;
 
             if (totalAmount >= this.traderLoadingSpeed()) {
                 for (var c of this.contracts()) {
@@ -2177,7 +2177,7 @@ class ContractManager {
         this.traderLoadingSpeedPercentBoost = createIntInput(0);
 
         if (localStorage) {
-            let id = "traderLoadingSpeedPercentBoost.amount";
+            let id = "traderLoadingSpeed.percentBoost";
             if (localStorage.getItem(id) != null)
                 this.traderLoadingSpeedPercentBoost(parseInt(localStorage.getItem(id)));
 

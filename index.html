@@ -1384,7 +1384,7 @@
                         </div>
                         <hr />
                         <div data-bind="with: $root.island().contractManager">
-                            <div class="inline-list-stretched">
+                            <div class="inline-list-stretched" data-bind="visible: !view.island().isAllIslands()">
                                 <div class="input-group spinner" style="max-width: 18rem;">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text" data-bind="text: $root.texts.loadingSpeed.name()"></span>
@@ -1427,11 +1427,10 @@
                                                     <input step="0.1" min="0" class="form-control" type="number" value="0" data-bind="value: exportAmount, attr: { id: $data.exportFactory.guid + '-' + $data.importFactory.guid + '-export-amount-input' }" />
                                                     <div class="input-group-append">
                                                         <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.exportAmount, id: $data.exportFactory.guid + '-' + $data.importFactory.guid + '-export-amount-input' }}"></div>
-                                                        <span class="input-group-text">
-                                                            <span>t/min (</span>
-                                                            <span data-bind="text: formatNumber($data.exportCount())"></span>
-                                                            <span> t)</span>
-                                                        </span>
+                                                        <div class="input-group-text">
+                                                            <span data-bind="visible: view.island().isAllIslands()">t/min</span>
+                                                            <span data-bind="text: 't/min (' + formatNumber($data.exportCount()) + ' t)', visible: !view.island().isAllIslands()"></span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1451,11 +1450,10 @@
                                                     <input step="0.1" min="0" class="form-control" type="number" value="0" data-bind="value: importAmount, attr: { id: $data.exportFactory.guid + '-' + $data.importFactory.guid + '-import-amount-input' }" />
                                                     <div class="input-group-append">
                                                         <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.importAmount, id: $data.exportFactory.guid + '-' + $data.importFactory.guid + '-import-amount-input' }}"></div>
-                                                        <span class="input-group-text">
-                                                            <span>t/min (</span>
-                                                            <span data-bind="text: formatNumber($data.importCount())"></span>
-                                                            <span> t)</span>
-                                                        </span>
+                                                        <div class="input-group-text">
+                                                            <span data-bind="visible: view.island().isAllIslands()">t/min</span>
+                                                            <span data-bind="text: 't/min (' + formatNumber($data.importCount()) + ' t)', visible: !view.island().isAllIslands()"></span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
