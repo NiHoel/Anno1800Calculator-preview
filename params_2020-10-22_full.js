@@ -12338,28 +12338,44 @@ params=
 {
 "guid": 1010200,
 "residents": 3,
-"tpmin": 0.0025000002
+"tpmin": 0.0025000002,
+"unlockCondition": {
+"amount": 50,
+"populationLevel": 15000000
+}
 },
 {
 "guid": 1010216,
 "happiness": 8,
 "residents": 0,
-"tpmin": 0.003333336
+"tpmin": 0.003333336,
+"unlockCondition": {
+"amount": 100,
+"populationLevel": 15000000
+}
 },
 {
 "guid": 1010237,
 "residents": 2,
-"tpmin": 0.003076926
+"tpmin": 0.003076926,
+"unlockCondition": {
+"amount": 100,
+"populationLevel": 15000000
+}
 },
 {
 "guid": 1010349,
 "happiness": 12,
 "residents": 0,
-"tpmin": null
+"tpmin": null,
+"unlockCondition": {
+"amount": 150,
+"populationLevel": 15000000
+}
 }
 ],
 "region": 5000000,
-"residenceBuilding": 1010343
+"residence": 1010343
 },
 {
 "fullHouse": 20,
@@ -12417,33 +12433,53 @@ params=
 {
 "guid": 1010213,
 "residents": 3,
-"tpmin": 0.0009090899999999999
+"tpmin": 0.0009090899999999999,
+"unlockCondition": {
+"amount": 150,
+"populationLevel": 15000001
+}
 },
 {
 "guid": 1010350,
 "happiness": 7,
 "residents": 0,
-"tpmin": null
+"tpmin": null,
+"unlockCondition": {
+"amount": 150,
+"populationLevel": 15000001
+}
 },
 {
 "guid": 1010203,
 "residents": 2,
-"tpmin": 0.000416667
+"tpmin": 0.000416667,
+"unlockCondition": {
+"amount": 300,
+"populationLevel": 15000001
+}
 },
 {
 "guid": 1010214,
 "happiness": 3,
 "residents": 0,
-"tpmin": 0.00076923
+"tpmin": 0.00076923,
+"unlockCondition": {
+"amount": 500,
+"populationLevel": 15000001
+}
 },
 {
 "guid": 1010351,
 "residents": 2,
-"tpmin": null
+"tpmin": null,
+"unlockCondition": {
+"amount": 750,
+"populationLevel": 15000001
+}
 }
 ],
 "region": 5000000,
-"residenceBuilding": 1010344
+"residence": 1010344
 },
 {
 "fullHouse": 30,
@@ -12506,33 +12542,53 @@ params=
 {
 "guid": 1010206,
 "residents": 2,
-"tpmin": 0.00095238
+"tpmin": 0.00095238,
+"unlockCondition": {
+"amount": 250,
+"populationLevel": 15000002
+}
 },
 {
 "guid": 1010352,
 "happiness": 6,
 "residents": 0,
-"tpmin": null
+"tpmin": null,
+"unlockCondition": {
+"amount": 250,
+"populationLevel": 15000002
+}
 },
 {
 "guid": 1010257,
 "happiness": 4,
 "residents": 0,
-"tpmin": 0.001904762
+"tpmin": 0.001904762,
+"unlockCondition": {
+"amount": 500,
+"populationLevel": 15000002
+}
 },
 {
 "guid": 1010247,
 "residents": 2,
-"tpmin": 0.0008888879999999999
+"tpmin": 0.0008888879999999999,
+"unlockCondition": {
+"amount": 900,
+"populationLevel": 15000002
+}
 },
 {
 "guid": 1010353,
 "residents": 2,
-"tpmin": null
+"tpmin": null,
+"unlockCondition": {
+"amount": 1500,
+"populationLevel": 15000002
+}
 }
 ],
 "region": 5000000,
-"residenceBuilding": 1010345
+"residence": 1010345
 },
 {
 "fullHouse": 40,
@@ -12596,38 +12652,62 @@ params=
 "guid": 1010245,
 "happiness": 5,
 "residents": 0,
-"tpmin": 0.0006250005000000001
+"tpmin": 0.0006250005000000001,
+"unlockCondition": {
+"amount": 500,
+"populationLevel": 15000003
+}
 },
 {
 "guid": 120032,
 "residents": 2,
-"tpmin": 0.0011764710000000001
+"tpmin": 0.0011764710000000001,
+"unlockCondition": {
+"amount": 1000,
+"populationLevel": 15000003
+}
 },
 {
 "guid": 1010246,
 "happiness": 3,
 "residents": 0,
-"tpmin": 0.0001960785
+"tpmin": 0.0001960785,
+"unlockCondition": {
+"amount": 1000,
+"populationLevel": 15000003
+}
 },
 {
 "guid": 1010354,
 "residents": 2,
-"tpmin": null
+"tpmin": null,
+"unlockCondition": {
+"amount": 1750,
+"populationLevel": 15000003
+}
 },
 {
 "guid": 1010208,
 "residents": 2,
-"tpmin": 0.0003124995
+"tpmin": 0.0003124995,
+"unlockCondition": {
+"amount": 1750,
+"populationLevel": 15000003
+}
 },
 {
 "guid": 1010356,
 "happiness": 2,
 "residents": 0,
-"tpmin": null
+"tpmin": null,
+"unlockCondition": {
+"amount": 3000,
+"populationLevel": 15000003
+}
 }
 ],
 "region": 5000000,
-"residenceBuilding": 1010346
+"residence": 1010346
 },
 {
 "fullHouse": 50,
@@ -12696,39 +12776,63 @@ params=
 {
 "guid": 1010259,
 "residents": 2,
-"tpmin": 0.000444444
+"tpmin": 0.000444444,
+"unlockCondition": {
+"amount": 750,
+"populationLevel": 15000004
+}
 },
 {
 "guid": 1010355,
 "happiness": 5,
 "residents": 0,
-"tpmin": null
+"tpmin": null,
+"unlockCondition": {
+"amount": 750,
+"populationLevel": 15000004
+}
 },
 {
 "guid": 1010258,
 "residents": 2,
-"tpmin": 0.0010666668
+"tpmin": 0.0010666668,
+"unlockCondition": {
+"amount": 1750,
+"populationLevel": 15000004
+}
 },
 {
 "guid": 1010250,
 "happiness": 2,
 "residents": 0,
-"tpmin": 0.00042105239999999997
+"tpmin": 0.00042105239999999997,
+"unlockCondition": {
+"amount": 1750,
+"populationLevel": 15000004
+}
 },
 {
 "guid": 1010248,
 "happiness": 4,
 "residents": 0,
-"tpmin": 0.00010524
+"tpmin": 0.00010524,
+"unlockCondition": {
+"amount": 3000,
+"populationLevel": 15000004
+}
 },
 {
 "guid": 1010225,
 "residents": 4,
-"tpmin": 0.00013333319999999998
+"tpmin": 0.00013333319999999998,
+"unlockCondition": {
+"amount": 5000,
+"populationLevel": 15000004
+}
 }
 ],
 "region": 5000000,
-"residenceBuilding": 1010347
+"residence": 1010347
 },
 {
 "fullHouse": 10,
@@ -12759,28 +12863,44 @@ params=
 {
 "guid": 120033,
 "residents": 3,
-"tpmin": 0.00285714
+"tpmin": 0.00285714,
+"unlockCondition": {
+"amount": 50,
+"populationLevel": 15000005
+}
 },
 {
 "guid": 1010257,
 "happiness": 6,
 "residents": 0,
-"tpmin": 0.00142857
+"tpmin": 0.00142857,
+"unlockCondition": {
+"amount": 100,
+"populationLevel": 15000005
+}
 },
 {
 "guid": 120043,
 "residents": 2,
-"tpmin": 0.0025000020000000003
+"tpmin": 0.0025000020000000003,
+"unlockCondition": {
+"amount": 200,
+"populationLevel": 15000005
+}
 },
 {
 "guid": 120050,
 "happiness": 14,
 "residents": 0,
-"tpmin": null
+"tpmin": null,
+"unlockCondition": {
+"amount": 300,
+"populationLevel": 15000005
+}
 }
 ],
 "region": 5000001,
-"residenceBuilding": 101254
+"residence": 101254
 },
 {
 "fullHouse": 20,
@@ -12838,39 +12958,63 @@ params=
 {
 "guid": 120032,
 "residents": 2,
-"tpmin": 0.0005882369999999999
+"tpmin": 0.0005882369999999999,
+"unlockCondition": {
+"amount": 300,
+"populationLevel": 15000006
+}
 },
 {
 "guid": 1010348,
 "happiness": 4,
 "residents": 0,
-"tpmin": null
+"tpmin": null,
+"unlockCondition": {
+"amount": 300,
+"populationLevel": 15000006
+}
 },
 {
 "guid": 120037,
 "residents": 2,
-"tpmin": 0.001333332
+"tpmin": 0.001333332,
+"unlockCondition": {
+"amount": 600,
+"populationLevel": 15000006
+}
 },
 {
 "guid": 1010214,
 "happiness": 4,
 "residents": 0,
-"tpmin": 0.001333332
+"tpmin": 0.001333332,
+"unlockCondition": {
+"amount": 600,
+"populationLevel": 15000006
+}
 },
 {
 "guid": 1010259,
 "happiness": 2,
 "residents": 0,
-"tpmin": 0.000555555
+"tpmin": 0.000555555,
+"unlockCondition": {
+"amount": 1000,
+"populationLevel": 15000006
+}
 },
 {
 "guid": 1010206,
 "residents": 2,
-"tpmin": 0.0012500010000000002
+"tpmin": 0.0012500010000000002,
+"unlockCondition": {
+"amount": 1000,
+"populationLevel": 15000006
+}
 }
 ],
 "region": 5000001,
-"residenceBuilding": 101255
+"residence": 101255
 },
 {
 "fullHouse": 10,
@@ -12899,12 +13043,20 @@ params=
 {
 "guid": 112705,
 "residents": 3,
-"tpmin": 0.0012000000000000001
+"tpmin": 0.0012000000000000001,
+"unlockCondition": {
+"amount": 100,
+"populationLevel": 112642
+}
 },
 {
 "guid": 112702,
 "residents": 3,
-"tpmin": 0.0006000000000000001
+"tpmin": 0.0006000000000000001,
+"unlockCondition": {
+"amount": 500,
+"populationLevel": 112642
+}
 },
 {
 "guid": 112708,
@@ -12914,16 +13066,24 @@ params=
 {
 "guid": 112701,
 "residents": 0,
-"tpmin": 0.0009
+"tpmin": 0.0009,
+"unlockCondition": {
+"amount": 250,
+"populationLevel": 112642
+}
 },
 {
 "guid": 1010216,
 "residents": 0,
-"tpmin": 0.0015
+"tpmin": 0.0015,
+"unlockCondition": {
+"amount": 500,
+"populationLevel": 112642
+}
 }
 ],
 "region": 160001,
-"residenceBuilding": 112091
+"residence": 112091
 },
 {
 "fullHouse": 20,
@@ -12962,17 +13122,29 @@ params=
 {
 "guid": 112693,
 "residents": 3,
-"tpmin": null
+"tpmin": null,
+"unlockCondition": {
+"amount": 100,
+"populationLevel": 112643
+}
 },
 {
 "guid": 1010217,
 "residents": 3,
-"tpmin": 0.0006000000000000001
+"tpmin": 0.0006000000000000001,
+"unlockCondition": {
+"amount": 300,
+"populationLevel": 112643
+}
 },
 {
 "guid": 112703,
 "residents": 4,
-"tpmin": 0.0009
+"tpmin": 0.0009,
+"unlockCondition": {
+"amount": 750,
+"populationLevel": 112643
+}
 },
 {
 "guid": 112708,
@@ -12992,16 +13164,24 @@ params=
 {
 "guid": 112700,
 "residents": 0,
-"tpmin": 0.0012000000000000001
+"tpmin": 0.0012000000000000001,
+"unlockCondition": {
+"amount": 300,
+"populationLevel": 112643
+}
 },
 {
 "guid": 120032,
 "residents": 0,
-"tpmin": 0.0012000000000000001
+"tpmin": 0.0012000000000000001,
+"unlockCondition": {
+"amount": 750,
+"populationLevel": 112643
+}
 }
 ],
 "region": 160001,
-"residenceBuilding": 112652
+"residence": 112652
 },
 {
 "fullHouse": 10,
@@ -13030,33 +13210,53 @@ params=
 {
 "guid": 114371,
 "residents": 3,
-"tpmin": 0.003
+"tpmin": 0.003,
+"unlockCondition": {
+"amount": 50,
+"populationLevel": 114329
+}
 },
 {
 "guid": 114401,
 "residents": 2,
-"tpmin": 0.0015
+"tpmin": 0.0015,
+"unlockCondition": {
+"amount": 150,
+"populationLevel": 114329
+}
 },
 {
 "guid": 114361,
 "happiness": 8,
 "residents": 0,
-"tpmin": null
+"tpmin": null,
+"unlockCondition": {
+"amount": 150,
+"populationLevel": 114329
+}
 },
 {
 "guid": 114359,
 "residents": 2,
-"tpmin": 0.0021000000000000003
+"tpmin": 0.0021000000000000003,
+"unlockCondition": {
+"amount": 300,
+"populationLevel": 114329
+}
 },
 {
 "guid": 114390,
 "happiness": 12,
 "residents": 0,
-"tpmin": 0.0012000000000000001
+"tpmin": 0.0012000000000000001,
+"unlockCondition": {
+"amount": 300,
+"populationLevel": 114329
+}
 }
 ],
 "region": 114327,
-"residenceBuilding": 114436
+"residence": 114436
 },
 {
 "fullHouse": 20,
@@ -13123,39 +13323,63 @@ params=
 {
 "guid": 114410,
 "residents": 3,
-"tpmin": 0.00111
+"tpmin": 0.00111,
+"unlockCondition": {
+"amount": 300,
+"populationLevel": 114330
+}
 },
 {
 "guid": 114414,
 "happiness": 2,
 "residents": 0,
-"tpmin": 0.00045
+"tpmin": 0.00045,
+"unlockCondition": {
+"amount": 300,
+"populationLevel": 114330
+}
 },
 {
 "guid": 117698,
 "residents": 2,
-"tpmin": 0.00054
+"tpmin": 0.00054,
+"unlockCondition": {
+"amount": 600,
+"populationLevel": 114330
+}
 },
 {
 "guid": 120030,
 "happiness": 3,
 "residents": 0,
-"tpmin": 0.00035999999999999997
+"tpmin": 0.00035999999999999997,
+"unlockCondition": {
+"amount": 600,
+"populationLevel": 114330
+}
 },
 {
 "guid": 117699,
 "residents": 3,
-"tpmin": 0.0009
+"tpmin": 0.0009,
+"unlockCondition": {
+"amount": 1000,
+"populationLevel": 114330
+}
 },
 {
 "guid": 114362,
 "happiness": 3,
 "residents": 0,
-"tpmin": null
+"tpmin": null,
+"unlockCondition": {
+"amount": 1000,
+"populationLevel": 114330
+}
 }
 ],
 "region": 114327,
-"residenceBuilding": 114437
+"residence": 114437
 },
 {
 "fullHouse": 120,
@@ -13201,61 +13425,101 @@ params=
 {
 "guid": 114430,
 "residents": 23,
-"tpmin": 0.001375
+"tpmin": 0.001375,
+"unlockCondition": {
+"amount": 300,
+"populationLevel": 118745
+}
 },
 {
 "guid": 120037,
 "happiness": 3,
 "residents": 0,
-"tpmin": 0.0004
+"tpmin": 0.0004,
+"unlockCondition": {
+"amount": 300,
+"populationLevel": 118745
+}
 },
 {
 "guid": 114390,
 "happiness": 3,
 "residents": 0,
-"tpmin": 0.000875
+"tpmin": 0.000875,
+"unlockCondition": {
+"amount": 1000,
+"populationLevel": 118745
+}
 },
 {
 "guid": 1010354,
 "residents": 12,
-"tpmin": null
+"tpmin": null,
+"unlockCondition": {
+"amount": 1000,
+"populationLevel": 118745
+}
 },
 {
 "guid": 114410,
 "residents": 22,
-"tpmin": 0.00075
+"tpmin": 0.00075,
+"unlockCondition": {
+"amount": 2000,
+"populationLevel": 118745
+}
 },
 {
 "guid": 114404,
 "happiness": 3,
 "residents": 0,
-"tpmin": 0.000625
+"tpmin": 0.000625,
+"unlockCondition": {
+"amount": 2000,
+"populationLevel": 118745
+}
 },
 {
 "guid": 114414,
 "happiness": 3,
 "residents": 0,
-"tpmin": 0.000375
+"tpmin": 0.000375,
+"unlockCondition": {
+"amount": 4000,
+"populationLevel": 118745
+}
 },
 {
 "guid": 114431,
 "residents": 20,
-"tpmin": 0.00075
+"tpmin": 0.00075,
+"unlockCondition": {
+"amount": 4000,
+"populationLevel": 118745
+}
 },
 {
 "guid": 114425,
 "residents": 12,
-"tpmin": null
+"tpmin": null,
+"unlockCondition": {
+"amount": 7000,
+"populationLevel": 118745
+}
 },
 {
 "guid": 1010248,
 "happiness": 3,
 "residents": 0,
-"tpmin": 0.00035
+"tpmin": 0.00035,
+"unlockCondition": {
+"amount": 7000,
+"populationLevel": 118745
+}
 }
 ],
 "region": 5000000,
-"residenceBuilding": 114445
+"residence": 114445
 }
 ],
 "powerPlants": [
