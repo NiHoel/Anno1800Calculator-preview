@@ -1295,6 +1295,11 @@ class PopulationLevel extends NamedElement {
         this.needs = [];
         this.region = assetsMap.get(config.region);
 
+        this.propagatedAmount = ko.computed(() => {
+            var amount = view.settings.existingBuildingsInput.checked() ? parseInt(this.existingBuildings()) * config.fullHouse : parseInt(this.amount());
+            this.needs.forEach(n => n.updateAmount(amount));
+        });
+
         config.needs.forEach(n => {
             if (n.tpmin > 0 && assetsMap.get(n.guid))
                 this.needs.push(new PopulationNeed(n, assetsMap));
@@ -1303,19 +1308,13 @@ class PopulationLevel extends NamedElement {
         this.amount.subscribe(val => {
             if (val < 0)
                 this.amount(0);
-            else if (!view.settings.existingBuildingsInput.checked())
-                this.needs.forEach(n => n.updateAmount(parseInt(val)));
-        });
-        this.existingBuildings.subscribe(val => {
-            if (view.settings.existingBuildingsInput.checked())
-                this.needs.forEach(n => n.updateAmount(parseInt(val * config.fullHouse)))
         });
         view.settings.existingBuildingsInput.checked.subscribe(enabled => {
             if (enabled)
                 this.existingBuildings(Math.max(this.existingBuildings(),
                     Math.ceil(parseInt(this.amount()) / config.fullHouse)));
-            else
-                this.amount(Math.max(this.amount(), parseInt(this.existingBuildings()) / (config.fullHouse - 10)));
+            else if (!this.amount())
+                this.amount(parseInt(this.existingBuildings()) / config.fullHouse);
         });
 
         if (this.residence) {
