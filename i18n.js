@@ -673,6 +673,13 @@ options = {
             "korean": "부족한 건물 강조"
         }
     },
+    "needUnlockConditions": {
+        "name": "Consider unlock conditions for needs",
+        "locaText": {
+            "english": "Consider unlock conditions for needs",
+            "german": "Freischaltbedingungen der Bedürfnisse berücksichtigen",
+        }
+    },
     "noOptionalNeeds": {
         "name": "Do not produce luxury goods",
         "locaText": {

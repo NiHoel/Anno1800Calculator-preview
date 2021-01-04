@@ -325,11 +325,19 @@ class Island {
             this.residenceBuildings.push(b);
         }
 
+        for (var b of this.residenceBuildings)
+            if (b.upgradedBuilding)
+                b.upgradedBuilding = assetsMap.get(parseInt(b.upgradedBuilding));
+
         for (let level of params.populationLevels) {
 
             let l = new PopulationLevel(level, assetsMap);
             assetsMap.set(l.guid, l);
             this.populationLevels.push(l);
+        }
+
+        for (let l of this.populationLevels) {
+            l.initBans();
 
             if (localStorage) {
                 {
@@ -401,6 +409,8 @@ class Island {
 
             }
         }
+
+
 
         for (var category of params.productFilter) {
             let c = new ProductCategory(category, assetsMap);
@@ -1150,17 +1160,57 @@ class PopulationNeed extends Need {
             val = parseFloat(val);
             if (val <= 0)
                 this.percentBoost(1);
-        })
+        });
         this.boost = ko.computed(() => parseInt(this.percentBoost()) / 100);
         this.boost.subscribe(() => this.updateAmount(this.residents));
 
         this.checked = ko.observable(true);
+        this.optionalAmount = ko.observable(0);
+
+    }
+
+    initBans(level) {
+        if (this.unlockCondition) {
+            var config = this.unlockCondition;
+            this.locked = ko.computed(() => {
+                if (!config || !view.settings.needUnlockConditions.checked())
+                    return false;
+
+                var getAmount = l => view.settings.existingBuildingsInput.checked()
+                    ? parseInt(l.existingBuildings()) * l.fullHouse
+                    : parseInt(l.amount());
+
+                if (config.populationLevel != level.guid) {
+                    var l = assetsMap.get(config.populationLevel);
+                    var amount = getAmount(l);
+                    return amount < config.amount;
+                }
+
+                var amount = getAmount(level);
+                if (amount >= config.amount)
+                    return false;
+
+                var residence = level.residence.upgradedBuilding;
+                while (residence) {
+                    var l = residence.populationLevel;
+                    var amount = getAmount(l);
+                    if (amount > 0)
+                        return false;
+
+                    residence = residence.upgradedBuilding;
+                }
+
+                return true;
+            });
+        }
+
         this.banned = ko.computed(() => {
             var checked = this.checked();
             var noOptionalNeeds = view.settings.noOptionalNeeds.checked();
-            return !checked || this.happiness && noOptionalNeeds;
-        })
-        this.optionalAmount = ko.observable(0);
+            return !checked ||
+                this.happiness && noOptionalNeeds ||
+                this.locked && this.locked();
+        });
 
         this.banned.subscribe(banned => {
             if (banned)
@@ -1254,7 +1304,7 @@ class PopulationLevel extends NamedElement {
             if (val < 0)
                 this.amount(0);
             else if (!view.settings.existingBuildingsInput.checked())
-                this.needs.forEach(n => n.updateAmount(parseInt(val)))
+                this.needs.forEach(n => n.updateAmount(parseInt(val)));
         });
         this.existingBuildings.subscribe(val => {
             if (view.settings.existingBuildingsInput.checked())
@@ -1268,8 +1318,15 @@ class PopulationLevel extends NamedElement {
                 this.amount(Math.max(this.amount(), parseInt(this.existingBuildings()) / (config.fullHouse - 10)));
         });
 
-        if (this.residence)
+        if (this.residence) {
             this.residence = assetsMap.get(this.residence);
+            this.residence.populationLevel = this;
+    }
+    }
+
+    initBans() {
+        for (var n of this.needs)
+            n.initBans(this);
     }
 
     incrementAmount() {
@@ -1280,8 +1337,6 @@ class PopulationLevel extends NamedElement {
         this.amount(parseFloat(this.amount()) - 1);
     }
 }
-
-
 
 class ProductCategory extends NamedElement {
     constructor(config, assetsMap) {
