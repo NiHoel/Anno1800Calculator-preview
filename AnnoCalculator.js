@@ -337,7 +337,7 @@ class Island {
         }
 
         for (let l of this.populationLevels) {
-            l.initBans();
+            l.initBans(assetsMap);
 
             if (localStorage) {
                 {
@@ -1169,7 +1169,7 @@ class PopulationNeed extends Need {
 
     }
 
-    initBans(level) {
+    initBans(level, assetsMap) {
         if (this.unlockCondition) {
             var config = this.unlockCondition;
             this.locked = ko.computed(() => {
@@ -1324,9 +1324,9 @@ class PopulationLevel extends NamedElement {
     }
     }
 
-    initBans() {
+    initBans(assetsMap) {
         for (var n of this.needs)
-            n.initBans(this);
+            n.initBans(this, assetsMap);
     }
 
     incrementAmount() {
