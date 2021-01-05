@@ -1005,7 +1005,8 @@ class Demand extends NamedElement {
 
             this.buildings = ko.computed(() => {
                 var factory = this.factory();
-                var buildings = Math.max(0, this.inputAmount()) / factory.tpmin / factory.boost();
+                var factor = factory.extraGoodFactor ? factory.extraGoodFactor() : 1;
+                var buildings = Math.max(0, this.inputAmount()) / factor / factory.tpmin / factory.boost();
 
                 return buildings;
             });
