@@ -270,6 +270,19 @@ texts = {
         "japanese": "消費",
         "russian": "Потребление"
     },
+    "totalCapacity": {
+        "english": "Total Capacity",
+        "chinese": "总容量",
+        "taiwanese": "總容量",
+        "italian": "Capienza totale",
+        "spanish": "Capacidad total",
+        "german": "Gesamtkapazität",
+        "polish": "Pojemność całkowita",
+        "french": "Capacité totale",
+        "korean": "총 수용량",
+        "japanese": "総収容能力",
+        "russian": "Общая вместимость"
+    },
     requiredNumberOfBuildings: {
         english: "Required Number of Buildings",
         german: "Benötigte Anzahl an Gebäuden",

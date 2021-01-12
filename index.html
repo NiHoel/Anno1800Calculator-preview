@@ -648,7 +648,7 @@
                 <button type="button" class="btn" data-bind="enable: $root.settings.additionalProduction.checked()">
                     <img data-toggle="modal" data-target="#item-equipment-dialog" class="icon-navbar" src="icon_add_goods_socket_white.png" />
                 </button>
-                <button type="button" class="btn" data-bind="enable: $root.settings.contracts.checked()">
+                <button type="button" class="btn" data-bind="enable: $root.settings.contracts.checked(), visible: $root.island().contractManager">
                     <img data-toggle="modal" data-target="#contract-management-dialog" class="icon-navbar" src="icon_promo_decree_2d_white.png" />
                 </button>
             </div>
@@ -1095,7 +1095,7 @@
                                     <span class="mr-3"> t/min</span>
                                 </div>
                                 <div>
-                                    <button class="btn btn-sm btn-light" data-bind="click: () => $data.updateExtraGoods(1), enable: $data.amount() || $data.extraGoodProductionList.amount() || $data.tradeList.amount() || $data.contractList.amount()">
+                                    <button class="btn btn-sm btn-light" data-bind="click: () => $data.updateExtraGoods(1), enable: $data.amount() || $data.extraGoodProductionList.amount() || $data.tradeList.amount() || $data.contractList && $data.contractList.amount()">
                                         <span data-bind="text: $root.texts.apply.name">Apply</span>
                                     </button>
                                 </div>
@@ -1384,27 +1384,41 @@
                         </div>
                         <hr />
                         <div data-bind="with: $root.island().contractManager">
-                            <div class="inline-list-stretched" data-bind="visible: !view.island().isAllIslands()">
-                                <div class="input-group spinner" style="max-width: 18rem;">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text" data-bind="text: $root.texts.loadingSpeed.name()"></span>
-                                    </div>
-                                    <input step="1" min="120" class="form-control" type="number" value="120" data-bind="value: $data.traderLoadingSpeed, attr: { id: 'trader-loading-speed' }" />
-                                    <div class="input-group-append">
-                                        <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.traderLoadingSpeed, id: 'trader-loading-speed' }}"></div>
-                                        <button class="btn btn-light btn-sm input-group-text" data-toggle="modal" data-target="#trader-loading-speed-dialog">
-                                            <span class="fa fa-sliders"></span>
-                                        </button>
-                                        <span class="input-group-text">t/min</span>
-
-                                    </div>
+                            <div class="input-group spinner" style="max-width: 18rem;">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" data-bind="text: $root.texts.loadingSpeed.name()"></span>
                                 </div>
+                                <input step="1" min="120" class="form-control" type="number" value="120" data-bind="value: $data.traderLoadingSpeed, attr: { id: 'trader-loading-speed' }" />
+                                <div class="input-group-append">
+                                    <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.traderLoadingSpeed, id: 'trader-loading-speed' }}"></div>
+                                    <button class="btn btn-light btn-sm input-group-text" data-toggle="modal" data-target="#trader-loading-speed-dialog">
+                                        <span class="fa fa-sliders"></span>
+                                    </button>
+                                    <span class="input-group-text">t/min</span>
+
+                                </div>
+                            </div>
+                            <div class="inline-list-stretched mt-2" data-bind="visible: !view.island().isAllIslands()">
+
                                 <div>
                                     <span data-bind="text: $root.texts.duration.name()"></span>
                                     <span>: </span>
                                     <span data-bind="text: formatNumber($data.traderLoadingDuration())"></span>
                                     <span> min</span>
                                 </div>
+                                <div>
+                                    <span data-bind="text: $root.texts.total.name()"></span>
+                                    <span>: </span>
+                                    <span data-bind="text: formatNumber($data.totalAmount())"></span>
+                                    <span> t/min</span>
+                                </div>
+                                <div>
+                                    <span data-bind="text: $root.texts.totalCapacity.name()"></span>
+                                    <span>: </span>
+                                    <span data-bind="text: formatNumber($data.storageCapacity())"></span>
+                                    <span> t</span>
+                                </div>
+
                             </div>
 
                             <table class="table table-striped table-sm mt-3">

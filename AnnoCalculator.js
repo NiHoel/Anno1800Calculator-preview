@@ -550,7 +550,7 @@ class Island {
             return [...this.factories].sort(comp).slice(0, 5).filter(f => useBuildings ? f.existingBuildings() : f.buildings());
         });
 
-        if (params.tradeContracts)
+        if (params.tradeContracts && (!this.region || this.region.guid == 5000000))
             this.contractManager = new ContractManager(this, params.tradeContracts);
     }
 
@@ -2156,6 +2156,46 @@ class ContractManager {
             }
 
             return loadingDuration;
+        });
+
+        this.totalAmount = ko.pureComputed(() => {
+            var sum = 0;
+
+            for (var c of this.contracts())
+                sum += c.importAmount() + c.exportAmount();
+
+            return sum;
+        });
+
+        this.storageCapacity = ko.pureComputed(() => {
+            var productToCount = new Map();
+
+            for (var c of this.contracts()) {
+                // import
+                var guid = c.importProduct.guid;
+                if (productToCount.has(guid))
+                    productToCount.set(guid, c.importCount() + productToCount.get(guid));
+                else
+                    productToCount.set(guid, c.importCount());
+
+                // export
+                guid = c.exportProduct.guid;
+                if (productToCount.has(guid))
+                    productToCount.set(guid, c.exportCount() + productToCount.get(guid));
+                else
+                    productToCount.set(guid, c.exportCount());
+
+            }
+
+            if (!productToCount.size)
+                return 0;
+
+            var m = 0;
+            for (var val of productToCount.values())
+                if (val > m)
+                    m = val;
+
+            return m;
         });
 
         this.piers = [];
