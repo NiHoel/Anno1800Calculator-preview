@@ -2400,13 +2400,13 @@ class ContractCreatorFactory {
         this.canImport = ko.pureComputed(() => {
             var f = view.selectedFactory();
 
-            return f.product.canImport && (f.contractList.island.isAllIslands() || !f.contractList.exports().length);
+            return !!(f.product.canImport && (f.contractList.island.isAllIslands() || !f.contractList.exports().length));
         });
 
         this.canExport = ko.pureComputed(() => {
             var f = view.selectedFactory();
 
-            return f.contractList.island.isAllIslands() || !f.contractList.imports().length;
+            return !!(f.contractList.island.isAllIslands() || !f.contractList.imports().length);
         });
 
         view.selectedFactory.subscribe(f => {
@@ -2424,14 +2424,19 @@ class ContractCreatorFactory {
                 this.export(false);
                 this.newAmount(Math.abs(Math.min(0, overProduction)));
             } else {
-                this.export(overProduction > 0);
-                this.newAmount(Math.abs(overProduction));
+                if (overProduction < 0 && this.canImport()) {
+                    this.export(false);
+                    this.newAmount(Math.abs(overProduction));
+                } else {
+                    this.export(true);
+                    this.newAmount(Math.max(0, overProduction));
+                }
             }
         });
     }
 
     canCreate() {
-        return this.exchangeFactory() && this.newAmount();
+        return this.exchangeFactory() && this.newAmount() && (this.export() || this.canImport());
     }
 
     create() {
