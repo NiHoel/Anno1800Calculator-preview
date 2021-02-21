@@ -2021,7 +2021,7 @@ class TradeContract {
         this.importAmount = createFloatInput(0);
 
         this.ratio = ko.computed(() => {
-            return this.importProduct.exchangeWeight /
+            return (this.importProduct.agio || 1) * this.importProduct.exchangeWeight / 
                 this.exportProduct.exchangeWeight /
                 (view.contractUpgradeManager.upgradesMap().get(this.exportProduct.guid) || 1);
         });
@@ -2120,12 +2120,12 @@ class ContractManager {
 
         }
 
-        this.traderLoadingSpeed = createIntInput(2 * 60);
+        this.traderLoadingSpeed = createFloatInput(2);
 
         if (localStorage) {
             let id = "traderLoadingSpeed.amount";
             if (localStorage.getItem(id) != null)
-                this.traderLoadingSpeed(parseInt(localStorage.getItem(id)));
+                this.traderLoadingSpeed(parseFloat(localStorage.getItem(id)));
 
             this.traderLoadingSpeed.subscribe(val => localStorage.setItem(id, val));
         }
@@ -2135,9 +2135,9 @@ class ContractManager {
             for (var c of this.contracts())
                 totalAmount += c.importAmount() + c.exportAmount();
 
-            var transferTime = params.tradeContracts.traderTransferMinutes;
+            var transferTime = params.tradeContracts.traderTransferMinutes + 4;
 
-            if (totalAmount >= this.traderLoadingSpeed()) {
+            if (totalAmount >= 60 * this.traderLoadingSpeed()) {
                 for (var c of this.contracts()) {
                     c.importCount(Infinity);
                     c.exportCount(Infinity);
@@ -2146,8 +2146,8 @@ class ContractManager {
                 return Infinity;
             }
 
-            var x = totalAmount / this.traderLoadingSpeed();
-            var loadingDuration = - transferTime * x / (x - 1);
+            var x = totalAmount / (60 * this.traderLoadingSpeed() * params.tradeContracts.loadingSpeedFactor);
+            var loadingDuration = Math.max(params.tradeContracts.minimumLoadingTime / 60, - transferTime * x / (x - 1));
             var totalDuration = transferTime + loadingDuration;
 
             for (var c of this.contracts()) {
