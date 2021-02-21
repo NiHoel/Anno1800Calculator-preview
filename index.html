@@ -649,7 +649,7 @@
                     <img data-toggle="modal" data-target="#item-equipment-dialog" class="icon-navbar" src="icon_add_goods_socket_white.png" />
                 </button>
                 <button type="button" class="btn" data-bind="enable: $root.settings.contracts.checked(), visible: $root.island().contractManager">
-                    <img data-toggle="modal" data-target="#contract-management-dialog" class="icon-navbar" src="icon_promo_decree_2d_white.png" />
+                    <img data-toggle="modal" data-target="#contract-management-dialog" class="icon-navbar" src="icon_docklands_2d_white.png" />
                 </button>
             </div>
             <div class="input-group input-group-sm" data-bind="visible: $root.islands().length > 1" style="width: unset;">
@@ -1348,7 +1348,7 @@
                     </div>
                     <div class="modal-body">
                         <div data-bind="with: $root.contractUpgradeManager">
-                            <h5>Upgrades</h5>
+                            <h5 data-bind="text: $root.texts.exportPyramid.name">Your Specialty Exports</h5>
 
                             <table class="table table-striped table-sm">
                                 <tbody data-bind="foreach: $data.upgrades">

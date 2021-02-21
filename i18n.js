@@ -375,6 +375,19 @@ texts = {
         "japanese": "持続時間",
         "russian": "Длительность"
     },
+    exportPyramid: {
+        "english": "Your Specialty Exports",
+        "polish": "Specjalizacje eksportowe",
+        "spanish": "Tus especialidades de exportación",
+        "taiwanese": "你的專屬出口貨物",
+        "german": "Exportwaren-Pyramide",
+        "chinese": "你的专属出口货物",
+        "italian": "Le tue esportazioni di specialità",
+        "korean": "전문 수출품",
+        "french": "Vos exportations ",
+        "japanese": "あなたの名産輸出品",
+        "russian": "Специализация экспорта"
+    },
     language: {
         "english": "Text Language",
         "chinese": "文本语言",
@@ -693,7 +706,18 @@ options = {
         //guid: 132271
         "dialog": "contract-management-dialog",
         "locaText": {
-            "english": "Trade Contracts"
+            "english": "Docklands",
+            //"guid": 410083,
+            "polish": "Okno na świat",
+            "spanish": "Zona portuaria",
+            "taiwanese": "港灣",
+            "german": "Speicherstadt",
+            "chinese": "港湾",
+            "italian": "Area portuale",
+            "korean": "부둣가",
+            "french": "Zone portuaire",
+            "japanese": "港湾地区",
+            "russian": "Доки"
         }
     },
     "autoApplyExtraNeed": {
