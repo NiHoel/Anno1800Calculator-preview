@@ -25,7 +25,7 @@
 
     <script type="text/javascript" src="i18n.js"></script>
     <script type="text/javascript" src="AnnoCalculator.js"></script>
-    <script type="text/javascript" src="params_2020-12-14_full.js"></script>
+    <script type="text/javascript" src="params_2021-02-23_full.js"></script>
 </head>
 <body>
     <noscript>This site requires JavaScript!</noscript>
@@ -1388,13 +1388,13 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" data-bind="text: $root.texts.loadingSpeed.name()"></span>
                                 </div>
-                                <input step="1" min="120" class="form-control" type="number" value="120" data-bind="value: $data.traderLoadingSpeed, attr: { id: 'trader-loading-speed' }" />
+                                <input step="0.1" min="1" class="form-control" type="number" value="100" data-bind="value: $data.traderLoadingSpeed, attr: { id: 'trader-loading-speed' }" />
                                 <div class="input-group-append">
                                     <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.traderLoadingSpeed, id: 'trader-loading-speed' }}"></div>
-                                    <button class="btn btn-light btn-sm input-group-text" data-toggle="modal" data-target="#trader-loading-speed-dialog">
+                                    <!--<button class="btn btn-light btn-sm input-group-text" data-toggle="modal" data-target="#trader-loading-speed-dialog">
                                         <span class="fa fa-sliders"></span>
-                                    </button>
-                                    <span class="input-group-text">t/min</span>
+                                    </button> -->
+                                    <span class="input-group-text">t/s</span>
 
                                 </div>
                             </div>
