@@ -1427,7 +1427,7 @@
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text">
                                                             <img class="icon-sm icon-light" src="icon_transporter_unloading_light.png" />
-                                                            <a href="#" data-bind="click: () => {$root.selectedFactory($data.exportFactory); setTimeout(() => {$('#factory-config-dialog').modal('show')}, 500);}, attr: {title: $data.exportFactory.name()}" style="margin: 0 0.25rem;">
+                                                            <a href="#" data-dismiss="modal" data-bind="click: () => {$root.selectedFactory($data.exportFactory); setTimeout(() => {$('#factory-config-dialog').modal('show')}, 500);}, attr: {title: $data.exportFactory.name()}" style="margin: 0 0.25rem;">
                                                                 <img class="icon-sm" src="" data-bind="attr: { src: $data.exportFactory.icon ? $data.exportFactory.icon : null, alt: $data.exportFactory.name}">
                                                             </a>
                                                         </span>
@@ -1453,7 +1453,7 @@
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text">
                                                             <img class="icon-sm icon-light" src="icon_transporter_loading_light.png" />
-                                                            <a href="#" data-bind="click: () => {$root.selectedFactory($data.importFactory); setTimeout(() => {$('#factory-config-dialog').modal('show')}, 500);}, attr: {title: $data.importFactory.name()}" style="margin: 0 0.25rem;">
+                                                            <a href="#" data-dismiss="modal" data-bind="click: () => {$root.selectedFactory($data.importFactory); setTimeout(() => {$('#factory-config-dialog').modal('show')}, 500);}, attr: {title: $data.importFactory.name()}" style="margin: 0 0.25rem;">
                                                                 <img class="icon-sm" src="" data-bind="attr: { src: $data.importFactory.icon ? $data.importFactory.icon : null, alt: $data.importFactory.name}">
                                                             </a>
                                                         </span>
