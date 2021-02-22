@@ -1391,9 +1391,6 @@
                                 <input step="0.1" min="1" class="form-control" type="number" value="100" data-bind="value: $data.traderLoadingSpeed, attr: { id: 'trader-loading-speed' }" />
                                 <div class="input-group-append">
                                     <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.traderLoadingSpeed, id: 'trader-loading-speed' }}"></div>
-                                    <!--<button class="btn btn-light btn-sm input-group-text" data-toggle="modal" data-target="#trader-loading-speed-dialog">
-                                        <span class="fa fa-sliders"></span>
-                                    </button> -->
                                     <span class="input-group-text">t/s</span>
 
                                 </div>
@@ -1493,36 +1490,6 @@
             </div>
         </div>
         <!-- #/contract-management-dialog -->
-        <!-- #trader-loading-speed-dialog -->
-        <div id="trader-loading-speed-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-sm">
-                <div class="modal-content" data-bind="with: $root.island().contractManager">
-                    <div class="modal-body">
-                        <select name="piers" class="custom-select" id="trader-piers" data-bind="value: $data.pier, options: $data.piers, optionsText: i => i.name()"></select>
-                        <div class="input-group input-group-sm spinner mb-3">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">+ </span>
-                            </div>
-                            <input step="5" class="form-control" type="number" value="0" min="0" data-bind="value: $data.traderLoadingSpeedPercentBoost, attr: {id: 'trader-loading-speed-percent-boost'}" />
-                            <div class="input-group-append">
-                                <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.traderLoadingSpeedPercentBoost, id: 'trader-loading-speed-percent-boost' }}"></div>
-                                <span class="input-group-text">%</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <span data-bind="text: $root.texts.loadingSpeed.name">Loading Speed</span>
-                        <span>: </span>
-                        <span data-bind="text: formatNumber($data.computedTraderLoadingSpeed())"></span>
-                        <span>t/min</span>
-                        <button data-dismiss="modal" class="btn btn-light btn-sm" data-bind="click: () => $data.apply()">
-                            <span data-bind="text: $root.texts.apply.name">Apply</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- #/trader-loading-speed-dialog -->
         <div class="animate-bottom">
             <!-- population input field -->
             <fieldset class="ui-fieldset" id="residents-view">

@@ -2198,36 +2198,6 @@ class ContractManager {
             return m;
         });
 
-        this.piers = [];
-        for (var p of params.tradeContracts.piers) {
-            this.piers.push(new Pier(p));
-        }
-
-        this.pier = ko.observable(this.piers[0]);
-        if (localStorage) {
-            let id = "traderPier.guid";
-            if (localStorage.getItem(id) != null) {
-                var guid = parseInt(localStorage.getItem(id));
-                for (var p of this.piers)
-                    if (p.guid == guid)
-                        this.pier(p);
-            }
-
-            this.pier.subscribe(val => localStorage.setItem(id, val.guid));
-        }
-
-        this.traderLoadingSpeedPercentBoost = createIntInput(0);
-
-        if (localStorage) {
-            let id = "traderLoadingSpeed.percentBoost";
-            if (localStorage.getItem(id) != null)
-                this.traderLoadingSpeedPercentBoost(parseInt(localStorage.getItem(id)));
-
-            this.traderLoadingSpeedPercentBoost.subscribe(val => localStorage.setItem(id, val));
-        }
-
-        this.computedTraderLoadingSpeed =
-            ko.pureComputed(() => this.pier().loadingSpeed * (1 + this.traderLoadingSpeedPercentBoost() / 100));
     }
 
     add(contract) {
@@ -2243,9 +2213,6 @@ class ContractManager {
     islandDeleted(island) {
     }
 
-    apply() {
-        this.traderLoadingSpeed(this.computedTraderLoadingSpeed());
-    }
 }
 
 class ContractUpgrade {
