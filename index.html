@@ -877,7 +877,7 @@
                             <hr />
                         </div>
 
-                        <div data-bind="if: $root.settings.contracts && $root.settings.contracts.checked() && $data instanceof Factory">
+                        <div data-bind="if: $root.settings.contracts && $root.settings.contracts.checked() && $data instanceof Factory && $data.getProduct().exchangeWeight">
                             <div data-bind="with: $data.contractList">
 
                                 <h6><span data-bind="text: $root.settings.contracts.name">Trade Contracts</span></h6>

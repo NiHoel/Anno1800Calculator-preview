@@ -2401,7 +2401,7 @@ class ContractCreatorFactory {
     }
 
     canCreate() {
-        return this.exchangeFactory() && this.newAmount() && (this.export() || this.canImport());
+        return this.exchangeFactory() && this.newAmount() && (this.export() || this.canImport()) && this.exchangeFactory().getProduct().exchangeWeight && view.selectedFactory().getProduct().exchangeWeight;
     }
 
     create() {
