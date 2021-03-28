@@ -25,7 +25,7 @@
 
     <script type="text/javascript" src="i18n.js"></script>
     <script type="text/javascript" src="AnnoCalculator.js"></script>
-    <script type="text/javascript" src="params_2021-02-23_full.js"></script>
+    <script type="text/javascript" src="params_2021-03-23_full.js"></script>
 </head>
 <body>
     <noscript>This site requires JavaScript!</noscript>
@@ -1499,8 +1499,8 @@
 
                     <div class="ui-tier-input fleft">
                         <!-- <div class="ui-tier-icon">
-                        <img src="/img/icons/gui_icon_map_0-17-10.png" alt="Old World" width="46" height="46">
-                    </div> -->
+                    <img src="/img/icons/gui_icon_map_0-17-10.png" alt="Old World" width="46" height="46">
+                </div> -->
                         <div data-bind="foreach: $root.template.populationLevels">
                             <div class="ui-tier-unit" data-bind="visible: !$root.island().region || $root.island().region == $data.region">
                                 <div class="ui-tier-unit-icon mb-1">
@@ -1552,8 +1552,8 @@
 
                     <div class="ui-tier-input fleft">
                         <!-- <div class="ui-tier-icon">
-                        <img src="/img/icons/gui_icon_map_0-17-10.png" alt="Old World" width="46" height="46">
-                    </div> -->
+                    <img src="/img/icons/gui_icon_map_0-17-10.png" alt="Old World" width="46" height="46">
+                </div> -->
                         <div data-bind="foreach: $root.template.workforce">
                             <div class="ui-tier-unit">
                                 <div class="ui-tier-unit-icon"><img class="icon-tile" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }"></div>
@@ -1571,6 +1571,134 @@
                 </div>
             </fieldset>
             <!-- /required workforce field -->
+            <!-- public buildings -->
+            <fieldset class="ui-fieldset" id="categories-view" data-bind="visible: !$root.island().region || $root.island().region.guid === 5000000 || $root.island().region.guid === 160001">
+                <legend class="collapser" data-toggle="collapse" data-bind="attr: {'data-target' : '#category-public-buildings'}">
+                    <span class="fa fa-chevron-right"></span>
+                    <span class="fa fa-chevron-down"></span>
+                    <span data-bind="text:$root.texts.publicBuildings.name"></span>
+                </legend>
+
+                <div class="ui-fchain collapse show" data-bind="attr: {id:  'category-public-buildings'}">
+                    <div data-bind="foreach: $root.template.powerPlants">
+
+                        <!-- power plants -->
+                        <div class="ui-fchain-item" data-bind="visible: $data.instance().visible">
+                            <div class="ui-fchain-item-tr-button">
+                                <div>
+                                    <button class="btn btn-light btn-sm" data-bind="click: () => {$root.selectedFactory($data.instance())}" data-toggle="modal" data-target="#factory-config-dialog">
+                                        <span class="fa fa-sliders"></span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="ui-fchain-item-name" data-bind="text: $data.getRegionExtendedName(), visible: !$root.settings.hideNames.checked()"></div>
+                            <div class="ui-fchain-item-icon mb-2"><img class="icon-tile" src="" data-bind="attr: { src: $data.icon, alt: $data.name }"></div>
+
+
+                            <!-- buildings input  -->
+                            <div class="ui-fchain-item-count">
+                                <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
+
+                                    <div class="input-group input-group-sm mb-3 spinner">
+                                        <input class="form-control" type="number" value="0" step="1" min="0" data-bind="value:  $data.instance().existingBuildings, attr: { id: $data.guid + '-existingBuildings-input'}" />
+                                        <div class="input-group-append">
+                                            <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.instance().existingBuildings, id: $data.guid + '-existingBuildings-input' }}"></div>
+                                            <span class="input-group-text">x</span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <!-- buildings counter -->
+                            <div class="ui-fchain-item-count" data-bind="visible:  $data.instance().buildings() >  $data.instance().existingBuildings()">
+                                <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildingsDescription.name}">
+                                    <span data-bind="text: $root.texts.requiredNumberOfBuildings.name"></span>
+                                    <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? formatNumber( $data.instance().buildings()) : Math.ceil( $data.instance().buildings())"></span>
+                                    <span>x</span>
+                                    <div class="btn-group" role="group">
+                                        <button type="button" class="btn btn-secondary" data-bind="click: () =>  $data.instance().incrementBuildings(), enable:  $data.instance().buildings() > 0" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">+</button>
+                                        <button type="button" class="btn btn-secondary" data-bind="click: () =>  $data.instance().decrementBuildings(), enable:  $data.instance().buildings() > 1.00001" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">-</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
+                                <div class="ui-fchain-item-load"><span data-bind="text: formatNumber($data.instance().amount())"></span><span> t/min</span></div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- /power plants -->
+                    <!-- recipes -->
+                    <div data-bind="foreach: $root.template.publicRecipeBuildings">
+
+                        <div class="ui-fchain-item" data-bind="visible: $data.instance().visible() && $data.instance().existingBuildings() > 0">
+                            <div class="ui-fchain-item-tr-button">
+                                <div>
+                                    <button class="btn btn-light btn-sm" data-bind="click: () => {$root.selectedFactory($data.instance())}" data-toggle="modal" data-target="#factory-config-dialog">
+                                        <span class="fa fa-sliders"></span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="ui-fchain-item-name" data-bind="text: $data.getRegionExtendedName(), visible: !$root.settings.hideNames.checked()"></div>
+                            <div class="ui-fchain-item-icon mb-2"><img class="icon-tile" src="" data-bind="attr: { src: $data.icon, alt: $data.name }"></div>
+
+
+                            <!-- buildings counter -->
+                            <div class="ui-fchain-item-count">
+                                <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
+
+                                    <div class="input-group input-group-sm mb-3 spinner">
+                                        <input class="form-control" type="number" value="0" step="1" min="0" data-bind="value:  $data.instance().existingBuildings, attr: { id: $data.guid + '-existingBuildings-input'}" />
+                                        <div class="input-group-append">
+                                            <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.instance().existingBuildings, id: $data.guid + '-existingBuildings-input' }}"></div>
+                                            <span class="input-group-text">x</span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
+                                <div class="ui-fchain-item-load"><span data-bind="text: formatNumber($data.instance().amount())"></span><span> t/min</span></div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- /recipes -->
+                    <!-- public recipe buildings -->
+                    <div data-bind="foreach: $root.island().recipeLists">
+
+                        <div class="ui-fchain-item" data-bind="visible: $data.unusedRecipes().length">
+
+
+                            <div class="ui-fchain-item-name" data-bind="text: $data.name, visible: !$root.settings.hideNames.checked()"></div>
+                            <div class="ui-fchain-item-icon mb-2"><img class="icon-tile" src="" data-bind="attr: { src: $data.icon, alt: $data.name }"></div>
+
+
+                            <div class="form-group">
+                                <select class="custom-select form-control" data-bind="value: $data.selectedRecipe, options: $data.unusedRecipes, optionsText: r => r.name()"></select>
+                            </div>
+
+                            <button class="btn btn-secondary btn-sm" data-bind="click: () => $data.create(), enable: $data.canCreate">
+                                <span class="fa fa-plus"> </span>
+                            </button>
+
+
+                        </div>
+
+                    </div>
+                    <!-- /public recipe buildings -->
+                </div>
+                <div class="clear"></div>
+            </fieldset>
+
+            <!-- /public buildings -->
             <!-- required factories by category -->
             <div data-bind="foreach: { data: $root.template.categories, as: 'category'}">
                 <fieldset class="ui-fieldset" id="categories-view">
@@ -1724,58 +1852,6 @@
 
                                 </div>
                             </div>
-                        </div>
-                        <div data-bind="foreach: $data.consumers">
-                            <div data-bind="visible: !$data.island.region || $data.region === $data.island.region">
-                                <div class="ui-fchain-item" data-bind="css: $root.settings.missingBuildingsHighlight.checked() &&  $data.instance().buildings() >  $data.instance().existingBuildings() ? 'danger' : ''">
-                                    <div class="ui-fchain-item-tr-button">
-                                        <div>
-                                            <button class="btn btn-light btn-sm" data-bind="click: () => {$root.selectedFactory($data.instance())}" data-toggle="modal" data-target="#factory-config-dialog">
-                                                <span class="fa fa-sliders"></span>
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <div class="ui-fchain-item-name" data-bind="text: $data.getRegionExtendedName(), visible: !$root.settings.hideNames.checked()"></div>
-                                    <div class="ui-fchain-item-icon mb-2"><img class="icon-tile" src="" data-bind="attr: { src: $data.icon, alt: $data.name }"></div>
-
-
-                                    <!-- buildings input  -->
-                                    <div class="ui-fchain-item-count">
-                                        <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
-
-                                            <div class="input-group input-group-sm mb-3 spinner">
-                                                <input class="form-control" type="number" value="0" step="1" min="0" data-bind="value:  $data.instance().existingBuildings, attr: { id: $data.guid + '-existingBuildings-input'}" />
-                                                <div class="input-group-append">
-                                                    <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.instance().existingBuildings, id: $data.guid + '-existingBuildings-input' }}"></div>
-                                                    <span class="input-group-text">x</span>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </div>
-
-                                    <!-- required buildings display -->
-                                    <div class="ui-fchain-item-count" data-bind="visible:  $data.instance().buildings() >  $data.instance().existingBuildings()">
-                                        <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildingsDescription.name}">
-                                            <span data-bind="text: $root.texts.requiredNumberOfBuildings.name"></span>
-                                            <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? formatNumber( $data.instance().buildings()) : Math.ceil( $data.instance().buildings())"></span>
-                                            <span>x</span>
-                                            <div class="btn-group" role="group">
-                                                <button type="button" class="btn btn-secondary" data-bind="click: () =>  $data.instance().incrementBuildings(), enable:  $data.instance().buildings() > 0" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">+</button>
-                                                <button type="button" class="btn btn-secondary" data-bind="click: () =>  $data.instance().decrementBuildings(), enable:  $data.instance().buildings() > 1.00001" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">-</button>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
-                                        <div class="ui-fchain-item-load"><span data-bind="text: formatNumber($data.instance().amount())"></span><span> t/min</span></div>
-
-                                    </div>
-                                </div>
-
-                            </div>
-
                         </div>
                     </div>
                     <div class="clear"></div>

@@ -321,6 +321,19 @@ texts = {
         "japanese": "トン毎分 (トン/分)",
         "russian": "Тонн в минуту (т./мин.)"
     },
+    publicBuildings: {
+        "english": "Public Buildings",
+        "polish": "Budynki użyteczności publicznej",
+        "spanish": "Edificios públicos",
+        "taiwanese": "公共建築",
+        "german": "Öffentliche Gebäude",
+        "chinese": "公共建筑",
+        "italian": "Edifici pubblici",
+        "korean": "공공건물",
+        "french": "Bâtiments publics",
+        "japanese": "公共施設",
+        "russian": "Общественные здания"
+    },
     outputAmount: {
         english: "Plain building output without extra goods",
         german: "Reiner Gebäudeoutput ohne Zusatzwaren",

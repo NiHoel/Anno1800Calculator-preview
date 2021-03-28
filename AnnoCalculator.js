@@ -134,6 +134,8 @@ class Island {
 
         this.populationLevels = [];
         this.residenceBuildings = [];
+        this.powerPlants = [];
+        this.publicRecipeBuildings = [];
         this.consumers = [];
         this.factories = [];
         this.categories = [];
@@ -144,6 +146,7 @@ class Island {
         this.replaceInputItems = [];
         this.extraGoodItems = [];
         this.allGoodConsumptionUpgrades = new GoodConsumptionUpgradeIslandList();
+        this.recipeLists = [];
 
         for (let workforce of params.workforce) {
             let w = new Workforce(workforce, assetsMap);
@@ -152,12 +155,11 @@ class Island {
         }
 
         for (let consumer of (params.powerPlants || [])) {
-            //if (this.region && this.region.guid != consumer.region)
-            //    continue;
 
-            let f = new Consumer(consumer, assetsMap, this);
+            let f = new PublicConsumerBuilding(consumer, assetsMap, this);
             assetsMap.set(f.guid, f);
             this.consumers.push(f);
+            this.powerPlants.push(f);
 
             if (localStorage) {
                 {
@@ -168,6 +170,29 @@ class Island {
                     f.existingBuildings.subscribe(val => localStorage.setItem(id, val));
                 }
             }
+        }
+
+        for (let consumer of (params.publicRecipeBuildings || [])) {
+
+            let f = new PublicConsumerBuilding(consumer, assetsMap, this);
+            assetsMap.set(f.guid, f);
+            this.consumers.push(f);
+            this.publicRecipeBuildings.push(f);
+
+            if (localStorage) {
+                {
+                    let id = f.guid + ".existingBuildings";
+                    if (localStorage.getItem(id) != null)
+                        f.existingBuildings(parseInt(localStorage.getItem(id)));
+
+                    f.existingBuildings.subscribe(val => localStorage.setItem(id, val));
+                }
+            }
+        }
+
+        for (let list of (params.recipeLists || [])) {
+            if (!list.region || !this.region || list.region === this.region.guid)
+                this.recipeLists.push(new RecipeList(list, assetsMap, this));
         }
 
         for (let consumer of (params.modules || [])) {
@@ -419,18 +444,6 @@ class Island {
             this.categories.push(c);
         }
 
-        for (let powerPlant of (params.powerPlants || [])) {
-            var pl = assetsMap.get(powerPlant.guid);
-            if (!pl)
-                continue; // power plant not constructable in this region
-
-            this.categories[1].consumers.push(pl);
-            pl.editable(true);
-            var pr = pl.getInputs()[0].product;
-            let n = new PowerPlantNeed({ guid: pr.guid, factory: pl, product: pr }, assetsMap);
-            pl.existingBuildings.subscribe(() => n.updateAmount());
-            n.updateAmount();
-        }
 
         for (let p of this.categories[1].products) {
             if (p)
@@ -713,6 +726,36 @@ class Module extends Consumer {
     }
 }
 
+class PublicConsumerBuilding extends Consumer {
+    constructor(config, assetsMap, island) {
+        super(config, assetsMap, island);
+
+        this.needs = [];
+
+        this.existingBuildings.subscribe(b => {
+            this.amount(b * this.tpmin);
+
+            for (var d of this.needs)
+                d.updateAmount(this.amount());
+        });
+
+        this.visible = ko.computed(() => {
+            if (this.region && this.island.region && this.region != this.island.region)
+                return false;
+
+            return true;
+        });
+    }
+
+    referenceProducts(assetsMap) {
+        super.referenceProducts(assetsMap);
+
+        this.needs = this.getInputs().map(input => 
+            new Demand({ guid: input.Product, consumer: { factory: ko.observable(this)} }, assetsMap)
+        );
+    }
+}
+
 class PalaceBuff extends NamedElement {
     constructor(config, assetsMap) {
         super(config, assetsMap);
@@ -992,8 +1035,9 @@ class Demand extends NamedElement {
         if (this.product) {
             this.updateFixedProductFactory(this.product.fixedFactory());
             this.product.fixedFactory.subscribe(f => this.updateFixedProductFactory(f));
+        }
 
-            this.inputAmount = ko.computed(() => {
+        this.inputAmount = ko.computed(() => {
                 var amount = parseFloat(this.amount());
 
                 var factor = 1;
@@ -1008,7 +1052,7 @@ class Demand extends NamedElement {
             if (this.consumer)
                 this.consumer.factory.subscribe(() => this.updateFixedProductFactory(this.product.fixedFactory()));
 
-            if (this.product.differentFactoryInputs) {
+            if (this.product && this.product.differentFactoryInputs) {
                 this.demands = [new FactoryDemandSwitch(this, assetsMap)];
                 this.inputAmount.subscribe(val => this.demands[0].updateAmount(val));
             }
@@ -1038,7 +1082,7 @@ class Demand extends NamedElement {
 
                 return buildings;
             });
-        }
+        
     }
 
     updateFixedProductFactory(f) {
@@ -1125,7 +1169,7 @@ class FactoryDemandSwitch {
 
         this.amount = 0;
 
-        consumer.factory.subscribe(factory => this.updateAmount(this.amount));
+        this.consumer.factory.subscribe(factory => this.updateAmount(this.amount));
     }
 
     updateAmount(amount) {
@@ -1294,21 +1338,6 @@ class BuildingMaterialsNeed extends Need {
 
         var overProduction = existingBuildingsOutput - otherDemand;
         this.amount(Math.max(0, overProduction - EPSILON));
-    }
-
-    updateFixedProductFactory() { }
-}
-
-class PowerPlantNeed extends Need {
-    constructor(config, assetsMap) {
-        super(config, assetsMap);
-
-        this.factory(config.factory);
-        this.factory().add(this);
-    }
-
-    updateAmount() {
-        this.amount(this.factory().existingBuildings() * this.factory().tpmin);
     }
 
     updateFixedProductFactory() { }
@@ -2448,6 +2477,38 @@ class ContractCreatorFactory {
     }
 }
 
+class RecipeList extends NamedElement{
+    constructor(list, assetsMap, island) {
+        super(list);
+
+        this.island = island;
+
+        this.recipeBuildings = list.recipeBuildings.map(r => assetsMap.get(r));
+        this.unusedRecipes = ko.computed(() => {
+            var result = [];
+            for (var recipe of this.recipeBuildings) {
+                if (!recipe.existingBuildings())
+                    result.push(recipe);
+            }
+
+            return result;
+        });
+        this.selectedRecipe = ko.observable(this.recipeBuildings[0]);
+
+        this.canCreate = ko.pureComputed(() => {
+            return this.unusedRecipes().length && this.selectedRecipe();
+        });
+
+    }
+
+    create() {
+        if (!this.canCreate())
+            return;
+
+        this.selectedRecipe().existingBuildings(1);
+    }
+}
+
 class ProductionChainView {
     constructor() {
         this.factoryToDemands = new Map();
@@ -3099,6 +3160,8 @@ function init() {
         populationLevels: arrayToTemplate("populationLevels"),
         categories: arrayToTemplate("categories"),
         consumers: arrayToTemplate("consumers"),
+        powerPlants: arrayToTemplate("powerPlants"),
+        publicRecipeBuildings: arrayToTemplate("publicRecipeBuildings"),
         buildingMaterialsNeeds: arrayToTemplate("buildingMaterialsNeeds"),
         workforce: arrayToTemplate("workforce")
     }
