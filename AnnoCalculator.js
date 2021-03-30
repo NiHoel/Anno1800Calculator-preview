@@ -282,19 +282,11 @@ class Island {
                             f => f ? localStorage.setItem(id, f.guid) : localStorage.removeItem(id));
 
                 }
-
-                // Default rum, cotton fabric and coffee to the new world production
-
-                if (isNew) {
-                    if (p.guid == 1010240)
-                        p.fixedFactory(assetsMap.get(1010318));
-                    if (p.guid == 1010257)
-                        p.fixedFactory(assetsMap.get(1010340));
-                    if (p.guid == 120032)
-                        p.fixedFactory(assetsMap.get(101252));
-                }
             }
         }
+
+        if (isNew)
+            setDefaultFixedFactories(assetsMap);
 
         for (let item of (params.items || [])) {
             let i = new Item(item, assetsMap, this.region);
@@ -434,6 +426,8 @@ class Island {
 
         for (let f of this.consumers) {
             persistInt(f, "existingBuildings");
+            if (f.workforceDemand)
+                persistInt(f.workforceDemand, "percentBoost", `${f.guid}.workforce.percentBoost`);
         }
 
         // force update once all pending notifications are processed
@@ -482,8 +476,11 @@ class Island {
                 a.checked(false);
             if (a instanceof Product)
                 a.fixedFactory(null);
-            if (a instanceof Consumer)
+            if (a instanceof Consumer) {
                 a.existingBuildings(0);
+                if (a.workforceDemand && a.workforceDemand.percentBoost)
+                    a.workforceDemand.percentBoost(100);
+            }
             if (a instanceof Factory) {
                 if (a.moduleChecked)
                     a.moduleChecked(false);
@@ -504,9 +501,9 @@ class Island {
                     i.checked(false);
             }
 
-            if (a.guid == 1010240)
-                a.fixedFactory(this.assetsMap.get(1010318));
         });
+
+        setDefaultFixedFactories(this.assetsMap);
 
         this.populationLevels.forEach(l => l.needs.forEach(n => {
             if (n.checked)
@@ -899,6 +896,9 @@ class Factory extends Consumer {
 
             if (this.palaceBuffChecked)
                 other.palaceBuffChecked(this.palaceBuffChecked());
+
+            if (this.workforceDemand && this.workforceDemand.percentBoost)
+                other.workforceDemand.percentBoost(this.workforceDemand.percentBoost());
         }
     }
 }
@@ -1330,13 +1330,29 @@ class Workforce extends NamedElement {
 class WorkforceDemand extends NamedElement {
     constructor(config, assetsMap) {
         super(config);
+        this.buildings = 0;
+
         this.amount = ko.observable(0);
+        this.percentBoost = createIntInput(100);
+        this.percentBoost.subscribe(val => {
+            if (val < 0) {
+                this.percentBoost(0);
+                return;
+            }
+
+            this.updateAmount(this.buildings);
+        });
+
         this.workforce.add(this);
+
         this.amount.subscribe(val => this.workforce.updateAmount());
     }
 
     updateAmount(buildings) {
-        this.amount(Math.ceil(buildings) * this.Amount);
+        this.buildings = buildings;
+
+        var perBuilding = Math.ceil(this.Amount * this.percentBoost() / 100);
+        this.amount(Math.ceil(buildings) * perBuilding);
     }
 }
 
@@ -3200,6 +3216,13 @@ function factoryReset() {
         localStorage.clear();
 
     location.reload();
+}
+
+function setDefaultFixedFactories(assetsMap) {
+    // Default rum, cotton fabric and coffee to the new world production
+    assetsMap.get(1010240).fixedFactory(assetsMap.get(1010318));
+    assetsMap.get(1010257).fixedFactory(assetsMap.get(1010340));
+    assetsMap.get(120032).fixedFactory(assetsMap.get(101252));
 }
 
 function isLocal() {

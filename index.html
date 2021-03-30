@@ -1130,7 +1130,7 @@
                                     <td>
                                         <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.productionBoost.name}">
                                             <div class="input-group input-group-short spinner">
-                                                <input class="form-control" type="number" value="100" step="1" min="1" data-bind="value: percentBoost, attr: {id: $data.buid + '-percentBoost-input'}" />
+                                                <input class="form-control" type="number" value="100" step="1" min="1" data-bind="value: percentBoost, attr: {id: $data.guid + '-percentBoost-input'}" />
                                                 <div class="input-group-append">
                                                     <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.percentBoost, id: $data.guid + '-percentBoost-input' }}"></div>
                                                     <span class="input-group-text">%</span>
@@ -1138,7 +1138,30 @@
                                             </div>
                                         </div>
                                     </td>
-                                </tr>
+                            </tr>
+                            <tr data-bind="with: $data.workforceDemand">
+                                <!-- workforce -->
+                                <td>
+                                    <span data-bind="text: $root.texts.workforce.name"></span>
+                                </td>
+                                <td>
+                                    <div class="inline-list-stretched">
+                                        <div class="input-group input-group-short spinner">
+                                            <input class="form-control" type="number" value="100" step="10" min="0" data-bind="value: percentBoost, attr: {id: $parent.guid + '-workforcePercentBoost-input'}" />
+                                            <div class="input-group-append">
+                                                <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.percentBoost, id: $parent.guid + '-workforcePercentBoost-input' }}"></div>
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                        </div>
+                                        <div>
+
+                                            <span data-bind="text: formatNumber($data.amount())"></span>
+                                            <img class="mr-2 icon-sm" src="" data-bind="attr: { src: $data.workforce.icon ? $data.workforce.icon : null, alt: $data.workforce.name}">
+                                        </div>
+                                    </div>
+
+                                </td>
+                            </tr>
                                 <tr data-bind="if: $data.editable() || $root.settings.missingBuildingsHighlight.checked() && (!$data.region || !$data.island.region || $data.region === $data.island.region) ">
                                     <!-- existing buildings -->
                                     <td>
@@ -1156,6 +1179,7 @@
 
                                     </td>
                                 </tr>
+
                                 <tr data-bind="if: $root.settings.missingBuildingsHighlight.checked() && $data.overProduction">
                                     <!-- overproduction -->
                                     <td>
