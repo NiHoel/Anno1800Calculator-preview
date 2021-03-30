@@ -1684,12 +1684,14 @@
                             <div class="form-group">
                                 <select class="custom-select form-control" data-bind="value: $data.selectedRecipe, options: $data.unusedRecipes, optionsText: r => r.name()"></select>
                             </div>
-
-                            <button class="btn btn-secondary btn-sm" data-bind="click: () => $data.create(), enable: $data.canCreate">
-                                <span class="fa fa-plus"> </span>
-                            </button>
+                            
+                            <div style="margin: -10px;">
 
 
+                                <button data-bind="click: () => $data.create(), enable: $data.canCreate" class="btn btn-secondary btn-sm btn-light" style="width: 100%;">
+                                    <span class="fa fa-plus"></span>
+                                </button>
+                            </div>
                         </div>
 
                     </div>
