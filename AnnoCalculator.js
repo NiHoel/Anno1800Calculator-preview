@@ -132,6 +132,65 @@ class Island {
             return `${this.session.name()} - ${this.name()}`;
         });
 
+        // procedures to persist inputs
+        var persistBool, persistInt, persistFloat;
+
+        if (localStorage) {
+            persistBool = (obj, attributeName, storageName) => {
+
+                var attr = obj[attributeName];
+                if (attr) {
+                    let id = storageName ? storageName : (obj.guid + "." + attributeName);
+                    if (localStorage.getItem(id) != null)
+                        attr(parseInt(localStorage.getItem(id)));
+
+                    attr.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
+                }
+            }
+
+            persistInt = (obj, attributeName, storageName) => {
+
+                var attr = obj[attributeName];
+                if (attr) {
+                    let id = storageName ? storageName : (obj.guid + "." + attributeName);
+                    if (localStorage.getItem(id) != null)
+                        attr(parseInt(localStorage.getItem(id)));
+
+                    attr.subscribe(val => {
+                        val = parseInt(val);
+
+                        if (val == null || !isFinite(val) || isNaN(val))
+                            return;
+                        
+                        localStorage.setItem(id, val);
+                    });
+                }
+            }
+
+            persistFloat = (obj, attributeName, storageName) => {
+
+                var attr = obj[attributeName];
+                if (attr) {
+                    let id = storageName ? storageName : (obj.guid + "." + attributeName);
+                    if (localStorage.getItem(id) != null)
+                        attr(parseFloat(localStorage.getItem(id)));
+
+                    attr.subscribe(val => {
+                        val = parseFloat(val);
+
+                        if (val == null || !isFinite(val) || isNaN(val))
+                            return;
+
+                        localStorage.setItem(id, val);
+                    });
+                }
+            }
+        } else {
+            persistBool = persistFloat = persistInt = () => { };
+        }
+
+        // objects
+
         this.populationLevels = [];
         this.residenceBuildings = [];
         this.powerPlants = [];
@@ -198,39 +257,10 @@ class Island {
             this.consumers.push(f);
             this.factories.push(f);
 
-            if (localStorage) {
-                if (f.moduleChecked) { // set moduleChecked before boost, otherwise boost would be increased
-                    let id = f.guid + ".module.checked";
-                    if (localStorage.getItem(id) != null)
-                        f.moduleChecked(parseInt(localStorage.getItem(id)));
-
-                    f.moduleChecked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
-                }
-
-                if (f.palaceBuff) {
-                    let id = f.guid + ".palaceBuff.checked";
-                    if (localStorage.getItem(id) != null)
-                        f.palaceBuffChecked(parseInt(localStorage.getItem(id)));
-
-                    f.palaceBuffChecked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
-                }
-
-                {
-                    let id = f.guid + ".percentBoost";
-                    if (localStorage.getItem(id) != null)
-                        f.percentBoost(parseInt(localStorage.getItem(id)));
-
-                    f.percentBoost.subscribe(val => {
-                        val = parseInt(val);
-
-                        if (val == null || !isFinite(val) || isNaN(val)) {
-                            f.percentBoost(parseInt(localStorage.getItem(id)) || 100);
-                            return;
-                        }
-                        localStorage.setItem(id, val);
-                    });
-                }
-            }
+            // set moduleChecked before boost, otherwise boost would be increased
+            persistBool(f, "moduleChecked", `${f.guid}.module.checked`);
+            persistBool(f, "palaceBuffChecked", `${f.guid}.palaceBuff.checked`);
+            persistInt(f, "percentBoost");
         }
 
         let products = [];
@@ -245,27 +275,24 @@ class Island {
                     this.multiFactoryProducts.push(p);
 
                 if (localStorage) {
-                    {
-                        let id = p.guid + ".percentBoost";
-                        if (localStorage.getItem(id) != null) {
-                            let b = parseInt(localStorage.getItem(id))
-                            p.factories.forEach(f => f.percentBoost(b));
-                            localStorage.removeItem(id);
-                        }
-                    }
-
-
-                    {
                         let id = p.guid + ".fixedFactory";
                         if (localStorage.getItem(id) != null)
                             p.fixedFactory(assetsMap.get(parseInt(localStorage.getItem(id))));
                         p.fixedFactory.subscribe(
                             f => f ? localStorage.setItem(id, f.guid) : localStorage.removeItem(id));
-                    }
+
                 }
 
-                if (isNew && p.guid == 1010240)
-                    p.fixedFactory(assetsMap.get(1010318));
+                // Default rum, cotton fabric and coffee to the new world production
+
+                if (isNew) {
+                    if (p.guid == 1010240)
+                        p.fixedFactory(assetsMap.get(1010318));
+                    if (p.guid == 1010257)
+                        p.fixedFactory(assetsMap.get(1010340));
+                    if (p.guid == 120032)
+                        p.fixedFactory(assetsMap.get(101252));
+                }
             }
         }
 
@@ -341,74 +368,13 @@ class Island {
         for (let l of this.populationLevels) {
             l.initBans(assetsMap);
 
-            if (localStorage) {
-                {
-                    let id = l.guid + ".amount";
-                    if (localStorage.getItem(id) != null)
-                        l.amount(parseInt(localStorage.getItem(id)));
-
-                    l.amount.subscribe(val => {
-                        val = parseInt(val);
-
-                        if (val == null || !isFinite(val) || isNaN(val)) {
-                            l.amount(parseInt(localStorage.getItem(id)) || 0);
-                            return;
-                        }
-                        localStorage.setItem(id, val);
-                    });
-                }
-                {
-                    let id = l.guid + ".existingBuildings";
-                    if (localStorage.getItem(id) != null)
-                        l.existingBuildings(parseInt(localStorage.getItem(id)));
-
-                    l.existingBuildings.subscribe(val => localStorage.setItem(id, val))
-                }
-            } else {
-                l.amount.subscribe(val => {
-                    if (val == null || !isFinite(val) || isNaN(val)) {
-                        l.amount(0);
-                        return;
-                    }
-                });
-            }
+            persistInt(l, "amount");
+            persistInt(l, "existingBuildings");
 
             for (let n of l.needs) {
-                if (localStorage) {
-                    {
-                        let id = `${l.guid}[${n.guid}].checked`;
-                        if (localStorage.getItem(id) != null)
-                            n.checked(parseInt(localStorage.getItem(id)))
-
-                        n.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
-
-                    }
-
-                    {
-                        let id = `${l.guid}[${n.guid}].percentBoost`;
-                        if (localStorage.getItem(id) != null)
-                            n.percentBoost(parseFloat(localStorage.getItem(id)));
-
-                        n.percentBoost.subscribe(val => {
-                            val = parseFloat(val);
-
-                            if (val == null || !isFinite(val) || isNaN(val)) {
-                                n.percentBoost(parseFloat(localStorage.getItem(id)) || 100);
-                                return;
-                            }
-                            localStorage.setItem(id, val);
-                        });
-                    }
-
-                } else {
-                    n.percentBoost.subscribe(val => {
-                        if (val == null || !isFinite(val) || isNaN(val)) {
-                            n.percentBoost(100);
-                            return;
-                        }
-                    });
-                }
-
+                persistBool(n, "checked", `${l.guid}[${n.guid}].checked`);
+                persistFloat(n, "percentBoost", `${l.guid}[${n.guid}].percentBoost`);
+ 
             }
         }
 
@@ -435,14 +401,7 @@ class Island {
                             b.palaceBuffChecked.subscribe(() => n.updateAmount());
                         this.buildingMaterialsNeeds.push(n);
 
-                        if (localStorage) {
-                            let oldId = b.guid + ".buildings";
-                            let id = b.guid + ".existingBuildings"
-                            if (localStorage.getItem(id) != null || localStorage.getItem(oldId))
-                                b.existingBuildings(parseInt(localStorage.getItem(id) || localStorage.getItem(oldId)));
-
-                            b.existingBuildings.subscribe(val => localStorage.setItem(id, val));
-                        }
+                        persistInt(b, "existingBuildings");
 
                         n.updateAmount();
                     }
@@ -457,13 +416,7 @@ class Island {
             assetsMap.set(u.guid, u);
             this.allGoodConsumptionUpgrades.upgrades.push(u);
 
-            if (localStorage) {
-                let id = u.guid + ".checked";
-                if (localStorage.getItem(id) != null)
-                    u.checked(parseInt(localStorage.getItem(id)));
-
-                u.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
-            }
+            persistBool(u, "checked");
         }
 
         for (let level of this.populationLevels)
@@ -475,57 +428,12 @@ class Island {
         // negative extra amount must be set after the demands of the population are generated
         // otherwise it would be set to zero
         for (let f of this.factories) {
-
-            if (localStorage) {
-                {
-                    let id = f.guid + ".extraAmount";
-                    if (localStorage.getItem(id) != null) {
-                        f.extraAmount(parseFloat(localStorage.getItem(id)));
-                    }
-
-                    f.extraAmount.subscribe(val => {
-                        val = parseFloat(val);
-
-                        if (val == null || !isFinite(val) || isNaN(val)) {
-                            f.extraAmount(parseFloat(localStorage.getItem(id)) || 0);
-                            return;
-                        }
-                        localStorage.setItem(id, val);
-                    });
-                }
-
-                {
-                    let id = f.guid + ".extraGoodProductionList.checked";
-                    if (localStorage.getItem(id) != null) {
-                        f.extraGoodProductionList.checked(parseInt(localStorage.getItem(id)));
-                    }
-
-                    f.extraGoodProductionList.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0))
-                }
-
-
-            } else {
-                f.extraAmount.subscribe(val => {
-                    if (val == null || !isFinite(val) || isNaN(val)) {
-                        f.extraAmount(0);
-                    }
-                });
-            }
+            persistFloat(f, "extraAmount");
+            persistBool(f.extraGoodProductionList, "checked", `${f.guid}.extraGoodProductionList.checked`);
         }
 
         for (let f of this.consumers) {
-
-            if (localStorage) {
-                {
-                    let id = f.guid + ".existingBuildings";
-                    if (localStorage.getItem(id) != null)
-                        f.existingBuildings(parseInt(localStorage.getItem(id)));
-
-                    f.existingBuildings.subscribe(val => localStorage.setItem(id, val));
-                }
-
-
-            }
+            persistInt(f, "existingBuildings");
         }
 
         // force update once all pending notifications are processed
@@ -741,8 +649,8 @@ class PublicConsumerBuilding extends Consumer {
     referenceProducts(assetsMap) {
         super.referenceProducts(assetsMap);
 
-        this.needs = this.getInputs().map(input => 
-            new Demand({ guid: input.Product, consumer: { factory: ko.observable(this)} }, assetsMap)
+        this.needs = this.getInputs().map(input =>
+            new Demand({ guid: input.Product, consumer: { factory: ko.observable(this) } }, assetsMap)
         );
     }
 }
@@ -1029,51 +937,51 @@ class Demand extends NamedElement {
         }
 
         this.inputAmount = ko.computed(() => {
-                var amount = parseFloat(this.amount());
+            var amount = parseFloat(this.amount());
 
-                var factor = 1;
+            var factor = 1;
 
-                if (this.factory() && this.factory().extraGoodFactor)
-                    factor = this.factory().extraGoodFactor();
+            if (this.factory() && this.factory().extraGoodFactor)
+                factor = this.factory().extraGoodFactor();
 
-                return amount / factor;
+            return amount / factor;
 
+        });
+
+        if (this.consumer)
+            this.consumer.factory.subscribe(() => this.updateFixedProductFactory(this.product.fixedFactory()));
+
+        if (this.product && this.product.differentFactoryInputs) {
+            this.demands = [new FactoryDemandSwitch(this, assetsMap)];
+            this.inputAmount.subscribe(val => this.demands[0].updateAmount(val));
+        }
+        else
+            this.demands = this.factory().getInputs().map(input => {
+                var d;
+                let items = this.factory().items.filter(item => item.replacements && item.replacements.has(input.Product));
+                if (items.length)
+                    d = new ItemDemandSwitch(this, input, items, assetsMap);
+                else
+                    d = new Demand({ guid: input.Product, consumer: this }, assetsMap);
+
+                this.inputAmount.subscribe(val => d.updateAmount(val * input.Amount));
+
+                return d;
             });
 
-            if (this.consumer)
-                this.consumer.factory.subscribe(() => this.updateFixedProductFactory(this.product.fixedFactory()));
 
-            if (this.product && this.product.differentFactoryInputs) {
-                this.demands = [new FactoryDemandSwitch(this, assetsMap)];
-                this.inputAmount.subscribe(val => this.demands[0].updateAmount(val));
-            }
-            else
-                this.demands = this.factory().getInputs().map(input => {
-                    var d;
-                    let items = this.factory().items.filter(item => item.replacements && item.replacements.has(input.Product));
-                    if (items.length)
-                        d = new ItemDemandSwitch(this, input, items, assetsMap);
-                    else
-                        d = new Demand({ guid: input.Product, consumer: this }, assetsMap);
+        this.amount.subscribe(val => {
+            this.factory().updateAmount();
+        });
 
-                    this.inputAmount.subscribe(val => d.updateAmount(val * input.Amount));
+        this.buildings = ko.computed(() => {
+            var factory = this.factory();
+            var factor = factory.extraGoodFactor ? factory.extraGoodFactor() : 1;
+            var buildings = Math.max(0, this.inputAmount()) / factor / factory.tpmin / factory.boost();
 
-                    return d;
-                });
+            return buildings;
+        });
 
-
-            this.amount.subscribe(val => {
-                this.factory().updateAmount();
-            });
-
-            this.buildings = ko.computed(() => {
-                var factory = this.factory();
-                var factor = factory.extraGoodFactor ? factory.extraGoodFactor() : 1;
-                var buildings = Math.max(0, this.inputAmount()) / factor / factory.tpmin / factory.boost();
-
-                return buildings;
-            });
-        
     }
 
     updateFixedProductFactory(f) {
@@ -2050,7 +1958,7 @@ class TradeContract {
         this.importAmount = createFloatInput(0);
 
         this.ratio = ko.computed(() => {
-            return (this.importProduct.agio || 1) * this.importProduct.exchangeWeight / 
+            return (this.importProduct.agio || 1) * this.importProduct.exchangeWeight /
                 this.exportProduct.exchangeWeight /
                 (view.contractUpgradeManager.upgradesMap().get(this.exportProduct.guid) || 1);
         });
@@ -2386,7 +2294,7 @@ class ContractCreatorFactory {
         });
         this.exchangeFactory = ko.observable();
         this.exchangeFactory.subscribe(f => this.exchangeProduct(f ? f.product : null));
-        
+
         this.newAmount = createFloatInput(0);
 
         this.contractList = ko.pureComputed(() => {
@@ -2468,7 +2376,7 @@ class ContractCreatorFactory {
     }
 }
 
-class RecipeList extends NamedElement{
+class RecipeList extends NamedElement {
     constructor(list, assetsMap, island) {
         super(list);
 
