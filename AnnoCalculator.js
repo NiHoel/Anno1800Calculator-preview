@@ -161,15 +161,7 @@ class Island {
             this.consumers.push(f);
             this.powerPlants.push(f);
 
-            if (localStorage) {
-                {
-                    let id = f.guid + ".existingBuildings";
-                    if (localStorage.getItem(id) != null)
-                        f.existingBuildings(parseInt(localStorage.getItem(id)));
-
-                    f.existingBuildings.subscribe(val => localStorage.setItem(id, val));
-                }
-            }
+            // values for existingBuildings are read from localstorage later, after products are referenced
         }
 
         for (let consumer of (params.publicRecipeBuildings || [])) {
@@ -179,15 +171,7 @@ class Island {
             this.consumers.push(f);
             this.publicRecipeBuildings.push(f);
 
-            if (localStorage) {
-                {
-                    let id = f.guid + ".existingBuildings";
-                    if (localStorage.getItem(id) != null)
-                        f.existingBuildings(parseInt(localStorage.getItem(id)));
-
-                    f.existingBuildings.subscribe(val => localStorage.setItem(id, val));
-                }
-            }
+            // values for existingBuildings are read from localstorage later, after products are referenced
         }
 
         for (let list of (params.recipeLists || [])) {
@@ -245,14 +229,6 @@ class Island {
                         }
                         localStorage.setItem(id, val);
                     });
-                }
-
-                {
-                    let id = f.guid + ".existingBuildings";
-                    if (localStorage.getItem(id) != null)
-                        f.existingBuildings(parseInt(localStorage.getItem(id)));
-
-                    f.existingBuildings.subscribe(val => localStorage.setItem(id, val));
                 }
             }
         }
@@ -534,6 +510,21 @@ class Island {
                         f.extraAmount(0);
                     }
                 });
+            }
+        }
+
+        for (let f of this.consumers) {
+
+            if (localStorage) {
+                {
+                    let id = f.guid + ".existingBuildings";
+                    if (localStorage.getItem(id) != null)
+                        f.existingBuildings(parseInt(localStorage.getItem(id)));
+
+                    f.existingBuildings.subscribe(val => localStorage.setItem(id, val));
+                }
+
+
             }
         }
 
@@ -2521,6 +2512,8 @@ class ProductionChainView {
                     if (Math.abs(a) < ACCURACY)
                         return;
 
+                    if (f == view.selectedFactory())
+                        return;
 
                     if (!this.factoryToDemands.has(f)) {
                         var demandAggregate = {
@@ -2543,12 +2536,17 @@ class ProductionChainView {
                     traverse(e);
             }
 
+            var f = view.selectedFactory();
+            var demands = f.demands;
+            if (!demands.size && f.needs && f.needs.length)
+                demands = f.needs;
+
             this.factoryToDemands.clear();
-            for (var d of view.selectedFactory().demands) {
+            for (var d of demands) {
                 traverse(d);
             }
 
-            if (view.selectedFactory().extraDemand)
+            if (f.extraDemand)
                 traverse(view.selectedFactory().extraDemand);
 
             for (var c of chain) {
