@@ -39,6 +39,20 @@ texts = {
         "korean": "주민",
         "russian": "Жители"
     },
+    buildings: {
+        "english": "Buildings",
+        //"guid": 22659,
+        "polish": "Budynki",
+        "spanish": "Edificios",
+        "taiwanese": "建築",
+        "german": "Gebäude",
+        "chinese": "建筑",
+        "italian": "Edifici",
+        "korean": "건물",
+        "french": "Bâtiments",
+        "japanese": "建物",
+        "russian": "Сооружения"
+    },
     workforce: {
         english: "Required Workforce",
         german: "Benötigte Arbeitskraft",
@@ -190,6 +204,34 @@ texts = {
         "korean": "신문 효과",
         "japanese": "新聞の効力",
         "russian": "Эффективность газеты"
+    },
+    "basicNeed": {
+        "english": "Basic Need",
+        //"guid": 11708,
+        "polish": "Potrzeba podstawowa",
+        "spanish": "Necesidad básica",
+        "taiwanese": "基本需求",
+        "german": "Grundbedürfnis",
+        "chinese": "基本需求",
+        "italian": "Bisogno di base",
+        "korean": "생필품",
+        "french": "Besoin fondamental",
+        "japanese": "基本的な需要",
+        "russian": "Базовая потребность"
+    },
+    "luxuryNeed": {
+        "english": "Luxury Need",
+        //"guid": 11706,
+        "polish": "Potrzeba luksusowa",
+        "spanish": "Necesidad de lujo",
+        "taiwanese": "奢侈品",
+        "german": "Luxusbedürfnis",
+        "chinese": "奢侈品",
+        "italian": "Bisogno di lusso",
+        "korean": "사치품",
+        "french": "Besoin de luxe",
+        "japanese": "高級品の需要",
+        "russian": "Потребность в роскоши"
     },
     "reducedNeeds": {
         "english": "Reduced Needs",
@@ -400,6 +442,34 @@ texts = {
         "french": "Vos exportations ",
         "japanese": "あなたの名産輸出品",
         "russian": "Специализация экспорта"
+    },
+    maxResidents: {
+        "english": "Max. Residents",
+        //"guid": 2322,
+        "polish": "Maks. liczba mieszkańców",
+        "spanish": "Residentes máx.",
+        "taiwanese": "最大居民數量",
+        "german": "Einwohner (max.)",
+        "chinese": "最大居民数量",
+        "italian": "Max. residenti",
+        "korean": "최대 주민 수",
+        "french": "Habitants max.",
+        "japanese": "最大住民数",
+        "russian": "Макс. кол-во жителей"
+    },
+    perHouse: {
+        "english": "Per house",
+        //"guid": 17435,
+        "polish": "na dom",
+        "spanish": "Por cada casa",
+        "taiwanese": "每棟房屋",
+        "german": "Pro Wohnhaus",
+        "chinese": "每栋房屋",
+        "italian": "Per dimora",
+        "korean": "세대 당",
+        "french": "Par maison",
+        "japanese": "1件当たり",
+        "russian": "За дом"
     },
     language: {
         "english": "Text Language",
