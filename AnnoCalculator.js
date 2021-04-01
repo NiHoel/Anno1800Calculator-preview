@@ -429,6 +429,10 @@ class Island {
                 this.allGoodConsumptionUpgrades.lists.push(need.goodConsumptionUpgradeList);
             }
 
+        for (let b of this.publicRecipeBuildings)
+            if (b.goodConsumptionUpgrade)
+                b.goodConsumptionUpgrade = assetsMap.get(b.goodConsumptionUpgrade);
+
 
         // negative extra amount must be set after the demands of the population are generated
         // otherwise it would be set to zero

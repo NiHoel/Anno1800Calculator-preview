@@ -325,6 +325,20 @@ texts = {
         "japanese": "総収容能力",
         "russian": "Общая вместимость"
     },
+    "supplyEffects": {
+        "english": "Supply Effects",
+        // "guid": 11938,
+        "polish": "Efekty zaopatrzenia",
+        "spanish": "Efectos de suministro",
+        "taiwanese": "供給效果",
+        "german": "Versorgungseffekte",
+        "chinese": "供给效果",
+        "italian": "Effetti offerta",
+        "korean": "공급 효과",
+        "french": "Effets de l'approvisionnement",
+        "japanese": "供給効果",
+        "russian": "Влияние снабжения"
+    },
     requiredNumberOfBuildings: {
         english: "Required Number of Buildings",
         german: "Benötigte Anzahl an Gebäuden",

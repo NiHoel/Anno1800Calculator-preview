@@ -1889,6 +1889,11 @@
                                 </div>
                             </div>
 
+                            <div class="custom-control custom-checkbox" data-bind="with: $data.goodConsumptionUpgrade" style="word-break: break-word;">
+                                <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $data.guid + '-building-input' }">
+                                <label class="custom-control-label" data-bind="text: $root.texts.supplyEffects.name, attr: { for: $data.guid + '-building-input'}"></label>
+                            </div>
+
                             <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
                                 <div class="ui-fchain-item-load"><span data-bind="text: formatNumber($data.instance().amount())"></span><span> t/min</span></div>
 
