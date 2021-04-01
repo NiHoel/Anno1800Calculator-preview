@@ -1167,7 +1167,7 @@ class PopulationNeed extends Need {
     constructor(config, assetsMap) {
         super(config, assetsMap);
 
-        this.residents = 0;
+        this.population = 0;
         this.goodConsumptionUpgradeList = new GoodConsumptionUpgradeList(this);
 
         this.percentBoost = createFloatInput(100);
@@ -1177,7 +1177,7 @@ class PopulationNeed extends Need {
                 this.percentBoost(0);
         });
         this.boost = ko.computed(() => parseInt(this.percentBoost()) / 100);
-        this.boost.subscribe(() => this.updateAmount(this.residents));
+        this.boost.subscribe(() => this.updateAmount(this.population));
 
         this.checked = ko.observable(true);
         this.optionalAmount = ko.observable(0);
@@ -1246,9 +1246,9 @@ class PopulationNeed extends Need {
         }
     }
 
-    updateAmount(residents) {
-        this.residents = residents;
-        this.optionalAmount(this.tpmin * residents * this.boost());
+    updateAmount(population) {
+        this.population = population;
+        this.optionalAmount(this.tpmin * population * this.boost());
         if (!this.banned())
             this.amount(this.optionalAmount());
     }
@@ -1464,10 +1464,11 @@ class PopulationLevel extends NamedElement {
                 this.buildingNeeds.push(need);
             }
 
-            if (n.happiness)
-                this.luxuryNeeds.push(need);
-            else
+            if (n.residents)
                 this.basicNeeds.push(need);
+            else
+                this.luxuryNeeds.push(need);
+
         });
 
         if (this.residence) {
@@ -1479,6 +1480,21 @@ class PopulationLevel extends NamedElement {
     initBans(assetsMap) {
         for (var n of this.needs.concat(this.buildingNeeds))
             n.initBans(this, assetsMap);
+        this.deriveResidentsPerHouse = ko.computed(() => {
+            if (!view.settings.deriveResidentsPerHouse.checked())
+                return;
+
+            if (!this.fixAmountPerHouse())
+                this.fixAmountPerHouse(true);
+
+            var perHouse = 0;
+            for (var need of this.basicNeeds)
+                if (!need.banned || !need.banned())
+                    perHouse += need.residents;
+
+            this.amountPerHouse(perHouse);
+        });
+
     }
 
     incrementAmount() {

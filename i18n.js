@@ -851,6 +851,13 @@ options = {
             "german": "Freischaltbedingungen der Bedürfnisse berücksichtigen",
         }
     },
+    "deriveResidentsPerHouse": {
+        "name": "",
+        "locaText": {
+            "english": "Calculate residents per house based on the resident supply",
+            "german": "Berechne die Einwohner pro Haus basierend auf der Versorgung der Einwohner"
+        }
+    },
     "noOptionalNeeds": {
         "name": "Do not produce luxury goods",
         "locaText": {

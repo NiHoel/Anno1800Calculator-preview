@@ -850,7 +850,12 @@
 
                                     </tr>
                                     <tr>
-                                        <td></td>
+                                        <td>
+                                            <div class="custom-control custom-checkbox" data-bind="with: $root.settings.deriveResidentsPerHouse">
+                                                <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $data.id }">
+                                                <label class="custom-control-label" data-bind="text: $data.name, attr: { for: $data.id }"></label>
+                                            </div>
+                                        </td>
                                         <td>
                                             <div class="custom-control custom-checkbox" data-bind="with: $root.settings.noOptionalNeeds">
                                                 <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $data.id }">
