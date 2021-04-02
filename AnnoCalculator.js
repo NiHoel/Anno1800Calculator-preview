@@ -99,7 +99,7 @@ class Option extends NamedElement {
     constructor(config) {
         super(config);
         this.checked = ko.observable(false);
-        this.visible = !!config;
+        this.visible = ko.observable(!!config);
     }
 }
 
@@ -3135,6 +3135,67 @@ class DarkMode {
     }
 }
 
+class ViewMode {
+    constructor(firstRun) {
+        this.hiddenOptions = [
+            "existingBuildingsInput",
+            "additionalProduction",
+            "autoApplyExtraNeed",
+            "consumptionModifier",
+            "autoApplyConsumptionUpgrades",
+            "deriveResidentsPerHouse"
+        ];
+
+        this.simpleViewSubscription = ko.computed(() => {
+            var checked = view.settings.simpleView.checked();
+
+            if (checked) {
+                view.settings.existingBuildingsInput.checked(true);
+                view.settings.additionalProduction.checked(false);
+                view.settings.autoApplyExtraNeed.checked(true);
+                view.settings.consumptionModifier.checked(true);
+                view.settings.autoApplyConsumptionUpgrades.checked(true);
+                view.settings.needUnlockConditions.checked(true);
+                view.settings.deriveResidentsPerHouse.checked(true);
+            }
+
+            for (var option of this.hiddenOptions)
+                if (view.settings[option])
+                    view.settings[option].visible(!checked);
+        });
+
+        this.hideSimple = false;
+        if (firstRun || localStorage.getItem("simpleView") == null) {
+            localStorage.setItem("simpleView", 0);
+
+            this.showOnStartup = true;
+
+            if (view.settings.additionalProduction.checked())
+                this.hideSimple = true;
+        }
+    }
+
+    simple() {
+        view.settings.simpleView.checked(true);
+    }
+
+    complex() {
+        view.settings.simpleView.checked(false);
+    }
+
+    full() {
+        view.settings.simpleView.checked(false);
+
+        view.settings.tradeRoutes.checked(true);
+        view.settings.additionalProduction.checked(true);
+        view.settings.contracts.checked(true);
+        view.settings.consumptionModifier.checked(true);
+        view.settings.missingBuildingsHighlight.checked(true);
+        view.settings.needUnlockConditions.checked(true);
+        view.settings.decimalsForBuildings.checked(true);
+    }
+}
+
 class Template {
     constructor(asset, parentInstance, attributeName, index) {
 
@@ -3191,7 +3252,7 @@ class Template {
     }
 }
 
-function init() {
+function init(isFirstRun) {
     view.darkMode = new DarkMode();
 
     // set up options
@@ -3333,7 +3394,12 @@ function init() {
         workforce: arrayToTemplate("workforce")
     }
 
+    view.viewMode = new ViewMode(isFirstRun);
+
     ko.applyBindings(view, $(document.body)[0]);
+
+    if (view.viewMode.showOnStartup)
+        $('#view-mode-dialog').modal("show");
 
     view.island().name.subscribe(val => { window.document.title = val; });
 
@@ -3647,6 +3713,8 @@ function installImportConfigListener() {
 }
 
 $(document).ready(function () {
+    var isFirstRun = !localStorage || localStorage.getItem("versionCalculator") == null;
+
     // parse the parameters
     for (let attr in texts) {
         view.texts[attr] = new NamedElement({ name: attr, locaText: texts[attr] });
@@ -3667,12 +3735,12 @@ $(document).ready(function () {
     if (window.params == null)
         $('#params-dialog').modal("show");
     else
-        init();
+        init(isFirstRun);
 
     $('#params-dialog').on('hide.bs.modal', () => {
         try {
             window.params = JSON.parse($('textarea#input-params').val());
-            init();
+            init(isFirstRun);
         } catch (e) {
             console.log(e);
             $('#params-dialog').modal("show");

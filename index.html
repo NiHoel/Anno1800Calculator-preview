@@ -52,6 +52,70 @@
         </div>
     </div>
     <!-- /#params-dialog -->
+    <!-- #view-mode-dialog -->
+    <div id="view-mode-dialog" class="modal" role="dialog" tabindex="-1" aria-hidden="false">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 data-bind="text: texts.viewMode.name">View Mode</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" data-bind="text: texts.language.name">Language</span>
+                        </div>
+
+                        <select name="language" class="custom-select" id="language" data-bind="value: settings.language, options:settings.languages"></select>
+                    </div>
+
+                    <table data-bind="with: viewMode">
+                        <tr>
+                            <td>
+                                <div data-bind="visible: !hideSimple">
+                                    <button data-dismiss="modal" data-bind="click: () => simple()" class="btn btn-primary">
+                                        <span data-bind="text: $root.texts.viewSimple.name">Simple</span>
+                                    </button>
+                                </div>
+                            </td>
+                            <td>
+                                <div>
+                                    <button data-dismiss="modal" data-bind="click: () => complex()" class="btn btn-primary">
+                                        <span data-bind="text: $root.texts.viewComplex.name">Complex</span>
+                                    </button>
+                                </div>
+                            </td>
+                            <td>
+                                <div>
+                                    <button data-dismiss="modal" data-bind="click: () => full()" class="btn btn-primary">
+                                        <span data-bind="text: $root.texts.viewComplete.name">Full</span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div data-bind="visible: !$data.hideSimple">
+                                    <span data-bind="text: $root.texts.viewSimpleDescription.name"></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div>
+                                    <span data-bind="text: $root.texts.viewComplexDescription.name"></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div>
+                                    <span data-bind="text: $root.texts.viewCompleteDescription.name"></span>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- #/settings-dialog -->
     <!-- #settings-dialog -->
     <div id="settings-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -86,7 +150,7 @@
                         <hr />
                         <table class="table table-striped">
                             <tbody data-bind="foreach: settings.options">
-                                <tr>
+                                <tr data-bind="if: $data.visible()">
                                     <td>
                                         <div class="custom-control custom-checkbox">
                                             <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $data.id }">
@@ -264,7 +328,7 @@
     <!-- #item-equipment-dialog -->
     <div id="item-equipment-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-xl">
-            <div class="modal-content">
+            <div class="modal-content" data-bind="if: !$root.settings.simpleView.checked()">
                 <div class="modal-header">
                     <h4 data-bind="text: $root.texts.itemsEquipped.name">Items equipped</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -645,7 +709,7 @@
                 <button data-toggle="modal" data-target="#factory-choose-dialog" class="btn text-light">
                     <span class="fa fa-cogs"> </span>
                 </button>
-                <button type="button" class="btn" data-bind="enable: $root.settings.additionalProduction.checked()">
+                <button type="button" class="btn" data-bind="visible: !$root.settings.simpleView.checked(), enable: $root.settings.additionalProduction.checked()">
                     <img data-toggle="modal" data-target="#item-equipment-dialog" class="icon-navbar" src="icon_add_goods_socket_white.png" />
                 </button>
                 <button type="button" class="btn" data-bind="enable: $root.settings.contracts.checked(), visible: $root.island().contractManager">
@@ -713,7 +777,7 @@
                                         </div>
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr data-bind="if: !$root.settings.simpleView.checked()">
                                     <!-- amount -->
                                     <td>
                                         <span data-bind="text: $root.texts.residents.name"></span>
@@ -755,7 +819,7 @@
 
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr data-bind="if: !$root.settings.simpleView.checked()">
                                     <!-- limit -->
                                     <td>
                                         <span data-bind="text: $root.texts.maxResidents.name"></span>
@@ -851,7 +915,7 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            <div class="custom-control custom-checkbox" data-bind="with: $root.settings.deriveResidentsPerHouse">
+                                            <div class="custom-control custom-checkbox" data-bind="visible: !$root.settings.simpleView.checked(), with: $root.settings.deriveResidentsPerHouse">
                                                 <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $data.id }">
                                                 <label class="custom-control-label" data-bind="text: $data.name, attr: { for: $data.id }"></label>
                                             </div>
@@ -1267,7 +1331,7 @@
                             </div>
                         </div>
 
-                        <div data-bind="if: $data instanceof Factory && ($root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked() || $data.contractList && $root.settings.contracts.checked())">
+                        <div data-bind="if: !$root.settings.simpleView.checked() && $data instanceof Factory && ($root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked() || $data.contractList && $root.settings.contracts.checked())">
                             <div class="inline-list-stretched" style="padding: .75rem;">
                                 <div data-bind="if: $root.settings.tradeRoutes.checked()">
                                     <span class="mr-3" data-bind="text: $root.settings.tradeRoutes.name"></span>
@@ -1298,7 +1362,7 @@
                         </div>
                         <table class="table table-striped">
                             <tbody>
-                                <tr data-bind="if: $data instanceof Factory && ($root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked() || $data.contractList && $root.settings.contracts.checked())">
+                                <tr data-bind="if: !$root.settings.simpleView.checked() && $data instanceof Factory && ($root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked() || $data.contractList && $root.settings.contracts.checked())">
                                     <!-- extra goods -->
                                     <td>
                                         <span data-bind="text: $root.texts.extraNeed.name"></span>
@@ -1889,7 +1953,7 @@
                                 </div>
                             </div>
 
-                            <div class="custom-control custom-checkbox" data-bind="with: $data.goodConsumptionUpgrade" style="word-break: break-word;">
+                            <div class="custom-control custom-checkbox" data-bind="with: $data.instance().goodConsumptionUpgrade" style="word-break: break-word;">
                                 <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $data.guid + '-building-input' }">
                                 <label class="custom-control-label" data-bind="text: $root.texts.supplyEffects.name, attr: { for: $data.guid + '-building-input'}"></label>
                             </div>
@@ -1979,7 +2043,7 @@
                                                     <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
                                                         <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? formatNumber($data.instance().buildings()) : Math.ceil( $data.instance().buildings())"></span>
                                                         <span>x</span>
-                                                        <div class="btn-group" role="group">
+                                                        <div class="btn-group" role="group" data-bind="if: !$root.settings.simpleView.checked()">
                                                             <button type="button" class="btn btn-secondary" data-bind="click: () => $data.instance().incrementBuildings(), enable:  $data.instance().buildings() > 0" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">+</button>
                                                             <button type="button" class="btn btn-secondary" data-bind="click: () => $data.instance().decrementBuildings(), enable:  $data.instance().buildings() >= 1.01" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">-</button>
                                                         </div>
@@ -2023,9 +2087,19 @@
                                                     </div>
                                                 </div>
                                             </div>
+
+                                            <!-- amount -->
+                                            <div data-bind="if: !$root.settings.simpleView.checked()">
                                             <div class="ui-fchain-item-amount" href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
                                                 <div class="ui-fchain-item-load"><span data-bind="text: formatNumber($data.instance().amount())"></span><span> t/min</span></div>
 
+                                            </div>
+                                            </div>
+                                            <div data-bind="if: $root.settings.simpleView.checked()">
+                                                <div class="ui-fchain-item-amount" href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
+                                                    <div class="ui-fchain-item-load"><span data-bind="text: formatNumber($data.instance().outputAmount() * $data.instance().extraGoodFactor())"></span><span> t/min</span></div>
+
+                                                </div>
                                             </div>
 
                                             <div class="ui-fchain-item-module" data-bind="visible: !!$data.module || !!$data.palaceBuff">
@@ -2059,6 +2133,7 @@
                                                 <div style="flex: 100 1 auto;"></div>
                                             </div>
                                         </div>
+                                        <div data-bind="if: !$root.settings.simpleView.checked()">
                                         <div class="ui-fchain-item-load" data-bind="visible: $root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked() || $root.settings.contracts.checked()">
                                             <div class="ui-fchain-item-extra-input">
                                                 <div class="input-group input-group-sm spinner mb-3">
@@ -2078,7 +2153,7 @@
                                                 <div class="ui-fchain-item-load"><span data-bind="text: formatNumber($data.instance().outputAmount())"></span><span> t/min</span></div>
                                             </div>
 
-
+                                            </div>
 
                                         </div>
                                     </div>
@@ -2092,6 +2167,7 @@
             </div>
             <!-- /required factories by category -->
             <!-- production chains by population level -->
+            <div data-bind="if: !$root.settings.simpleView.checked()">
             <div data-bind="foreach: { data:  $root.template.populationLevels, as: 'populationLevel'}">
                 <div data-bind="visible:  $data.instance().amount() ||  $data.instance().existingBuildings()">
                     <fieldset class="ui-fieldset" id="consumption-view">
@@ -2193,6 +2269,7 @@
                         </div>
                     </fieldset>
                 </div>
+            </div>
             </div>
             <!-- /production chains by population level -->
         </div>

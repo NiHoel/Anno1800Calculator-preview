@@ -533,6 +533,36 @@ texts = {
         german: "Verändere die prozentuale Verbrauchsmenge für diese Ware und Bevölkerungsstufe",
         korean: "이 계층 및 제품의 사용량(백분율)을 수정하십시요"
     },
+    // view mode
+    viewMode: {
+        english: "View Mode",
+        german: "Ansichtsmodus"
+    },
+    viewSimple: {
+        english: "Simple",
+        german: "Einfach",
+    },
+    viewComplex: {
+        english: "Complex",
+        german: "Komplex"
+    },
+    viewComplete: {
+        english: "Complete",
+        german: "Vollständig"
+    },
+    viewSimpleDescription: {
+        english: "Default settings tailored to beginners, complex mechanics hidden.",
+        german: "Standardeinstellungen auf Einsteiger zugeschnitten, komplexe Mechaniken verborgen."
+    },
+    viewComplexDescription: {
+        english: "Alle settings and mechanics available (as before)",
+        german: "Alle Einstellungen und Mechaniken verfügbar (wie bisher)"
+    },
+    viewCompleteDescription: {
+        english: "Identical to 'complete', but all extensions activated by default.",
+        german: "Identisch zu 'vollständig', aber alle Erweiterungen standardmäßig aktiviert."
+    },
+    // calculator and server managment
     download: {
         english: "Downloads",
         german: "Downloads",
@@ -773,6 +803,13 @@ Siehe folgenden Link für weitere Informationen: `,
 }
 
 options = {
+    "simpleView": {
+        "name": "Simple View",
+        "locaText": {
+            "english": "Simple view",
+            "german": "Einfache Ansicht"
+        }
+    },
     "existingBuildingsInput": {
         "name": "Input number of houses instead of residents",
         "locaText": {
