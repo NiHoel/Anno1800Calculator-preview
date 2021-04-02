@@ -1864,6 +1864,11 @@ class GoodConsumptionUpgradeList {
 
         this.updateAmount();
         view.newspaperConsumption.amount.subscribe(() => this.updateAmount());
+
+        this.amount.subscribe(() => {
+            if (view.settings.autoApplyConsumptionUpgrades.checked())
+                this.apply();
+        });
     }
 
     add(upgrade) {

@@ -850,6 +850,13 @@ options = {
             "korean": "소비 수정(백분율)을 위한 입력 필드 표시"
         }
     },
+    "autoApplyConsumptionUpgrades": {
+        "name": "Automatically update need consumption based on effects and newspaper",
+        "locaText": {
+            "english": "Automatically update need consumption based on effects and newspaper",
+            "german": "Verbrauch der Bedürfnisse automatisch basierend auf Effekten und Zeitung anpassen"
+        }
+    },
     "missingBuildingsHighlight": {
         "name": "Highlight missing buildings",
         "locaText": {

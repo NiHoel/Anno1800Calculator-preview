@@ -366,7 +366,7 @@
                                 <span data-bind="text: formatPercentage($root.newspaperConsumption.amount())"></span>
                             </div>
 
-                            <button data-dismiss="modal" class="btn btn-light btn-sm" data-bind="click: () => $root.newspaperConsumption.apply(), visible: $root.islands().length > 1">
+                            <button data-dismiss="modal" class="btn btn-light btn-sm" data-bind="visible: !$root.settings.autoApplyConsumptionUpgrades.checked() && $root.islands().length > 1, click: () => $root.newspaperConsumption.apply()">
                                 <span data-bind="text: $root.texts.applyGlobally.name">Apply globally</span>
                             </button>
                         </div>
@@ -400,7 +400,7 @@
                     </table>
 
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer" data-bind="visible: !$root.settings.autoApplyConsumptionUpgrades.checked()">
                     <button data-dismiss="modal" class="btn btn-light btn-sm" data-bind="click: () => $data.apply()">
                         <span data-bind="text: $root.texts.apply.name">Apply</span>
                     </button>
@@ -1548,7 +1548,7 @@
                         <span data-bind="text: $root.texts.total.name">Total</span>
                         <span>: </span>
                         <span data-bind="text: formatPercentage($data.amount())"></span>
-                        <button data-dismiss="modal" class="btn btn-light btn-sm" data-bind="click: () => $data.apply()">
+                        <button data-dismiss="modal" class="btn btn-light btn-sm" data-bind="visible: !$root.settings.autoApplyConsumptionUpgrades.checked(), click: () => $data.apply()">
                             <span data-bind="text: $root.texts.apply.name">Apply</span>
                         </button>
                     </div>
