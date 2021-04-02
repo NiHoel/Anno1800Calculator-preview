@@ -818,21 +818,61 @@ options = {
             "korean": "주민 수 대신 주택 수를 입력"
         }
     },
-    "tradeRoutes": {
-        "name": "Trade Routes",
-        "dialog": "trade-routes-management-dialog",
+    "decimalsForBuildings": {
+        "name": "Show number of buildings with decimals",
         "locaText": {
-            "english": "Trade Routes",
-            "chinese": "贸易航线",
-            "taiwanese": "貿易航線",
-            "italian": "Rotte commerciali",
-            "spanish": "Rutas de comercio",
-            "german": "Handelsrouten",
-            "polish": "Szlaki handlowe",
-            "french": "Routes commerciales",
-            "korean": "무역로",
-            "japanese": "取引ルート",
-            "russian": "Торговые маршруты"
+            "english": "Show number of buildings with decimals",
+            "german": "Zeige Nachkommastellen bei der Gebäudeanzahl",
+            "korean": "건물 수를 소수점 단위로 표시"
+        }
+    },
+    "hideNames": {
+        "name": "Hide the names of products, factories, and population levels",
+        "locaText": {
+            "english": "Hide the names of products, factories, and population levels",
+            "german": "Verberge die Namen von Produkten, Fabriken und Bevölkerungsstufen",
+            "korean": "제품, 건물명 및 인구 이름 숨기기"
+        }
+    },
+    "hideProductionBoost": {
+        "name": "Hide the input fields for production boost",
+        "locaText": {
+            "english": "Hide the input fields for production boost",
+            "german": "Verberge das Eingabefelder für Produktionsboosts",
+            "korean": "생산성 입력 필드 숨기기"
+        }
+    },
+    "showAllConstructableFactories": {
+        "name": "Show all factories constructable in the region",
+        "locaText": {
+            "english": "Show all factories constructable in the region",
+            "german": "Zeige alle Fabriken, die in der Region errichtet werden können"
+        }
+    },
+    "missingBuildingsHighlight": {
+        "name": "Highlight missing buildings",
+        "locaText": {
+            "english": "Highlight missing buildings",
+            "german": "Fehlende Gebäude hervorheben",
+            "korean": "부족한 건물 강조"
+        }
+    },
+    "consumptionModifier": {
+        "name": "Need Consumption",
+        "dialog": "good-consumption-island-upgrade-dialog",
+        "locaText": {
+            "english": "Newspaper",
+            //"guid": 14496,
+            "polish": "Gazeta",
+            "spanish": "Periódico",
+            "taiwanese": "報紙",
+            "german": "Zeitung",
+            "chinese": "报纸",
+            "italian": "Giornale",
+            "korean": "신문",
+            "french": "Journal",
+            "japanese": "新聞",
+            "russian": "Газета"
         }
     },
     "additionalProduction": {
@@ -871,6 +911,23 @@ options = {
             "russian": "Доки"
         }
     },
+    "tradeRoutes": {
+        "name": "Trade Routes",
+        "dialog": "trade-routes-management-dialog",
+        "locaText": {
+            "english": "Trade Routes",
+            "chinese": "贸易航线",
+            "taiwanese": "貿易航線",
+            "italian": "Rotte commerciali",
+            "spanish": "Rutas de comercio",
+            "german": "Handelsrouten",
+            "polish": "Szlaki handlowe",
+            "french": "Routes commerciales",
+            "korean": "무역로",
+            "japanese": "取引ルート",
+            "russian": "Торговые маршруты"
+        }
+    },
     "autoApplyExtraNeed": {
         "name": "Automatically update extra need when trade routes or extra goods change",
         "locaText": {
@@ -878,28 +935,11 @@ options = {
             "german": "Zusatzbedarf automatisch anpassen, wenn sich Handelsrouten oder Zusatzwaren ändern"
         }
     },
-    "consumptionModifier": {
-        "name": "Show input field for percental consumption modification",
-        "dialog": "good-consumption-island-upgrade-dialog",
-        "locaText": {
-            "english": "Show input field for percental consumption modification",
-            "german": "Zeige Eingabefeld für prozentuale Änderung des Warenverbrauchs",
-            "korean": "소비 수정(백분율)을 위한 입력 필드 표시"
-        }
-    },
     "autoApplyConsumptionUpgrades": {
         "name": "Automatically update need consumption based on effects and newspaper",
         "locaText": {
             "english": "Automatically update need consumption based on effects and newspaper",
-            "german": "Verbrauch der Bedürfnisse automatisch basierend auf Effekten und Zeitung anpassen"
-        }
-    },
-    "missingBuildingsHighlight": {
-        "name": "Highlight missing buildings",
-        "locaText": {
-            "english": "Highlight missing buildings",
-            "german": "Fehlende Gebäude hervorheben",
-            "korean": "부족한 건물 강조"
+            "german": "Verbrauch der Bedürfnisse basierend auf Effekten und Zeitung automatisch anpassen"
         }
     },
     "needUnlockConditions": {
@@ -922,37 +962,6 @@ options = {
             "english": "Do not produce luxury goods",
             "german": "Keine Luxusgüter produzieren",
             "korean": "사치품을 생산하지 않습니다."
-        }
-    },
-    "decimalsForBuildings": {
-        "name": "Show number of buildings with decimals",
-        "locaText": {
-            "english": "Show number of buildings with decimals",
-            "german": "Zeige Nachkommastellen bei der Gebäudeanzahl",
-            "korean": "건물 수를 소수점 단위로 표시"
-        }
-    },
-    "hideNames": {
-        "name": "Hide the names of products, factories, and population levels",
-        "locaText": {
-            "english": "Hide the names of products, factories, and population levels",
-            "german": "Verberge die Namen von Produkten, Fabriken und Bevölkerungsstufen",
-            "korean": "제품, 건물명 및 인구 이름 숨기기"
-        }
-    },
-    "hideProductionBoost": {
-        "name": "Hide the input fields for production boost",
-        "locaText": {
-            "english": "Hide the input fields for production boost",
-            "german": "Verberge das Eingabefelder für Produktionsboosts",
-            "korean": "생산성 입력 필드 숨기기"
-        }
-    },
-    "showAllConstructableFactories": {
-        "name": "Show all factories constructable in the region",
-        "locaText": {
-            "english": "Show all factories constructable in the region",
-            "german": "Zeige alle Fabriken, die in der Region errichtet werden können"
         }
     }
 }
