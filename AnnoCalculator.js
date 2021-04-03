@@ -3406,6 +3406,32 @@ function init(isFirstRun) {
     view.selectedGoodConsumptionUpgradeList =
         ko.observable(view.island().populationLevels[0].needs[0].goodConsumptionUpgradeList);
     view.productionChain = new ProductionChainView();
+    view.selectedGoodConsumptionUpgradeIslandList = ko.observable(view.island().allGoodConsumptionUpgrades);
+    view.selectedMultiFactoryProducts = ko.observable(view.island().multiFactoryProducts);
+    view.selectedReplaceInputItems = ko.observable(view.island().replaceInputItems);
+    view.selectedExtraGoodItems = ko.observable(view.island().extraGoodItems);
+    view.selectedContractManager = ko.observable(view.island().contractManager);
+
+    $('#good-consumption-island-upgrade-dialog').on('show.bs.modal',
+        () => {
+            view.selectedGoodConsumptionUpgradeIslandList(view.island().allGoodConsumptionUpgrades);
+        });
+
+    $('#factory-choose-dialog').on('show.bs.modal',
+        () => {
+            view.selectedMultiFactoryProducts(view.island().multiFactoryProducts);
+            view.selectedReplaceInputItems(view.island().replaceInputItems);
+        });
+
+    $('#item-equipment-dialog').on('show.bs.modal',
+        () => {
+            view.selectedExtraGoodItems(view.island().extraGoodItems);
+        });
+
+    $('#contract-management-dialog').on('show.bs.modal',
+        () => {
+            view.selectedContractManager(view.island().contractManager);
+        });
 
     view.tradeManager = new TradeManager();
 

@@ -219,7 +219,7 @@
                 </div>
                 <div class="modal-body">
                     <form>
-                        <div data-bind="foreach: $root.island().multiFactoryProducts">
+                        <div data-bind="foreach: $root.selectedMultiFactoryProducts">
 
 
                             <div class="input-group mb-3">
@@ -343,7 +343,7 @@
                         <th data-bind="text: $root.texts.productionBuildings.name">Production Buildings</th>
                         <th data-bind="text: $root.texts.all.name">All</th>
                         </thead>
-                        <tbody data-bind="foreach: $root.island().extraGoodItems">
+                        <tbody data-bind="foreach: $root.selectedExtraGoodItems">
                             <tr data-bind="visible: $data.visible">
                                 <td><img class="icon-sm" src="" data-bind="attr: { src: $data.icon ? $data.icon : null}"></td> <!-- item icon -->
                                 <td data-bind="text: $data.name"></td> <!-- item name -->
@@ -397,7 +397,7 @@
     <!-- #good-consumption-upgrade-island-dialog -->
     <div id="good-consumption-island-upgrade-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
-            <div class="modal-content" data-bind="with: $root.island().allGoodConsumptionUpgrades">
+            <div class="modal-content" data-bind="with: $root.selectedGoodConsumptionUpgradeIslandList">
                 <div class="modal-header">
                     <h4 data-bind="text: $root.texts.needConsumption.name">Need Consumption</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -1666,7 +1666,7 @@
                             </form>
                         </div>
                         <hr />
-                        <div data-bind="with: $root.island().contractManager">
+                        <div data-bind="with: $root.selectedContractManager()">
                             <div class="input-group spinner" style="max-width: 18rem;">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" data-bind="text: $root.texts.loadingSpeed.name()"></span>
