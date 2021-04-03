@@ -429,9 +429,22 @@ class Island {
                 this.allGoodConsumptionUpgrades.lists.push(need.goodConsumptionUpgradeList);
             }
 
-        for (let b of this.publicRecipeBuildings)
+        for (let b of this.publicRecipeBuildings) {
             if (b.goodConsumptionUpgrade)
                 b.goodConsumptionUpgrade = assetsMap.get(b.goodConsumptionUpgrade);
+
+            if (b.goodConsumptionUpgrade) {
+                b.goodConsumptionUpgrade.checked.subscribe(checked => {
+                    if (checked)
+                        b.existingBuildings(Math.max(1, b.existingBuildings()));
+                });
+
+                b.existingBuildings.subscribe(val => {
+                    if (!val)
+                        b.goodConsumptionUpgrade.checked(false);
+                });
+            }
+        }
 
 
         // negative extra amount must be set after the demands of the population are generated
@@ -1366,7 +1379,7 @@ class PopulationLevel extends NamedElement {
 
 
             if (this.fixLimitPerHouse()) {
-                if(!inRange(val, this.limitPerHouse(), this.limit()))
+                if (!inRange(val, this.limitPerHouse(), this.limit()))
                     this.limit(Math.floor(val * this.limitPerHouse()));
             } else {
                 var perHouse = this.limit() / val;
@@ -2772,67 +2785,94 @@ class PopulationReader {
             }
 
 
-            if (!json.version || json.version.startsWith("v1")) {
-                view.island().populationLevels.forEach(function (element) {
-                    element.amount(0);
-                });
-                if (json.farmers) {
-                    view.island().populationLevels[0].amount(json.farmers);
+            if (view.settings.proposeIslandNames.checked()) {
+                for (var isl of (json.islands || [])) {
+                    view.islandManager.registerName(isl.name, view.assetsMap.get(isl.session));
                 }
-                if (json.workers) {
-                    view.island().populationLevels[1].amount(json.workers);
-                }
-                if (json.artisans) {
-                    view.island().populationLevels[2].amount(json.artisans);
-                }
-                if (json.engineers) {
-                    view.island().populationLevels[3].amount(json.engineers);
-                }
-                if (json.investors) {
-                    view.island().populationLevels[4].amount(json.investors);
-                }
-                if (json.jornaleros) {
-                    view.island().populationLevels[5].amount(json.jornaleros);
-                }
-                if (json.obreros) {
-                    view.island().populationLevels[6].amount(json.obreros);
-                }
-            } else {
+            }
 
-                if (view.settings.proposeIslandNames.checked()) {
-                    for (var isl of (json.islands || [])) {
-                        view.islandManager.registerName(isl.name, view.assetsMap.get(isl.session));
+            var island = null;
+            if (json.islandName) {
+                island = view.islandManager.getByName(json.islandName);
+            }
+
+            if (!island)
+                return;
+
+            if (view.settings.updateSelectedIslandOnly.checked() && island != view.island())
+                return;
+
+
+            for (let key in json) {
+                let asset = island.assetsMap.get(parseInt(key));
+                if (asset instanceof PopulationLevel) {
+                    if (json[key].existingBuildings && view.settings.populationLevelExistingBuildings.checked()) {
+                        asset.existingBuildings(json[key].existingBuildings);
+
+                        if (json[key].limit && view.settings.populationLevelLimit.checked())
+                            asset.limitPerHouse(json[key].limit / json[key].existingBuildings);
+
+                        if (json[key].amount && view.settings.populationLevelAmount.checked())
+                            asset.amountPerHouse(json[key].amount / json[key].existingBuildings);
                     }
-                }
 
-                var island = null;
-                if (json.islandName) {
-                    island = view.islandManager.getByName(json.islandName);
-                }
+                    if (json[key].limit && view.settings.populationLevelLimit.checked()) {
+                        asset.limit(json[key].limit);
+                    }
 
-                if (!island)
-                    return;
+                    if (json[key].amount && view.settings.populationLevelAmount.checked()) {
+                        asset.amount(json[key].amount);
+                    }
 
-                if (view.settings.updateSelectedIslandOnly.checked() && island != view.island())
-                    return;
+                } else if (asset instanceof Consumer) {
+                    if (json[key].existingBuildings && view.settings.factoryExistingBuildings.checked())
+                        asset.existingBuildings(parseInt(json[key].existingBuildings));
 
+                    if (view.settings.factoryPercentBoost.checked()) {
+                        if (view.settings.optimalProductivity.checked()) {
+                            if (asset.existingBuildings() && json[key].limit) {
 
-                for (let key in json) {
-                    let asset = island.assetsMap.get(parseInt(key));
-                    if (asset instanceof PopulationLevel) {
-                        if (json[key].amount && view.settings.populationLevelAmount.checked()) {
-                            asset.amount(json[key].amount);
+                                var limit = Math.max(0, json[key].limit - asset.extraGoodProductionList.amount());
+
+                                if (asset.getOutputs().length && asset.getOutputs()[0].product.producers.length > 1) {
+
+                                    // in all islands view, multiple factories can be produce one good
+                                    // the server stored the same values for all of these factories
+                                    // we consider them together and sum their existing buildings
+
+                                    var factories = [];
+                                    var countBuildings = 0;
+
+                                    for (var guid of asset.getOutputs()[0].product.producers) {
+                                        var factory = island.assetsMap.get(guid);
+
+                                        if (factory.existingBuildings() && json[guid]) {
+                                            factories.push(factory);
+                                            countBuildings += factory.existingBuildings() * factory.extraGoodFactor() * factory.tpmin;
+                                        }
+                                    }
+
+                                    var percentBoost = 100 * limit / countBuildings;
+                                    if (countBuildings == 0 || percentBoost < 50 || percentBoost >= 1000)
+                                        continue;
+
+                                    for (var factory of factories)
+                                        factory.percentBoost(percentBoost);
+                                }
+                                else {
+                                    var percentBoost = 100 * limit / asset.existingBuildings() / asset.tpmin / asset.extraGoodFactor();
+                                    if (percentBoost >= 50 && percentBoost < 1000)
+                                        asset.percentBoost(percentBoost);
+                                }
+                            }
+
                         }
-                        if (json[key].existingBuildings && view.settings.populationLevelExistingBuildings.checked()) {
-                            asset.existingBuildings(json[key].existingBuildings);
-                        }
-                    } else if (asset instanceof Consumer) {
-                        if (json[key].existingBuildings && view.settings.factoryExistingBuildings.checked())
-                            asset.existingBuildings(parseInt(json[key].existingBuildings));
-                        if (json[key].percentBoost && view.settings.factoryPercentBoost.checked())
+                        else if (json[key].percentBoost)
                             asset.percentBoost(parseInt(json[key].percentBoost));
                     }
+
                 }
+
             }
         } catch (e) {
         }

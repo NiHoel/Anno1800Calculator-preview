@@ -975,6 +975,13 @@ serverOptions = {
             "korean": "주민 수 가져오기"
         }
     },
+    "populationLevelLimit": {
+        "name": "PopulationLevel Limit",
+        "locaText": {
+            "english": "Update max. residents",
+            "german": "Aktualisiere maximale Einwohnerzahl"
+        }
+    },
     "populationLevelExistingBuildings": {
         "name": "PopulationLevel ExistingBuildings",
         "locaText": {
@@ -999,14 +1006,13 @@ serverOptions = {
             "korean": "생산성 가져오기"
         }
     },
-    /*    "optimalProductivity": {
+    "optimalProductivity": {
             "name": "Optimal Productivity",
             "locaText": {
-                "english": "Read maximum possible productivity instead of current average",
-                "german": "Lies best mögliche Produktivität anstelle des gegenwärtigen Durchschnitts aus",
-                "korean": "평균 대신 최대 생산성을 가져오기"
+                "english": "Use the production limit to calculate optimal productivity",
+                "german": "Verwende das Produktionslimit, um die optimale Produktivität zu berechnen"
             }
-        }, */
+     },
     "updateSelectedIslandOnly": {
         "name": "Update selected islands only",
         "locaText": {
