@@ -1072,7 +1072,8 @@ class Demand extends NamedElement {
     }
 
     updateAmount(amount) {
-        this.amount(amount);
+        if(Math.abs(this.amount() - amount) >= EPSILON)
+            this.amount(amount);
     }
 }
 
@@ -1306,8 +1307,10 @@ class BuildingMaterialsNeed extends Need {
         var existingBuildingsOutput =
             this.factory().existingBuildings() * this.factory().tpmin * this.factory().boost() * this.factory().extraGoodFactor();
 
-        var overProduction = existingBuildingsOutput - otherDemand;
-        this.amount(Math.max(0, overProduction - EPSILON));
+        var amount = Math.max(0, existingBuildingsOutput - otherDemand - EPSILON);
+
+        if(Math.abs(amount - this.amount()) >= EPSILON)
+            this.amount(amount);
     }
 
     updateFixedProductFactory() { }

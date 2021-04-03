@@ -949,19 +949,19 @@ options = {
             "german": "Freischaltbedingungen der Bedürfnisse berücksichtigen",
         }
     },
-    "deriveResidentsPerHouse": {
-        "name": "",
-        "locaText": {
-            "english": "Calculate residents per house based on the resident supply",
-            "german": "Berechne die Einwohner pro Haus basierend auf der Versorgung der Einwohner"
-        }
-    },
     "noOptionalNeeds": {
         "name": "Do not produce luxury goods",
         "locaText": {
             "english": "Do not produce luxury goods",
             "german": "Keine Luxusgüter produzieren",
             "korean": "사치품을 생산하지 않습니다."
+        }
+    },
+    "deriveResidentsPerHouse": {
+        "name": "",
+        "locaText": {
+            "english": "Calculate residents per house based on the resident supply",
+            "german": "Berechne die Einwohner pro Haus basierend auf der Versorgung der Einwohner"
         }
     }
 }
