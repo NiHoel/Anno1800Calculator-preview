@@ -551,12 +551,12 @@ texts = {
         german: "Vollständig"
     },
     viewSimpleDescription: {
-        english: "Default settings tailored to beginners, complex mechanics hidden.",
-        german: "Standardeinstellungen auf Einsteiger zugeschnitten, komplexe Mechaniken verborgen."
+        english: "Default settings tailored to beginners, complex mechanics hidden. Uses houses as input.",
+        german: "Standardeinstellungen auf Einsteiger zugeschnitten, komplexe Mechaniken verborgen. Verwendet Häuser als Eingabe."
     },
     viewComplexDescription: {
-        english: "Alle settings and mechanics available (as before)",
-        german: "Alle Einstellungen und Mechaniken verfügbar (wie bisher)"
+        english: "Alle settings and mechanics available (as before).",
+        german: "Alle Einstellungen und Mechaniken verfügbar (wie bisher)."
     },
     viewCompleteDescription: {
         english: "Identical to 'complete', but all extensions activated by default.",
