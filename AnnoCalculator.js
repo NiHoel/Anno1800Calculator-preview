@@ -469,7 +469,7 @@ class Island {
         this.products = products;
 
         this.top2Population = ko.computed(() => {
-            var useHouses = view.settings.existingBuildingsInput.checked();
+            var useHouses = view.settings.populationInput() == "0";
             var comp = useHouses
                 ? (a, b) => b.existingBuildings() - a.existingBuildings()
                 : (a, b) => b.amount() - a.amount();
@@ -1072,7 +1072,7 @@ class Demand extends NamedElement {
     }
 
     updateAmount(amount) {
-        if(Math.abs(this.amount() - amount) >= EPSILON)
+        if (Math.abs(this.amount() - amount) >= EPSILON)
             this.amount(amount);
     }
 }
@@ -1209,24 +1209,18 @@ class PopulationNeed extends Need {
                 if (!config || !view.settings.needUnlockConditions.checked())
                     return false;
 
-                var getAmount = l => view.settings.existingBuildingsInput.checked()
-                    ? parseInt(l.existingBuildings()) * l.fullHouse
-                    : parseInt(l.amount());
-
                 if (config.populationLevel != level.guid) {
                     var l = assetsMap.get(config.populationLevel);
-                    var amount = getAmount(l);
-                    return amount < config.amount;
+                    return l.amount() < config.amount;
                 }
 
-                var amount = getAmount(level);
-                if (amount >= config.amount)
+                if (level.amount() >= config.amount)
                     return false;
 
                 var residence = level.residence.upgradedBuilding;
                 while (residence) {
                     var l = residence.populationLevel;
-                    var amount = getAmount(l);
+                    var amount = l.amount();
                     if (amount > 0)
                         return false;
 
@@ -1309,7 +1303,7 @@ class BuildingMaterialsNeed extends Need {
 
         var amount = Math.max(0, existingBuildingsOutput - otherDemand - EPSILON);
 
-        if(Math.abs(amount - this.amount()) >= EPSILON)
+        if (Math.abs(amount - this.amount()) >= EPSILON)
             this.amount(amount);
     }
 
@@ -1494,7 +1488,7 @@ class PopulationLevel extends NamedElement {
         if (this.residence) {
             this.residence = assetsMap.get(this.residence);
             this.residence.populationLevel = this;
-    }
+        }
     }
 
     initBans(assetsMap) {
@@ -2445,9 +2439,9 @@ class ContractUpgradeManager {
 
         this.productsMap = new Map();
         var assetsMap = new Map();
-        for(var p of params.products)
-        if (p.exchangeWeight)
-            this.productsMap.set(p.guid, new Product(p, assetsMap));
+        for (var p of params.products)
+            if (p.exchangeWeight)
+                this.productsMap.set(p.guid, new Product(p, assetsMap));
 
 
         if (localStorage) {
@@ -3181,7 +3175,6 @@ class DarkMode {
 class ViewMode {
     constructor(firstRun) {
         this.hiddenOptions = [
-            "existingBuildingsInput",
             "additionalProduction",
             "autoApplyExtraNeed",
             "consumptionModifier",
@@ -3193,7 +3186,7 @@ class ViewMode {
             var checked = view.settings.simpleView.checked();
 
             if (checked) {
-                view.settings.existingBuildingsInput.checked(true);
+                view.settings.populationInput("0");
                 view.settings.additionalProduction.checked(false);
                 view.settings.autoApplyExtraNeed.checked(true);
                 view.settings.consumptionModifier.checked(true);
@@ -3332,6 +3325,26 @@ function init(isFirstRun) {
                 o.checked(parseInt(localStorage.getItem(id)));
 
             o.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
+        }
+    }
+
+    view.settings.populationInput = ko.observable("1");
+    if (localStorage) {
+        let id = "settings.populationInput";
+        let oldId = "settings.existingBuildingsInput";
+        if (localStorage.getItem(id) != null)
+            view.settings.populationInput(localStorage.getItem(id));
+
+        view.settings.populationInput.subscribe(val => {
+            if (val != "0" && val != "1" && val != "2")
+                view.settings.populationInput("1");
+
+            localStorage.setItem(id, val);
+        });
+
+        if (localStorage.getItem(oldId) != null) {
+            view.settings.populationInput("0");
+            localStorage.removeItem(oldId);
         }
     }
 

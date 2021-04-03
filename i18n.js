@@ -533,6 +533,10 @@ texts = {
         german: "Verändere die prozentuale Verbrauchsmenge für diese Ware und Bevölkerungsstufe",
         korean: "이 계층 및 제품의 사용량(백분율)을 수정하십시요"
     },
+    useInput: {
+        english: "Use as input on main page",
+        german: "Verwende als Eingabe auf der Hauptseite"
+    },
     // view mode
     viewMode: {
         english: "View Mode",
@@ -808,14 +812,6 @@ options = {
         "locaText": {
             "english": "Simple view",
             "german": "Einfache Ansicht"
-        }
-    },
-    "existingBuildingsInput": {
-        "name": "Input number of houses instead of residents",
-        "locaText": {
-            "english": "Input number of houses instead of residents",
-            "german": "Gib Anzahl an Häusern anstelle der Einwohner ein",
-            "korean": "주민 수 대신 주택 수를 입력"
         }
     },
     "decimalsForBuildings": {
