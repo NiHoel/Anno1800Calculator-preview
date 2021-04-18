@@ -489,7 +489,12 @@
                         </div>
 
                         <select name="islands" class="custom-select" id="islands" data-bind="value: $root.island, options: $root.islands, optionsText: i => i.sessionExtendedName()"></select>
+                        <div class="input-group-append">
+                            <button class="btn btn-secondary" data-bind="disable: $root.island().isAllIslands(), click: () => $root.islandManager.startRename($root.island())">
+                                <span class="fa fa-pencil"> </span>
+                            </button>
 
+                        </div>
                     </div>
 
                     <hr />
@@ -591,6 +596,9 @@
                                 </td>
                                 <td>
                                     <div class="float-right" data-bind="if: !$data.isAllIslands()">
+                                        <button class="btn btn-secondary btn-sm" data-bind="click: () => $root.islandManager.startRename($data)">
+                                            <span class="fa fa-pencil"> </span>
+                                        </button>
                                         <button class="btn btn-secondary btn-sm" data-bind="click: () => $root.islandManager.delete($data)">
                                             <span class="fa fa-trash"> </span>
                                         </button>
@@ -608,6 +616,31 @@
         </div>
     </div>
     <!-- #/island-management-dialog -->
+    <!-- #island-rename-dialog -->
+    <div id="island-rename-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog" data-bind="with: $root.islandManager">
+            <div class="modal-content">
+                <div class="modal-header" data-bind="with: renameIsland">
+                    <img class="icon-light icon-sm mr-2" src="" data-bind="attr: { src: $data.session.icon ? $data.session.icon  : null, alt: $data.session.name, title: $data.session.name}" />
+                    <h4 data-bind="text: name">Name</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+
+                </div>
+                <div class="modal-body">
+
+                    <form data-bind="submit: () => {rename(renameIsland(), islandNameInput()); $('#island-rename-dialog').modal('hide');}" >
+                        <input name="island" class="form-control" id="island" type="text" data-bind="value: $root.islandManager.islandNameInput" />
+                    </form>
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" data-bind="text: $root.texts.confirm.name, enable: !islandExists(), click: () => {rename(renameIsland(), islandNameInput()); $('#island-rename-dialog').modal('hide');}">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- #/island-rename-dialog -->
     <!-- #trade-routes-management-dialog -->
     <div id="trade-routes-management-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -764,7 +797,7 @@
                                 <tr>
                                     <!-- existing buildings -->
                                     <td data-bind="if: !$root.settings.simpleView.checked()">
-                                         <input type="radio" name="populationInputSelection" value="0" data-bind="checked: $root.settings.populationInput, attr: {title: $root.texts.useInput.name()}">
+                                        <input type="radio" name="populationInputSelection" value="0" data-bind="checked: $root.settings.populationInput, attr: {title: $root.texts.useInput.name()}">
                                     </td>
                                     <td>
                                         <span data-bind="text: $root.texts.buildings.name"></span>

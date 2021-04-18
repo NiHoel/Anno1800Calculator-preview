@@ -56,6 +56,12 @@ class Storage {
         return null;
     }
 
+    updateKey(key) {
+        localStorage.removeItem(this.key);
+        this.key = key;
+        this.save();
+    }
+
     clear() {
         this.json = {}
         this.save();
@@ -107,6 +113,7 @@ class Island {
     constructor(params, localStorage, session) {
         if (localStorage instanceof Storage) {
             this.name = ko.observable(localStorage.key);
+            this.name.subscribe(name => this.storage.updateKey(name));
             this.isAllIslands = function () { return false; };
         } else {
             this.name = ko.computed(() => view.texts.allIslands.name());
@@ -2897,12 +2904,14 @@ class IslandManager {
         let islandKey = "islandName";
         let islandsKey = "islandNames";
 
+        // used for creation and renaming
         this.islandNameInput = ko.observable();
         this.sessionInput = ko.observable(view.sessions[0]);
         this.params = params;
         this.islandCandidates = ko.observableArray();
         this.unusedNames = new Set();
         this.serverNamesMap = new Map();
+        this.renameIsland = ko.observable();
 
         this.showIslandOnCreation = new Option({
             name: "Show Island on Creation",
@@ -2946,10 +2955,10 @@ class IslandManager {
                 localStorage.setItem(islandsKey, islandNames);
             });
 
-            view.island.subscribe(island => {
-                localStorage.setItem(islandKey, island.name());
+            this.currentIslandSubscription = ko.computed(() => {
+                var name = view.island().name();
+                localStorage.setItem(islandKey, name);
             });
-
         }
 
         this.islandExists = ko.computed(() => {
@@ -3017,6 +3026,45 @@ class IslandManager {
         this.unusedNames.add(island.name());
         this.islandCandidates.push({ name: island.name(), session: island.session });
         this.sortUnusedNames();
+    }
+
+    rename(island, name) {
+        if (this.islandExists())
+            return;
+
+        if (this.serverNamesMap.has(name) && this.serverNamesMap.get(name).name() == name)
+            return;
+
+        for (var entry of this.serverNamesMap.entries()) {
+            if (entry[1] == island)
+                this.serverNamesMap.set(entry[0], null);
+        }
+
+        this.serverNamesMap.delete(island.name());
+        this.unusedNames.add(island.name());
+        this.islandCandidates.push({ name: island.name(), session: island.session });
+
+        island.name(name);
+        this.sortIslands();
+
+        this.serverNamesMap.set(name, island);
+        var removedCandidates = this.islandCandidates.remove(i => !isNaN(this.compareNames(i.name, name)));
+        for (var c of removedCandidates) {
+            this.unusedNames.delete(c.name);
+            this.serverNamesMap.set(c.name, island);
+        }
+
+        this.islandNameInput(null);
+        this.sortUnusedNames();
+    }
+
+    startRename(island) {
+        if (island.isAllIslands())
+            return;
+
+        this.renameIsland(island);
+        this.islandNameInput(island.name());
+        $('#island-rename-dialog').modal("show");
     }
 
     deleteCandidate(candidate) {

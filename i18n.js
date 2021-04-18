@@ -273,6 +273,20 @@ texts = {
         "japanese": "適用",
         "russian": "Применить"
     },
+    "confirm": {
+        "english": "Confirm",
+        //"guid": 118171,
+        "chinese": "确认",
+        "taiwanese": "確認",
+        "italian": "Conferma",
+        "spanish": "Confirmar",
+        "german": "Bestätigen",
+        "polish": "Potwierdź",
+        "french": "Confirmer",
+        "korean": "확인",
+        "japanese": "認める",
+        "russian": "Подтвердить"
+    },
     "world": {
         "english": "The World",
         "chinese": "世界",
@@ -563,8 +577,8 @@ texts = {
         german: "Alle Einstellungen und Mechaniken verfügbar (wie bisher)."
     },
     viewCompleteDescription: {
-        english: "Identical to 'complete', but all extensions activated by default.",
-        german: "Identisch zu 'vollständig', aber alle Erweiterungen standardmäßig aktiviert."
+        english: "Identical to 'complex', but all extensions activated by default.",
+        german: "Identisch zu 'komplex', aber alle Erweiterungen standardmäßig aktiviert."
     },
     // calculator and server managment
     download: {
@@ -1003,12 +1017,12 @@ serverOptions = {
         }
     },
     "optimalProductivity": {
-            "name": "Optimal Productivity",
-            "locaText": {
-                "english": "Use the production limit to calculate optimal productivity",
-                "german": "Verwende das Produktionslimit, um die optimale Produktivität zu berechnen"
-            }
-     },
+        "name": "Optimal Productivity",
+        "locaText": {
+            "english": "Use the production limit to calculate optimal productivity",
+            "german": "Verwende das Produktionslimit, um die optimale Produktivität zu berechnen"
+        }
+    },
     "updateSelectedIslandOnly": {
         "name": "Update selected islands only",
         "locaText": {
