@@ -432,6 +432,23 @@ texts = {
         english: "Export overproduction",
         german: "Überproduktion exportieren"
     },
+    setTotalCapacity: {
+        "english": "Set Total Capacity",
+        "chinese": "Set 总容量",
+        "taiwanese": "Set 總容量",
+        "italian": "Set Capienza totale",
+        "spanish": "Set Capacidad total",
+        "german": "Setze Gesamtkapazität",
+        "polish": "Set Pojemność całkowita",
+        "french": "Set Capacité totale",
+        "korean": "Set 총 수용량",
+        "japanese": "Set 総収容能力",
+        "russian": "Set Общая вместимость"
+    },
+    setTotalCapacityTooltip: {
+        "english": "Multiply all contracts by such a factor that the total capacity equals this value.",
+        "german": "Multipliziere all Verträge mit solch einem Faktor, dass die Gesamtkapazität diesem Wert entspricht.",
+    },
     loadingSpeed: {
         "english": "Loading Speed",
         "chinese": "装货速度",

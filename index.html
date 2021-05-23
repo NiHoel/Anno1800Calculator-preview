@@ -628,7 +628,7 @@
                 </div>
                 <div class="modal-body">
 
-                    <form data-bind="submit: () => {rename(renameIsland(), islandNameInput()); $('#island-rename-dialog').modal('hide');}" >
+                    <form data-bind="submit: () => {rename(renameIsland(), islandNameInput()); $('#island-rename-dialog').modal('hide');}">
                         <input name="island" class="form-control" id="island" type="text" data-bind="value: $root.islandManager.islandNameInput" />
                     </form>
 
@@ -1705,15 +1705,28 @@
                         </div>
                         <hr />
                         <div data-bind="with: $root.selectedContractManager()">
-                            <div class="input-group spinner" style="max-width: 18rem;">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" data-bind="text: $root.texts.loadingSpeed.name()"></span>
-                                </div>
-                                <input step="0.1" min="1" class="form-control" type="number" value="100" data-bind="value: $data.traderLoadingSpeed, attr: { id: 'trader-loading-speed' }" />
-                                <div class="input-group-append">
-                                    <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.traderLoadingSpeed, id: 'trader-loading-speed' }}"></div>
-                                    <span class="input-group-text">t/s</span>
+                            <div class="inline-list-stretched">
+                                <div class="input-group spinner" style="max-width: 18rem;">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" data-bind="text: $root.texts.loadingSpeed.name()"></span>
+                                    </div>
+                                    <input step="0.1" min="1" class="form-control" type="number" value="100" data-bind="value: $data.traderLoadingSpeed, attr: { id: 'trader-loading-speed' }" />
+                                    <div class="input-group-append">
+                                        <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.traderLoadingSpeed, id: 'trader-loading-speed' }}"></div>
+                                        <span class="input-group-text">t/s</span>
 
+                                    </div>
+                                </div>
+
+                                <div class="input-group spinner" data-bind="if: !view.island().isAllIslands()" style="max-width: 19rem;">
+                                    <input step="100" min="100" class="form-control" type="number" value="2000" data-bind="value: $data.existingStorageCapacity, attr: { id: 'existing-storage-capacity' }" />
+                                    <div class="input-group-append">
+                                        <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.existingStorageCapacity, id: 'existing-storage-capacity' }}"></div>
+                                        <span class="input-group-text">t</span>
+                                        <button class="btn btn-sm btn-light" data-bind="click: () => $data.setStorageCapacity(), enable: $data.contracts().length, attr: {'title': $root.texts.setTotalCapacityTooltip.name()}">
+                                            <span data-bind="text: $root.texts.setTotalCapacity.name()">Set total capacity</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                             <div class="inline-list-stretched mt-2" data-bind="visible: !view.island().isAllIslands()">

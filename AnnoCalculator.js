@@ -2335,13 +2335,24 @@ class ContractManager {
         }
 
         this.traderLoadingSpeed = createFloatInput(2);
+        this.existingStorageCapacity = createIntInput(2000);
 
         if (localStorage) {
-            let id = "traderLoadingSpeed.amount";
-            if (localStorage.getItem(id) != null)
-                this.traderLoadingSpeed(parseFloat(localStorage.getItem(id)));
+            {
+                let id = "traderLoadingSpeed.amount";
+                if (localStorage.getItem(id) != null)
+                    this.traderLoadingSpeed(parseFloat(localStorage.getItem(id)));
 
-            this.traderLoadingSpeed.subscribe(val => localStorage.setItem(id, val));
+                this.traderLoadingSpeed.subscribe(val => localStorage.setItem(id, val));
+            }
+
+            {
+                let id = "existingStorageCapacity.amount";
+                if (localStorage.getItem(id) != null)
+                    this.existingStorageCapacity(parseInt(localStorage.getItem(id)));
+
+                this.existingStorageCapacity.subscribe(val => localStorage.setItem(id, val));
+            }
         }
 
         this.traderLoadingDuration = ko.computed(() => {
@@ -2427,6 +2438,53 @@ class ContractManager {
     islandDeleted(island) {
     }
 
+    setStorageCapacity() {
+        if (!this.contracts().length)
+            return;
+
+        var transferTime = params.tradeContracts.traderTransferMinutes + 4;
+
+        var totalAmount = 0;
+        var productToAmount = new Map();
+        for (var c of this.contracts()) {
+            totalAmount += c.importAmount() + c.exportAmount();
+
+            // import
+            var guid = c.importProduct.guid;
+            if (productToAmount.has(guid))
+                productToAmount.set(guid, c.importAmount() + productToAmount.get(guid));
+            else
+                productToAmount.set(guid, c.importAmount());
+
+            // export
+            guid = c.exportProduct.guid;
+            if (productToAmount.has(guid))
+                productToAmount.set(guid, c.exportAmount() + productToAmount.get(guid));
+            else
+                productToAmount.set(guid, c.exportAmount());
+        }
+
+        var maxAmount = 0;
+        for (var val of productToAmount.values())
+            if (val > maxAmount)
+                maxAmount = val;
+
+
+        var s = 60 * this.traderLoadingSpeed() * params.tradeContracts.loadingSpeedFactor;
+
+        //x = newTotalAmount / s
+        //existingStorageCapactiy = newMaxAmount * (loadingDuration + transferTime) 
+        //    = newMaxAmount * (-transferTime * x/(x-1) + transferTime)
+        //    = newMaxAmount * (- transferTime * (newTotalAmount / s) / ((newTotalAmount / s) - 1) + transferTime)
+        //    = f * maxAmount * (- transferTime * (f * totalAmount / s) / ((f * totalAmount / s) - 1) + transferTime)
+
+        var c = this.existingStorageCapacity();
+        var f = c * s / (maxAmount * s * transferTime + c * totalAmount);
+
+        for (var c of this.contracts()) {
+            c.importAmount(f * c.importAmount());
+        }
+    }
 }
 
 class ContractUpgrade {
