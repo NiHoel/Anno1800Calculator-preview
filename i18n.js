@@ -646,8 +646,8 @@ Siehe folgenden Link für weitere Informationen: `,
         korean: "새로운 Anno1800 계산기 버전이 제공됩니다. 다운로드 버튼을 클릭하십시오."
     },
     newFeature: {
-        english: "Game Update 10: Docklands with trade contracts.",
-        german: "Game Update 10: Speicherstadt mit Handelsverträgen.",
+        english: "Game Update 11: Tourist Season. Configuration menu for population tiers.",
+        german: "Game Update 11: Reisezeit. Konfigurationsmenü für Bevölkerungslevel.",
     },
     helpContent: {
         german:
