@@ -2659,7 +2659,12 @@ class RecipeList extends NamedElement {
 
         this.island = island;
 
-        this.recipeBuildings = list.recipeBuildings.map(r => assetsMap.get(r));
+        this.recipeBuildings = list.recipeBuildings.map(r => {
+            var a = assetsMap.get(r);
+            a.recipeList = this;
+            return a;
+        });
+
         this.unusedRecipes = ko.computed(() => {
             var result = [];
             for (var recipe of this.recipeBuildings) {
@@ -2697,8 +2702,11 @@ class ProductionChainView {
                     if (Math.abs(a) < ACCURACY)
                         return;
 
-                    if (f == view.selectedFactory())
+                    if (f == view.selectedFactory()) {
+                        for (var e of d.demands)
+                            traverse(e);
                         return;
+                    }
 
                     if (!this.factoryToDemands.has(f)) {
                         var demandAggregate = {

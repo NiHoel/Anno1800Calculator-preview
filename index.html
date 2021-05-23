@@ -25,7 +25,7 @@
 
     <script type="text/javascript" src="i18n.js"></script>
     <script type="text/javascript" src="AnnoCalculator.js"></script>
-    <script type="text/javascript" src="params_2021-02-23_full.js"></script>
+    <script type="text/javascript" src="params_2021-05-21_full.js"></script>
 </head>
 <body>
     <noscript>This site requires JavaScript!</noscript>
@@ -1968,6 +1968,31 @@
 
                     </div>
                     <!-- /power plants -->
+                    <!-- public recipe buildings -->
+                    <div data-bind="foreach: $root.island().recipeLists">
+
+                        <div class="ui-fchain-item" data-bind="visible: $data.unusedRecipes().length">
+
+
+                            <div class="ui-fchain-item-name" data-bind="text: $data.name, visible: !$root.settings.hideNames.checked()"></div>
+                            <div class="ui-fchain-item-icon mb-2"><img class="icon-tile" src="" data-bind="attr: { src: $data.icon, alt: $data.name }"></div>
+
+
+                            <div class="form-group">
+                                <select class="custom-select form-control" data-bind="value: $data.selectedRecipe, options: $data.unusedRecipes, optionsText: r => r.goodConsumptionUpgrade.name()"></select>
+                            </div>
+
+                            <div style="margin: -10px;">
+
+
+                                <button data-bind="click: () => $data.create(), enable: $data.canCreate" class="btn btn-secondary btn-sm btn-light" style="width: 100%;">
+                                    <span class="fa fa-plus"></span>
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- /public recipe buildings -->
                     <!-- recipes -->
                     <div data-bind="foreach: $root.template.publicRecipeBuildings">
 
@@ -1980,7 +2005,7 @@
                                 </div>
                             </div>
 
-                            <div class="ui-fchain-item-name" data-bind="text: $data.getRegionExtendedName(), visible: !$root.settings.hideNames.checked()"></div>
+                            <div class="ui-fchain-item-name" data-bind="text:  $data.goodConsumptionUpgrade.name(), visible: !$root.settings.hideNames.checked()"></div>
                             <div class="ui-fchain-item-icon mb-2"><img class="icon-tile" src="" data-bind="attr: { src: $data.icon, alt: $data.name }"></div>
 
 
@@ -2012,32 +2037,7 @@
 
                     </div>
                     <!-- /recipes -->
-                    <!-- public recipe buildings -->
-                    <div data-bind="foreach: $root.island().recipeLists">
-
-                        <div class="ui-fchain-item" data-bind="visible: $data.unusedRecipes().length">
-
-
-                            <div class="ui-fchain-item-name" data-bind="text: $data.name, visible: !$root.settings.hideNames.checked()"></div>
-                            <div class="ui-fchain-item-icon mb-2"><img class="icon-tile" src="" data-bind="attr: { src: $data.icon, alt: $data.name }"></div>
-
-
-                            <div class="form-group">
-                                <select class="custom-select form-control" data-bind="value: $data.selectedRecipe, options: $data.unusedRecipes, optionsText: r => r.name()"></select>
                             </div>
-
-                            <div style="margin: -10px;">
-
-
-                                <button data-bind="click: () => $data.create(), enable: $data.canCreate" class="btn btn-secondary btn-sm btn-light" style="width: 100%;">
-                                    <span class="fa fa-plus"></span>
-                                </button>
-                            </div>
-                        </div>
-
-                    </div>
-                    <!-- /public recipe buildings -->
-                </div>
                 <div class="clear"></div>
             </fieldset>
 
