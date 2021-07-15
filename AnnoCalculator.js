@@ -495,6 +495,9 @@ class Island {
 
         if (params.tradeContracts && (!this.region || this.region.guid == 5000000))
             this.contractManager = new ContractManager(this, params.tradeContracts);
+
+        if (isNew)
+            this.allGoodConsumptionUpgrades.apply();
     }
 
     reset() {
@@ -781,7 +784,7 @@ class Factory extends Consumer {
             return buildings;
         });
 
-        if(this.workforceDemand)
+        if (this.workforceDemand)
             this.buildings.subscribe(val => this.workforceDemand.updateAmount(Math.max(val, this.buildings())));
 
         // use the history to break the cycle: extra good (lumberjack) -> building materials need (timber) -> production (sawmill) -> production (lumberjack)
@@ -1349,6 +1352,8 @@ class BuildingMaterialsNeed extends Need {
 class ResidenceBuilding extends NamedElement {
     constructor(config, assetsMap) {
         super(config);
+
+        this.existingBuildings = createIntInput(0);
     }
 }
 
@@ -2970,6 +2975,9 @@ class PopulationReader {
                             asset.percentBoost(parseInt(json[key].percentBoost));
                     }
 
+                } else if (asset instanceof ResidenceBuilding) {
+                    if (json[key].existingBuildings && view.settings.factoryExistingBuildings.checked())
+                        asset.existingBuildings(parseInt(json[key].existingBuildings));
                 }
 
             }
@@ -3892,7 +3900,7 @@ function installImportConfigListener() {
                     if (localStorage) {
 
                         if (config.islandName && config.islandName != "Anno 1800 Calculator" &&
-                            !config.islandNames && !config[config.islandName]) {
+                            !config.islandNames && !config[config.islandName] && (!config.versionCalculator || config.versionCalculator.startsWith("v1") || config.versionCalculator.startsWith("v2"))) {
                             // import old, one island save
                             delete config.versionCalculator;
                             delete config.versionServer;
@@ -3904,19 +3912,19 @@ function installImportConfigListener() {
                             island.storage.save();
                             localStorage.setItem("islandName", config.islandName);
                         } else {
-                            localStorage.clear();
-                            for (var a in config)
-                                localStorage.setItem(a, config[a]);
-                            localStorage.setItem("versionCalculator", versionCalculator);
+                        localStorage.clear();
+                        for (var a in config)
+                            localStorage.setItem(a, config[a]);
+                        localStorage.setItem("versionCalculator", versionCalculator);
 
-                            if (!config.islandNames) { // old save, restore islands
-                                for (var island of view.islands()) {
-                                    if (!island.isAllIslands())
-                                        island.storage.save();
-                                }
-                                let islandNames = JSON.stringify(view.islands().filter(i => !i.isAllIslands()).map(i => i.name()));
-                                localStorage.setItem("islandNames", islandNames);
+                        if (!config.islandNames) { // old save, restore islands
+                            for (var island of view.islands()) {
+                                if (!island.isAllIslands())
+                                    island.storage.save();
                             }
+                            let islandNames = JSON.stringify(view.islands().filter(i => !i.isAllIslands()).map(i => i.name()));
+                            localStorage.setItem("islandNames", islandNames);
+                        }
                         }
                         location.reload();
 
