@@ -186,13 +186,26 @@ nav {
     margin-bottom: 20px;
 }
 
-    .ui-fieldset legend {
-        font-weight: bold;
-        color: #000;
-        font-size: unset;
-        width:unset;
-        padding-right:5px;
-    }
+.ui-fieldset legend {
+    font-weight: bold;
+    color: #000;
+    font-size: unset;
+    width: unset;
+    padding-right: 5px;
+}
+
+.collapsable-section {
+    border-top: 1px solid #CECECE;
+    margin-bottom: 20px;
+}
+
+.collapsable-section legend {
+    font-weight: bold;
+    color: #000;
+    font-size: unset;
+    width: unset;
+    padding-right: 5px;
+}
 
 .ui-fchain-item {
     float: left;
@@ -390,6 +403,11 @@ nav {
 
 .input-group-short {
     max-width: 10rem;
+    float: right;
+}
+
+.input-group-medium {
+    max-width: 12rem;
     float: right;
 }
 

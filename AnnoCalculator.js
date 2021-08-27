@@ -352,14 +352,20 @@ class Island {
 
 
         for (var building of (params.residenceBuildings || [])) {
-            var b = new ResidenceBuilding(building, assetsMap);
+            var b = new ResidenceBuilding(building, assetsMap, this);
             assetsMap.set(b.guid, b);
             this.residenceBuildings.push(b);
         }
 
-        for (var b of this.residenceBuildings)
+        for (var b of this.residenceBuildings) {
             if (b.upgradedBuilding)
                 b.upgradedBuilding = assetsMap.get(parseInt(b.upgradedBuilding));
+
+            persistInt(b, "existingBuildings");
+            persistFloat(b, "limitPerHouse");
+            persistInt(b, "limit");
+            persistBool(b, "fixLimitPerHouse");
+        }
 
         for (let level of params.populationLevels) {
 
@@ -530,7 +536,12 @@ class Island {
                 a.extraAmount(0);
                 a.extraGoodProductionList.checked(true);
             }
-
+            if (a instanceof ResidenceBuilding) {
+                a.existingBuildings(0);
+                a.limitPerHouse(a.fullHouse);
+                a.limit(0);
+                a.fixLimitPerHouse(true);
+            }
             if (a instanceof PopulationLevel) {
                 a.existingBuildings(0);
                 a.amountPerHouse(a.fullHouse);
@@ -580,7 +591,7 @@ class Consumer extends NamedElement {
 
         this.demands = new Set();
         this.buildings = ko.computed(() => Math.max(0, parseFloat(this.amount())) / this.tpmin);
-        this.existingBuildings = createIntInput(0);
+        this.existingBuildings = createIntInput(0,0);
         this.items = [];
 
         this.outputAmount = ko.computed(() => this.amount());
@@ -724,7 +735,7 @@ class Factory extends Consumer {
         this.extraAmount = createFloatInput(0);
         this.extraGoodProductionList = new ExtraGoodProductionList(this);
 
-        this.percentBoost = createIntInput(100);
+        this.percentBoost = createIntInput(100,0);
         this.boost = ko.computed(() => parseInt(this.percentBoost()) / 100);
 
         if (this.module) {
@@ -879,15 +890,9 @@ class Factory extends Consumer {
 
         this.extraDemand = new FactoryDemand({ factory: this, guid: this.product.guid }, assetsMap);
         this.extraAmount.subscribe(val => {
-            val = parseFloat(val);
-            if (!isFinite(val) || val == null) {
-                this.extraAmount(0);
-                return;
-            }
-
             let amount = parseFloat(this.amount());
             if (val < -Math.ceil(amount * 100) / 100)
-                this.extraAmount(- Math.ceil(amount * 100) / 100);
+                delayUpdate(this.extraAmount,- Math.ceil(amount * 100) / 100);
             else
                 this.extraDemand.updateAmount(Math.max(val, -amount));
         });
@@ -1015,6 +1020,20 @@ class PublicBuildingNeed extends Option {
 
         this.product = assetsMap.get(this.guid);
         this.initBans = PopulationNeed.prototype.initBans;
+    }
+}
+
+class StoreNeed extends PublicBuildingNeed {
+    constructor(config, floors, assetsMap) {
+        super(config, assetsMap);
+
+        this.visible = ko.computed(() => {
+            for (var i = this.requiredFloorLevel - 1; i < floors.length; i++)
+                if (floors[i].existingBuildings() > 0)
+                    return true;
+
+            return false;
+        });
     }
 }
 
@@ -1227,18 +1246,13 @@ class PopulationNeed extends Need {
         this.population = 0;
         this.goodConsumptionUpgradeList = new GoodConsumptionUpgradeList(this);
 
-        this.percentBoost = createFloatInput(100);
-        this.percentBoost.subscribe(val => {
-            val = parseFloat(val);
-            if (val < 0)
-                this.percentBoost(0);
-        });
+        this.percentBoost = createFloatInput(100,0);
         this.boost = ko.computed(() => parseInt(this.percentBoost()) / 100);
+
         this.boost.subscribe(() => this.updateAmount(this.population));
 
         this.checked = ko.observable(true);
         this.optionalAmount = ko.observable(0);
-
     }
 
     initBans(level, assetsMap) {
@@ -1246,6 +1260,9 @@ class PopulationNeed extends Need {
             var config = this.unlockCondition;
             this.locked = ko.computed(() => {
                 if (!config || !view.settings.needUnlockConditions.checked())
+                    return false;
+
+                if (level.floorsSummedExistingBuildings && level.floorsSummedExistingBuildings() > 0)
                     return false;
 
                 if (config.populationLevel != level.guid) {
@@ -1300,7 +1317,7 @@ class PopulationNeed extends Need {
     updateAmount(population) {
         this.population = population;
         this.optionalAmount(this.tpmin * population * this.boost());
-        if (!this.banned())
+        if (!this.banned || !this.banned())
             this.amount(this.optionalAmount());
     }
 
@@ -1310,6 +1327,36 @@ class PopulationNeed extends Need {
 
     decrementPercentBoost() {
         this.percentBoost(parseInt(this.percentBoost()) - 1);
+    }
+}
+
+class PopulationLevelNeed extends PopulationNeed {
+    constructor(config, level, assetsMap) {
+        super(config, assetsMap);
+        level.limit.subscribe(limit => this.updateAmount(limit))
+    }
+}
+
+class SkyscraperPopulationNeed extends PopulationNeed {
+    constructor(config, floors, assetsMap) {
+        super(config, assetsMap);
+
+        this.floors = typeof floors[0] === 'number' ? floors.map(f => assetsMap.get(f)) : floors;
+        this.floorSubscription = ko.computed(() => {
+            var amount = 0;
+            for (var i = this.requiredFloorLevel - 1; i < floors.length; i++)
+                amount += this.floors[i].limit();
+
+            this.updateAmount(amount);
+        });
+
+        this.hidden = ko.computed(() => {
+            for (var i = this.requiredFloorLevel - 1; i < floors.length; i++)
+                if (this.floors[i].existingBuildings() > 0)
+                    return false;
+
+            return true;
+        });
     }
 }
 
@@ -1350,10 +1397,49 @@ class BuildingMaterialsNeed extends Need {
 }
 
 class ResidenceBuilding extends NamedElement {
-    constructor(config, assetsMap) {
+    constructor(config, assetsMap, island) {
         super(config);
+        this.island = island;
 
-        this.existingBuildings = createIntInput(0);
+        this.existingBuildings = createIntInput(0,0);
+        this.limit = createIntInput(0,0);
+        this.limitPerHouse = createFloatInput(config.residentMax, config.residentMax);
+
+        this.fixLimitPerHouse = ko.observable(true);
+
+        var inRange = function (buildings, perHouse, val) {
+            return val <= buildings * perHouse && val > (buildings - 1) * perHouse;
+        }
+
+        this.existingBuildings.subscribe(val => {
+            if (this.fixLimitPerHouse()) {
+                if (!inRange(val, this.limitPerHouse(), this.limit()))
+                    this.limit(Math.floor(val * this.limitPerHouse()));
+            } else {
+                var perHouse = this.limit() / val;
+                if (Math.abs(this.limitPerHouse() - perHouse) > ACCURACY)
+                    this.limitPerHouse(perHouse);
+            }
+        });
+
+        this.limit.subscribe(val => {
+            if (this.fixLimitPerHouse())
+                this.existingBuildings(Math.ceil(val / this.limitPerHouse()));
+            else {
+                var perHouse = val / (this.existingBuildings() || 1);
+
+                if (Math.abs(this.limitPerHouse() - perHouse) > ACCURACY)
+                    if (perHouse < this.residentMax)
+                        this.existingBuildings(Math.floor(val / this.residentMax));
+                    else
+                        this.limitPerHouse(perHouse);
+            }
+        });
+
+        this.limitPerHouse.subscribe(val => {
+            if (!inRange(this.existingBuildings(), val, this.limit()))
+                this.limit(val * this.existingBuildings());
+        });
     }
 }
 
@@ -1370,11 +1456,28 @@ class PopulationLevel extends NamedElement {
         this.luxuryNeeds = [];
         this.region = assetsMap.get(config.region);
 
-        this.amount = createIntInput(0);
-        this.existingBuildings = createIntInput(0);
-        this.limit = createIntInput(0);
-        this.amountPerHouse = createFloatInput(config.fullHouse);
-        this.limitPerHouse = createFloatInput(config.fullHouse);
+        this.allResidences = [];
+
+        if (this.residence) {
+            this.residence = assetsMap.get(this.residence);
+            this.residence.populationLevel = this;
+            this.allResidences.push(this.residence);
+        }
+
+        if (config.skyscraperLevels) {
+            this.skyscraperLevels = config.skyscraperLevels.map(l => assetsMap.get(l));
+            this.allResidences = this.allResidences.concat(this.skyscraperLevels);
+        }
+        if (config.skylineTower) {
+            this.skylineTower = assetsMap.get(config.skylineTower);
+            this.allResidences.push(this.skylineTower);
+        }
+
+        this.amount = createIntInput(0,0);
+        this.existingBuildings = createIntInput(0,0);
+        this.limit = createIntInput(0,0);
+        this.amountPerHouse = createFloatInput(config.fullHouse, 1);
+        this.limitPerHouse = createFloatInput(config.fullHouse, config.fullHouse);
 
         this.fixAmountPerHouse = ko.observable(true);
         this.fixLimitPerHouse = ko.observable(true);
@@ -1383,11 +1486,32 @@ class PopulationLevel extends NamedElement {
             return val <= buildings * perHouse && val > (buildings - 1) * perHouse;
         }
 
-        this.amount.subscribe(val => {
-            if (val < 0) {
-                this.amount(0);
-                return;
+        
+
+        config.needs.forEach(n => {
+            var need;
+            if (n.tpmin > 0 && assetsMap.get(n.guid)) {
+                if (n.requiredFloorLevel)
+                    need = new SkyscraperPopulationNeed(n, this.skyscraperLevels, assetsMap);
+                else
+                    need = new PopulationLevelNeed(n, this, assetsMap);
+                this.needs.push(need);
+            } else {
+                if (n.requiredFloorLevel)
+                    need = new StoreNeed(n, this.skyscraperLevels, assetsMap);
+                else
+                    need = new PublicBuildingNeed(n, assetsMap);
+                this.buildingNeeds.push(need);
             }
+
+            if (n.residents)
+                this.basicNeeds.push(need);
+            else
+                this.luxuryNeeds.push(need);
+
+        });
+
+        this.amount.subscribe(val => {
 
             if (this.limit() < val)
                 this.limit(val);
@@ -1400,79 +1524,17 @@ class PopulationLevel extends NamedElement {
                 if (Math.abs(this.amountPerHouse() - perHouse) > ACCURACY)
                     if (this.fixLimitPerHouse() && perHouse > ACCURACY + this.limitPerHouse()) {
                         this.existingBuildings(Math.ceil(val / this.limitPerHouse() - EPSILON));
-                        this.amount(val);
+                        delayUpdate(this.amount,val);
                         return;
                     } else
                         this.amountPerHouse(perHouse);
             }
-
-
-        });
-
-        this.existingBuildings.subscribe(val => {
-            if (val < 0) {
-                this.existingBuildings(0);
-                return;
-            }
-
-
-            if (this.fixLimitPerHouse()) {
-                if (!inRange(val, this.limitPerHouse(), this.limit()))
-                    this.limit(Math.floor(val * this.limitPerHouse()));
-            } else {
-                var perHouse = this.limit() / val;
-                if (Math.abs(this.limitPerHouse() - perHouse) > ACCURACY)
-                    this.limitPerHouse(perHouse);
-            }
-
-            if (this.fixAmountPerHouse()) {
-                if (!inRange(val, this.amountPerHouse(), this.amount()))
-                    this.amount(Math.floor(val * this.amountPerHouse()));
-            } else {
-                var perHouse = this.amount() / val;
-                if (Math.abs(this.amountPerHouse() - perHouse) > ACCURACY)
-                    this.amountPerHouse(perHouse);
-            }
-        });
-
-        this.limit.subscribe(val => {
-            if (val < 0) {
-                this.limit(0);
-                return;
-            }
-
-            if (this.amount() > val)
-                this.amount(val);
-
-            if (this.fixLimitPerHouse())
-                this.existingBuildings(Math.ceil(val / this.limitPerHouse()));
-            else {
-                var perHouse = val / (this.existingBuildings() || 1);
-                var perHouseCapped = Math.max(this.fullHouse, perHouse);
-
-                if (Math.abs(this.limitPerHouse() - perHouse) > ACCURACY)
-                    if (this.fixAmountPerHouse() && perHouseCapped + ACCURACY < this.amountPerHouse()) {
-                        this.existingBuildings(Math.ceil(val / this.amountPerHouse()));
-                        this.limit(val);
-                        return;
-                    } else if (perHouse < this.fullHouse)
-                        this.existingBuildings(Math.floor(val / this.fullHouse));
-                    else
-                        this.limitPerHouse(perHouse);
-            }
-
-
         });
 
         this.amountPerHouse.subscribe(val => {
-            if (val < 1) {
-                this.amountPerHouse(1);
-                return;
-            }
-
             if (val > this.limitPerHouse() + ACCURACY) {
                 if (this.fixLimitPerHouse()) {
-                    this.amountPerHouse(this.limitPerHouse());
+                    delayUpdate(this.amountPerHouse,this.limitPerHouse());
                     return;
                 } else {
                     this.limitPerHouse(val);
@@ -1483,53 +1545,154 @@ class PopulationLevel extends NamedElement {
                 this.amount(val * this.existingBuildings());
         });
 
-        this.limitPerHouse.subscribe(val => {
-            if (val < this.fullHouse) {
-                this.limitPerHouse(this.fullHouse);
-                return;
-            }
-
-            if (val + ACCURACY < this.amountPerHouse()) {
-                if (this.fixAmountPerHouse()) {
-                    this.limitPerHouse(this.amountPerHouse());
+        if (this.skyscraperLevels) {
+            // ensure that the value for the population level and those summed over the buildings match
+            this.floorsSummedLimit = ko.computed(() => {
+                var tower = this.skylineTower ? this.skylineTower.limit() : 0;
+                return tower + this.skyscraperLevels.map(s => s.limit()).reduce((a, b) => a + b);
+            });
+            this.floorsSummedExistingBuildings = ko.computed(() => {
+                var tower = this.skylineTower ? this.skylineTower.existingBuildings() : 0;
+                return tower + this.skyscraperLevels.map(s => s.existingBuildings()).reduce((a, b) => a + b);
+            });
+            this.floorsSummedExistingBuildings.subscribe(val => {
+                if (val > 0)
+                    this.fixLimitPerHouse(true);
+            });
+            
+            this.floorsSummedLimit.subscribe(val => {
+                this.limit(val + this.residence.limit());
+            });
+            this.limit.subscribe(val => {
+                if (val < this.floorsSummedLimit()) {
+                    delayUpdate(this.limit,this.floorsSummedLimit());
                     return;
-                } else {
-                    this.amountPerHouse(val);
                 }
-            }
+                else
+                    this.residence.limit(Math.max(0, val - this.floorsSummedLimit()));
 
-            if (!inRange(this.existingBuildings(), val, this.limit()))
-                this.limit(val * this.existingBuildings());
-        });
+                if (this.amount() > val)
+                    this.amount(val);
 
-        this.propagatedAmount = ko.computed(() => {
-            var amount = this.limit();
-            this.needs.forEach(n => n.updateAmount(amount));
+                // if there are only residences, the residence object takes care of 
+                // updating existingBuildings / limitPerHouse / limit appropriately
+                if (this.floorsSummedExistingBuildings() > 0) {
+                    var perHouse = val / (this.existingBuildings() || 1);
+                    var perHouseCapped = Math.max(this.fullHouse, perHouse);
 
-            return amount;
-        });
+                    if (Math.abs(this.limitPerHouse() - perHouse) > ACCURACY)
+                        if (this.fixAmountPerHouse() && perHouseCapped + ACCURACY < this.amountPerHouse()) {
+                            this.existingBuildings(Math.ceil(val / this.amountPerHouse()));
+                            delayUpdate(this.limit,val);
+                            return;
+                        } else if (perHouse < this.fullHouse)
+                            this.existingBuildings(Math.floor(val / this.fullHouse));
+                        else
+                            this.limitPerHouse(perHouse);
+                }
+            });
+            this.residence.limit.subscribe(val => {
+                this.limit(val + this.floorsSummedLimit());
+            });
 
-        config.needs.forEach(n => {
-            var need;
-            if (n.tpmin > 0 && assetsMap.get(n.guid)) {
-                need = new PopulationNeed(n, assetsMap);
-                this.needs.push(need);
-            } else {
-                need = new PublicBuildingNeed(n, assetsMap);
-                this.buildingNeeds.push(need);
-            }
+            this.floorsSummedExistingBuildings.subscribe(val => {
+                this.existingBuildings(val + this.residence.existingBuildings());
+            });
+            this.existingBuildings.subscribe(val => {
+                if (val < this.floorsSummedExistingBuildings()) {
+                    delayUpdate(this.existingBuildings,this.floorsSummedExistingBuildings());
+                    return;
+                }
+                else
+                    this.residence.existingBuildings(Math.max(0, val - this.floorsSummedExistingBuildings()));
 
-            if (n.residents)
-                this.basicNeeds.push(need);
-            else
-                this.luxuryNeeds.push(need);
+                if (this.floorsSummedExistingBuildings() > 0) {
+                    var perHouse = this.limit() / val;
+                    if (Math.abs(this.limitPerHouse() - perHouse) > ACCURACY)
+                        this.limitPerHouse(perHouse);
+                }
 
-        });
+                if (this.fixAmountPerHouse()) {
+                    if (!inRange(val, this.amountPerHouse(), this.amount()))
+                        this.amount(Math.floor(val * this.amountPerHouse()));
+                } else {
+                    var perHouse = this.amount() / val;
+                    if (Math.abs(this.amountPerHouse() - perHouse) > ACCURACY)
+                        this.amountPerHouse(perHouse);
+                }
+            });
+            this.residence.existingBuildings.subscribe(val => {
+                this.existingBuildings(val + this.floorsSummedExistingBuildings());
+            });
 
-        if (this.residence) {
-            this.residence = assetsMap.get(this.residence);
-            this.residence.populationLevel = this;
+            for (var attr of ["limitPerHouse", "fixLimitPerHouse"])
+                this[attr].subscribe(val => this.residence[attr](val));
+        } else {
+            
+
+            this.existingBuildings.subscribe(val => {
+
+                if (this.fixLimitPerHouse()) {
+                    if (!inRange(val, this.limitPerHouse(), this.limit()))
+                        this.limit(Math.floor(val * this.limitPerHouse()));
+                } else {
+                    var perHouse = this.limit() / val;
+                    if (Math.abs(this.limitPerHouse() - perHouse) > ACCURACY)
+                        this.limitPerHouse(perHouse);
+                }
+
+                if (this.fixAmountPerHouse()) {
+                    if (!inRange(val, this.amountPerHouse(), this.amount()))
+                        this.amount(Math.floor(val * this.amountPerHouse()));
+                } else {
+                    var perHouse = this.amount() / val;
+                    if (Math.abs(this.amountPerHouse() - perHouse) > ACCURACY)
+                        this.amountPerHouse(perHouse);
+                }
+            });
+
+            this.limit.subscribe(val => {
+                if (this.amount() > val)
+                    this.amount(val);
+
+                if (this.fixLimitPerHouse())
+                    this.existingBuildings(Math.ceil(val / this.limitPerHouse()));
+                else {
+                    var perHouse = val / (this.existingBuildings() || 1);
+                    var perHouseCapped = Math.max(this.fullHouse, perHouse);
+
+                    if (Math.abs(this.limitPerHouse() - perHouse) > ACCURACY)
+                        if (this.fixAmountPerHouse() && perHouseCapped + ACCURACY < this.amountPerHouse()) {
+                            this.existingBuildings(Math.ceil(val / this.amountPerHouse()));
+                            delayUpdate(this.limit,val);
+                            return;
+                        } else if (perHouse < this.fullHouse)
+                            this.existingBuildings(Math.floor(val / this.fullHouse));
+                        else
+                            this.limitPerHouse(perHouse);
+                }
+            });
+
+
+
+            this.limitPerHouse.subscribe(val => {
+                if (val + ACCURACY < this.amountPerHouse()) {
+                    if (this.fixAmountPerHouse()) {
+                        delayUpdate(this.limitPerHouse,this.amountPerHouse());
+                        return;
+                    } else {
+                        this.amountPerHouse(val);
+                    }
+                }
+
+                if (!inRange(this.existingBuildings(), val, this.limit()))
+                    this.limit(val * this.existingBuildings());
+            });
+
+            for (var attr of ["existingBuildings", "limit", "limitPerHouse", "fixLimitPerHouse"])
+                this[attr].subscribe(val => this.residence[attr](val));
         }
+
     }
 
     initBans(assetsMap) {
@@ -1588,6 +1751,20 @@ class PopulationLevel extends NamedElement {
             other.limitPerHouse(this.limitPerHouse());
             other.fixAmountPerHouse(true);
             other.fixLimitPerHouse(true);
+
+            if (this.residence && other.residence) {
+                other.residence.limitPerHouse(this.residence.limitPerHouse());
+                other.residence.fixLimitPerHouse(true);
+            }
+
+            if (this.skyscraperLevels && other.skyscraperLevels) {
+                other.skyscraperLevels.limitPerHouse(this.skyscraperLevels.limitPerHouse());
+                other.skyscraperLevels.fixLimitPerHouse(true);
+            }
+
+            if (this.skylineTower && other.skylineTower) {
+                other.skylineTower.limitPerHouse(this.skylineTower.limitPerHouse());
+            }
         }
     }
 }
@@ -1623,13 +1800,8 @@ class WorkforceDemand extends NamedElement {
         this.buildings = 0;
 
         this.amount = ko.observable(0);
-        this.percentBoost = createIntInput(100);
+        this.percentBoost = createIntInput(100,0);
         this.percentBoost.subscribe(val => {
-            if (val < 0) {
-                this.percentBoost(0);
-                return;
-            }
-
             this.updateAmount(this.buildings);
         });
 
@@ -1918,7 +2090,7 @@ class GoodConsumptionUpgradeList {
 
         this.amount.subscribe(() => {
             if (view.settings.autoApplyConsumptionUpgrades.checked())
-                this.apply();
+                setTimeout(() => this.apply(),0);
         });
     }
 
@@ -1961,7 +2133,7 @@ class TradeRoute {
     constructor(config) {
         $.extend(this, config);
 
-        this.amount = createFloatInput(0);
+        this.amount = createFloatInput(0,0);
         this.amount(config.amount);
     }
 
@@ -2266,7 +2438,7 @@ class TradeContract {
         this.exportProduct = this.exportFactory.product;
         this.importProduct = this.importFactory.product;
 
-        this.importAmount = createFloatInput(0);
+        this.importAmount = createFloatInput(0,0);
 
         this.ratio = ko.computed(() => {
             return (this.importProduct.agio || 1) * this.importProduct.exchangeWeight /
@@ -2368,8 +2540,8 @@ class ContractManager {
 
         }
 
-        this.traderLoadingSpeed = createFloatInput(2);
-        this.existingStorageCapacity = createIntInput(2000);
+        this.traderLoadingSpeed = createFloatInput(2,1,50);
+        this.existingStorageCapacity = createIntInput(2000,100,50000);
 
         if (localStorage) {
             {
@@ -2664,7 +2836,7 @@ class ContractCreatorFactory {
         this.exchangeFactory = ko.observable();
         this.exchangeFactory.subscribe(f => this.exchangeProduct(f ? f.product : null));
 
-        this.newAmount = createFloatInput(0);
+        this.newAmount = createFloatInput(0,0);
 
         this.contractList = ko.pureComputed(() => {
             return view.selectedFactory().contractList;
@@ -3568,6 +3740,7 @@ function init(isFirstRun) {
     }
 
     // set up modal dialogs
+    view.skyscraperDropdownStatus = ko.observable("hide");
     view.selectedFactory = ko.observable(view.island().factories[0]);
     view.selectedPopulationLevel = ko.observable(view.island().populationLevels[0]);
     view.selectedGoodConsumptionUpgradeList =
@@ -3599,6 +3772,21 @@ function init(isFirstRun) {
         () => {
             view.selectedContractManager(view.island().contractManager);
         });
+
+    // store collapsable state of skyline configuration closing and reopening would otherwise restore the default
+    view.selectedPopulationLevel.subscribe(() => {
+        setTimeout(() => {
+            $('#population-level-building-configuration').collapse(view.skyscraperDropdownStatus());
+            $('#population-level-building-configuration').off();
+            $('#population-level-building-configuration').on("hidden.bs.collapse shown.bs.collapse", function (event) {
+                if ($(this).hasClass("show")) {
+                    view.skyscraperDropdownStatus("show");
+                } else {
+                    view.skyscraperDropdownStatus("hide");
+                }
+            });
+        }, 200);
+    })
 
     view.tradeManager = new TradeManager();
 
@@ -3727,32 +3915,79 @@ function formatPercentage(number) {
     return str;
 }
 
-function createIntInput(init) {
-    var obs = ko.observable(init);
-    obs.subscribe(val => {
-        var num = parseInt(val);
-
-        if (typeof num == "number" && isFinite(num) && val !== num)
-            obs(num);
-        else if (typeof num != "number" || !isFinite(num))
-            obs(init);
+function delayUpdate(obs, val) {
+    var version = obs.getVersion();
+    setTimeout(() => {
+        if (!obs.hasChanged(version))
+            obs(val);
     });
-
-    return obs;
 }
 
-function createFloatInput(init) {
-    var obs = ko.observable(init);
-    obs.subscribe(val => {
-        var num = parseFloat(val);
+// from https://knockoutjs.com/documentation/extenders.html
+ko.extenders.numeric = function (target, bounds) {
+    //create a writable computed observable to intercept writes to our observable
+    var result = ko.computed({
+        read: target,  //always return the original observables value
+        write: function (newValue) {
+            var current = target();
 
-        if (typeof num == "number" && isFinite(num) && val !== num)
-            obs(num);
-        else if (typeof num != "number" || !isFinite(num))
-            obs(init);
+            if (bounds.precision === 0)
+                valueToWrite = parseInt(newValue);
+            else if (bounds.precision) {
+                roundingMultiplier = Math.pow(10, precision);
+                newValueAsNum = isNaN(newValue) ? 0 : +newValue;
+                valueToWrite = Math.round(newValueAsNum * roundingMultiplier) / roundingMultiplier;
+            } else {
+                valueToWrite = parseFloat(newValue);
+            }
+
+            if (!isFinite(valueToWrite))
+                return;
+
+            if (valueToWrite > bounds.max)
+                valueToWrite = bounds.max;
+
+            if (valueToWrite < bounds.min)
+                valueToWrite = bounds.min;
+
+
+            //only write if it changed
+            if (valueToWrite !== current) {
+                if (result._state && result._state.isBeingEvaluated) {
+                    console.log("cycle detected, propagation stops");
+                    return;
+                }
+
+                target(valueToWrite);
+            }
+        }
+    }).extend({ notify: 'always' });
+
+    //initialize with current value to make sure it is rounded appropriately
+    result(target());
+
+    //return the new computed observable
+    return result;
+};
+
+
+function createIntInput(init, min = -Infinity, max = Infinity) {
+   return ko.observable(init).extend({
+        numeric: {
+            precision: 0,
+            min: min,
+            max: max
+        }
     });
+}
 
-    return obs;
+function createFloatInput(init, min = -Infinity, max = Infinity) {
+    return ko.observable(init).extend({
+        numeric: {
+            min: min,
+            max: max
+        }
+    });
 }
 
 function factoryReset() {
