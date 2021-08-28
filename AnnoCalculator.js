@@ -457,6 +457,10 @@ class Island {
                         b.goodConsumptionUpgrade.checked(false);
                 });
             }
+
+            b.recipeName = ko.computed(() => {
+                   return b.name().split(':').slice(-1)[0].trim();
+            });
         }
 
 
