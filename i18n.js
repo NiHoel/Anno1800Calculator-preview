@@ -53,6 +53,20 @@ texts = {
         "japanese": "建物",
         "russian": "Сооружения"
     },
+    skyscrapers: {
+        "english": "Skyscrapers",
+        //"guid": 131726,
+        "spanish": "Rascacielos",
+        "chinese": "摩天大楼",
+        "korean": "마천루",
+        "japanese": "高層ビル",
+        "taiwanese": "摩天大樓",
+        "french": "Gratte-ciel",
+        "polish": "Wieżowce",
+        "german": "Wolkenkratzer",
+        "italian": "Grattacieli",
+        "russian": "Небоскребы"
+    },
     workforce: {
         english: "Required Workforce",
         german: "Benötigte Arbeitskraft",

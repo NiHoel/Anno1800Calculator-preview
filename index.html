@@ -822,7 +822,7 @@
                                     <td>
                                         <div class="inline-list-stretched">
                                             <div class="input-group spinner" style="max-width: 18rem;">
-                                                <div class="input-group-prepend" style="display: flex">
+                                                <div class="input-group-prepend" style="display: flex" data-bind="visible: $data.canEditPerHouse">
                                                     <div class="input-group-text">
                                                         <div class="mr-2">
 
@@ -838,7 +838,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <input class="form-control" type="number" value="10" step="1" min="10" data-bind="value: amountPerHouse, disable: $data.fixAmountPerHouse, attr: {id: $data.guid + '-amountPerHouse-input'}" />
+                                                <input class="form-control" type="number" value="10" step="1" min="10" data-bind="value: amountPerHouse, disable: $data.fixAmountPerHouse(), attr: {id: $data.guid + '-amountPerHouse-input'}" />
                                                 <div class="input-group-append">
                                                     <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.amountPerHouse, id: $parent.guid + '-amountPerHouse-input' }}"></div>
                                                     <span class="input-group-text" data-bind="text: $root.texts.perHouse.name">Per House</span>
@@ -865,7 +865,7 @@
                                     <td>
                                         <div class="inline-list-stretched">
                                             <div class="input-group spinner" style="max-width: 18rem;">
-                                                <div class="input-group-prepend" style="display: flex" data-bind="visible: !$data.skyscraperLevels || $data.floorsSummedExistingBuildings() === 0">
+                                                <div class="input-group-prepend" style="display: flex" data-bind="visible: $data.canEditPerHouse">
                                                     <div class="input-group-text">
                                                         <div class="mr-2">
 
@@ -881,15 +881,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="input-group-prepend" style="display: flex" data-bind="visible: $data.skyscraperLevels && $data.floorsSummedExistingBuildings() > 0">
-                                                    <div class="input-group-text">
-                                                        <div class="mr-2">
-
-                                                            <img class="icon-sm icon-light" src="icon_lock.png" />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <input class="form-control" type="number" value="10" step="1" min="10" data-bind="value: limitPerHouse, disable: $data.fixLimitPerHouse, attr: {id: $data.guid + '-limitPerHouse-input'}" />
+                                                <input class="form-control" type="number" value="10" step="1" min="10" data-bind="value: limitPerHouse, disable: $data.fixLimitPerHouse() || !$data.canEditPerHouse(), attr: {id: $data.guid + '-limitPerHouse-input'}" />
                                                 <div class="input-group-append">
                                                     <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.limitPerHouse, id: $parent.guid + '-limitPerHouse-input' }}"></div>
                                                     <span class="input-group-text" data-bind="text: $root.texts.perHouse.name">Per House</span>
@@ -916,7 +908,7 @@
                             <legend class="collapser collapsed" data-toggle="collapse" data-target="#population-level-building-configuration">
                                 <span class="fa fa-chevron-right"></span>
                                 <span class="fa fa-chevron-down"></span>
-                                <span data-bind="text:$root.texts.buildings.name"></span>
+                                <span data-bind="text:$root.texts.skyscrapers.name">Skyscrapers</span>
                             </legend>
 
                             <div id="population-level-building-configuration" class="collapse" data-bind="class: $root.skyscraperDropdownStatus">
