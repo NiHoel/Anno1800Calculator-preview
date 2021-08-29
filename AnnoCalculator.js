@@ -463,18 +463,17 @@ class Island {
             });
         }
 
-
-        // negative extra amount must be set after the demands of the population are generated
-        // otherwise it would be set to zero
-        for (let f of this.factories) {
-            persistFloat(f, "extraAmount");
-            persistBool(f.extraGoodProductionList, "checked", `${f.guid}.extraGoodProductionList.checked`);
-        }
-
         for (let f of this.consumers) {
             persistInt(f, "existingBuildings");
             if (f.workforceDemand)
                 persistInt(f.workforceDemand, "percentBoost", `${f.guid}.workforce.percentBoost`);
+        }
+
+        // negative extra amount must be set after the demands of the population and public buildings are generated
+        // otherwise it would be set to zero
+        for (let f of this.factories) {
+            persistFloat(f, "extraAmount");
+            persistBool(f.extraGoodProductionList, "checked", `${f.guid}.extraGoodProductionList.checked`);
         }
 
         // force update once all pending notifications are processed
@@ -3948,15 +3947,19 @@ ko.extenders.numeric = function (target, bounds) {
             if (bounds.precision === 0)
                 valueToWrite = parseInt(newValue);
             else if (bounds.precision) {
-                roundingMultiplier = Math.pow(10, precision);
+                roundingMultiplier = Math.pow(10, bounds.precision);
                 newValueAsNum = isNaN(newValue) ? 0 : +newValue;
                 valueToWrite = Math.round(newValueAsNum * roundingMultiplier) / roundingMultiplier;
             } else {
                 valueToWrite = parseFloat(newValue);
             }
 
-            if (!isFinite(valueToWrite))
+            if (!isFinite(valueToWrite)) {
+                if (newValue != current)
+                    target.notifySubscribers(); // reset input field
+
                 return;
+            }
 
             if (valueToWrite > bounds.max)
                 valueToWrite = bounds.max;
@@ -3973,6 +3976,8 @@ ko.extenders.numeric = function (target, bounds) {
                 }
 
                 target(valueToWrite);
+            } else {
+                target.notifySubscribers();
             }
         }
     }).extend({ notify: 'always' });
@@ -3999,7 +4004,8 @@ function createFloatInput(init, min = -Infinity, max = Infinity) {
     return ko.observable(init).extend({
         numeric: {
             min: min,
-            max: max
+            max: max,
+            precision: 6
         }
     });
 }
