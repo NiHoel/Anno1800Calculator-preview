@@ -26,6 +26,32 @@
     <script type="text/javascript" src="i18n.js"></script>
     <script type="text/javascript" src="AnnoCalculator.js"></script>
     <script type="text/javascript" src="params_2021-08-31_full.js"></script>
+
+    <script id="treeElement" type="text/html">
+        <li>
+            <shadow href="#" class="tree-node">
+                
+
+                        <div class="ui-fchain-item-icon mb-2">
+                            <img class="icon-tile" src="" data-bind="attr: { src: $data.factory.icon ? $data.factory.icon : null, alt: $data.factory.name }">
+                        </div>
+                        <div class="ui-fchain-item-count mb-2">
+                            <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
+                                <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? formatNumber($data.buildings) : formatNumber(Math.ceil($data.buildings))"></span>
+                                <span>x</span>
+                            </span>
+                        </div>
+                        <div class="tree-node-item-name">
+                            <a href="#" data-bind="text: $data.factory.name, visible: !$root.settings.hideNames.checked(), click: () => $root.selectedFactory($data.factory)"></a>
+                        </div>
+                   
+            </shadow>
+            <div data-bind="if: children.length">
+            <ul data-bind="template: { name: 'treeElement', foreach: children }">
+            </ul>
+            </div>
+        </li>
+    </script>
 </head>
 <body>
     <noscript>This site requires JavaScript!</noscript>
@@ -1635,24 +1661,10 @@
 
 
                         </div>
-                        <div data-bind="visible: $root.productionChain.demands().length > 0">
+                        <div data-bind="if: $root.productionChain.tree() && $root.productionChain.tree().buildings > ACCURACY">
                             <hr />
-                            <div class="row" data-bind="foreach: $root.productionChain.demands" style="justify-content: center">
-                                <div class="col-4 col-md-2">
-
-                                    <div class="ui-fchain-item-icon">
-                                        <img class="icon-tile" src="" data-bind="attr: { src: $data.factory.icon ? $data.factory.icon : null, alt: $data.factory.name }">
-                                    </div>
-                                    <div class="ui-fchain-item-count">
-                                        <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
-                                            <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? formatNumber($data.buildings) : formatNumber(Math.ceil($data.buildings))"></span>
-                                            <span>x</span>
-                                        </span>
-                                    </div>
-                                    <div class="ui-fchain-item-name mb-3">
-                                        <a href="#" data-bind="text: $data.factory.name, visible: !$root.settings.hideNames.checked(), click: () => $root.selectedFactory($data.factory)"></a>
-                                    </div>
-                                </div>
+                            <div class="tree" data-bind="with: $root.productionChain.tree()"style="justify-content: center">
+                                <ul data-bind="template: { name: 'treeElement'}"></ul>
                             </div>
                         </div>
 

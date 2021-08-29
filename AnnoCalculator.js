@@ -459,7 +459,7 @@ class Island {
             }
 
             b.recipeName = ko.computed(() => {
-                   return b.name().split(':').slice(-1)[0].trim();
+                return b.name().split(':').slice(-1)[0].trim();
             });
         }
 
@@ -594,7 +594,7 @@ class Consumer extends NamedElement {
 
         this.demands = new Set();
         this.buildings = ko.computed(() => Math.max(0, parseFloat(this.amount())) / this.tpmin);
-        this.existingBuildings = createIntInput(0,0);
+        this.existingBuildings = createIntInput(0, 0);
         this.items = [];
 
         this.outputAmount = ko.computed(() => this.amount());
@@ -738,7 +738,7 @@ class Factory extends Consumer {
         this.extraAmount = createFloatInput(0);
         this.extraGoodProductionList = new ExtraGoodProductionList(this);
 
-        this.percentBoost = createIntInput(100,0);
+        this.percentBoost = createIntInput(100, 0);
         this.boost = ko.computed(() => parseInt(this.percentBoost()) / 100);
 
         if (this.module) {
@@ -895,7 +895,7 @@ class Factory extends Consumer {
         this.extraAmount.subscribe(val => {
             let amount = parseFloat(this.amount());
             if (val < -Math.ceil(amount * 100) / 100)
-                delayUpdate(this.extraAmount,- Math.ceil(amount * 100) / 100);
+                delayUpdate(this.extraAmount, - Math.ceil(amount * 100) / 100);
             else
                 this.extraDemand.updateAmount(Math.max(val, -amount));
         });
@@ -1249,7 +1249,7 @@ class PopulationNeed extends Need {
         this.population = 0;
         this.goodConsumptionUpgradeList = new GoodConsumptionUpgradeList(this);
 
-        this.percentBoost = createFloatInput(100,0);
+        this.percentBoost = createFloatInput(100, 0);
         this.boost = ko.computed(() => parseInt(this.percentBoost()) / 100);
 
         this.boost.subscribe(() => this.updateAmount(this.population));
@@ -1404,8 +1404,8 @@ class ResidenceBuilding extends NamedElement {
         super(config);
         this.island = island;
 
-        this.existingBuildings = createIntInput(0,0);
-        this.limit = createIntInput(0,0);
+        this.existingBuildings = createIntInput(0, 0);
+        this.limit = createIntInput(0, 0);
         this.limitPerHouse = createFloatInput(config.residentMax + (config.freeResidents || 0), config.residentMax);
 
         this.fixLimitPerHouse = ko.observable(true);
@@ -1476,9 +1476,9 @@ class PopulationLevel extends NamedElement {
             this.allResidences.push(this.skylineTower);
         }
 
-        this.amount = createIntInput(0,0);
-        this.existingBuildings = createIntInput(0,0);
-        this.limit = createIntInput(0,0);
+        this.amount = createIntInput(0, 0);
+        this.existingBuildings = createIntInput(0, 0);
+        this.limit = createIntInput(0, 0);
         this.amountPerHouse = createFloatInput(config.fullHouse, 1);
         this.limitPerHouse = createFloatInput(config.fullHouse, config.fullHouse);
 
@@ -1489,7 +1489,7 @@ class PopulationLevel extends NamedElement {
             return val <= buildings * perHouse && val > (buildings - 1) * perHouse;
         }
 
-        
+
 
         config.needs.forEach(n => {
             var need;
@@ -1527,7 +1527,7 @@ class PopulationLevel extends NamedElement {
                 if (Math.abs(this.amountPerHouse() - perHouse) > ACCURACY)
                     if (this.fixLimitPerHouse() && perHouse > ACCURACY + this.limitPerHouse()) {
                         this.existingBuildings(Math.ceil(val / this.limitPerHouse() - EPSILON));
-                        delayUpdate(this.amount,val);
+                        delayUpdate(this.amount, val);
                         return;
                     } else
                         this.amountPerHouse(perHouse);
@@ -1537,7 +1537,7 @@ class PopulationLevel extends NamedElement {
         this.amountPerHouse.subscribe(val => {
             if (val > this.limitPerHouse() + ACCURACY) {
                 if (this.fixLimitPerHouse()) {
-                    delayUpdate(this.amountPerHouse,this.limitPerHouse());
+                    delayUpdate(this.amountPerHouse, this.limitPerHouse());
                     return;
                 } else {
                     this.limitPerHouse(val);
@@ -1547,7 +1547,7 @@ class PopulationLevel extends NamedElement {
             if (!inRange(this.existingBuildings(), val, this.amount()))
                 this.amount(val * this.existingBuildings());
         });
-        
+
         if (this.skyscraperLevels) {
             // ensure that the value for the population level and those summed over the buildings match
             this.floorsSummedLimit = ko.computed(() => {
@@ -1564,13 +1564,13 @@ class PopulationLevel extends NamedElement {
                     this.fixAmountPerHouse(false);
                 }
             });
-            
+
             this.floorsSummedLimit.subscribe(val => {
                 this.limit(val + this.residence.limit());
             });
             this.limit.subscribe(val => {
                 if (val < this.floorsSummedLimit()) {
-                    delayUpdate(this.limit,this.floorsSummedLimit());
+                    delayUpdate(this.limit, this.floorsSummedLimit());
                     return;
                 }
                 else
@@ -1588,7 +1588,7 @@ class PopulationLevel extends NamedElement {
                     if (Math.abs(this.limitPerHouse() - perHouse) > ACCURACY)
                         if (this.fixAmountPerHouse() && perHouseCapped + ACCURACY < this.amountPerHouse()) {
                             this.existingBuildings(Math.ceil(val / this.amountPerHouse()));
-                            delayUpdate(this.limit,val);
+                            delayUpdate(this.limit, val);
                             return;
                         } else if (perHouse < this.fullHouse)
                             this.existingBuildings(Math.floor(val / this.fullHouse));
@@ -1605,7 +1605,7 @@ class PopulationLevel extends NamedElement {
             });
             this.existingBuildings.subscribe(val => {
                 if (val < this.floorsSummedExistingBuildings()) {
-                    delayUpdate(this.existingBuildings,this.floorsSummedExistingBuildings());
+                    delayUpdate(this.existingBuildings, this.floorsSummedExistingBuildings());
                     return;
                 }
                 else
@@ -1637,7 +1637,7 @@ class PopulationLevel extends NamedElement {
                 return this.floorsSummedExistingBuildings() <= 0;
             });
         } else {
-            
+
 
             this.existingBuildings.subscribe(val => {
 
@@ -1673,7 +1673,7 @@ class PopulationLevel extends NamedElement {
                     if (Math.abs(this.limitPerHouse() - perHouse) > ACCURACY)
                         if (this.fixAmountPerHouse() && perHouseCapped + ACCURACY < this.amountPerHouse()) {
                             this.existingBuildings(Math.ceil(val / this.amountPerHouse()));
-                            delayUpdate(this.limit,val);
+                            delayUpdate(this.limit, val);
                             return;
                         } else if (perHouse < this.fullHouse)
                             this.existingBuildings(Math.floor(val / this.fullHouse));
@@ -1687,7 +1687,7 @@ class PopulationLevel extends NamedElement {
             this.limitPerHouse.subscribe(val => {
                 if (val + ACCURACY < this.amountPerHouse()) {
                     if (this.fixAmountPerHouse()) {
-                        delayUpdate(this.limitPerHouse,this.amountPerHouse());
+                        delayUpdate(this.limitPerHouse, this.amountPerHouse());
                         return;
                     } else {
                         this.amountPerHouse(val);
@@ -1813,7 +1813,7 @@ class WorkforceDemand extends NamedElement {
         this.buildings = 0;
 
         this.amount = ko.observable(0);
-        this.percentBoost = createIntInput(100,0);
+        this.percentBoost = createIntInput(100, 0);
         this.percentBoost.subscribe(val => {
             this.updateAmount(this.buildings);
         });
@@ -2103,7 +2103,7 @@ class GoodConsumptionUpgradeList {
 
         this.amount.subscribe(() => {
             if (view.settings.autoApplyConsumptionUpgrades.checked())
-                setTimeout(() => this.apply(),0);
+                setTimeout(() => this.apply(), 0);
         });
     }
 
@@ -2146,7 +2146,7 @@ class TradeRoute {
     constructor(config) {
         $.extend(this, config);
 
-        this.amount = createFloatInput(0,0);
+        this.amount = createFloatInput(0, 0);
         this.amount(config.amount);
     }
 
@@ -2451,7 +2451,7 @@ class TradeContract {
         this.exportProduct = this.exportFactory.product;
         this.importProduct = this.importFactory.product;
 
-        this.importAmount = createFloatInput(0,0);
+        this.importAmount = createFloatInput(0, 0);
 
         this.ratio = ko.computed(() => {
             return (this.importProduct.agio || 1) * this.importProduct.exchangeWeight /
@@ -2553,8 +2553,8 @@ class ContractManager {
 
         }
 
-        this.traderLoadingSpeed = createFloatInput(2,1,50);
-        this.existingStorageCapacity = createIntInput(2000,100,50000);
+        this.traderLoadingSpeed = createFloatInput(2, 1, 50);
+        this.existingStorageCapacity = createIntInput(2000, 100, 50000);
 
         if (localStorage) {
             {
@@ -2849,7 +2849,7 @@ class ContractCreatorFactory {
         this.exchangeFactory = ko.observable();
         this.exchangeFactory.subscribe(f => this.exchangeProduct(f ? f.product : null));
 
-        this.newAmount = createFloatInput(0,0);
+        this.newAmount = createFloatInput(0, 0);
 
         this.contractList = ko.pureComputed(() => {
             return view.selectedFactory().contractList;
@@ -2969,67 +2969,93 @@ class RecipeList extends NamedElement {
 
 class ProductionChainView {
     constructor() {
-        this.factoryToDemands = new Map();
-        this.demands = ko.computed(() => {
-            var chain = [];
-            let traverse = d => {
+        //this.factoryToDemands = new Map();
+        this.tree = ko.computed(() => {
+            let traverse = (d, node) => {
                 if (d.factory && d.amount) {
                     var a = ko.isObservable(d.amount) ? parseFloat(d.amount()) : parseFloat(d.amount);
                     var f = ko.isObservable(d.factory) ? d.factory() : d.factory;
                     if (Math.abs(a) < ACCURACY)
-                        return;
+                        return node;
 
-                    if (f == view.selectedFactory()) {
-                        for (var e of d.demands)
-                            traverse(e);
-                        return;
-                    }
-
-                    if (!this.factoryToDemands.has(f)) {
-                        var demandAggregate = {
+                    if (!node)
+                        node = {
                             amount: a,
                             factory: f,
-                            demands: [d]
+                            children: []
                         }
+                    else
+                        node.amount += a;
+                } else
+                    return node;
 
-                        this.factoryToDemands.set(f, demandAggregate);
-                        chain.push(demandAggregate);
-                    } else {
-                        var aggregate = this.factoryToDemands.get(f);
-                        aggregate.amount += a;
-                        aggregate.demands.push(d);
+                var childDemands = d.demands.flatMap(e => {
+                    if (e instanceof ItemDemandSwitch || e instanceof FactoryDemandSwitch)
+                        return e.demands;
+                    return [e];
+                });
+
+                if (node.children.length) {
+                    for (var i = 0; i < node.children.length; i++) {
+                        if(node.children[i])
+                            traverse(childDemands[i], node.children[i]);
                     }
-
+                } else {
+                    for (var e of childDemands) {
+                        node.children.push(traverse(e));
+                    }
                 }
 
-                for (var e of d.demands)
-                    traverse(e);
+                return node;
             }
 
             var f = view.selectedFactory();
+            var root = null;
             var demands = f.demands;
-            if (!demands.size && f.needs && f.needs.length)
-                demands = f.needs;
+            if (!demands.size && f.needs && f.needs.length) {
+                root = {
+                    amount: f.amount(),
+                    factory: f,
+                    buildings: f.existingBuildings(),
+                    children: []
+                }
 
-            this.factoryToDemands.clear();
-            for (var d of demands) {
-                traverse(d);
+                for (var d of f.needs)
+                    root.children.push(traverse(d));
+            } else {
+
+
+                ////this.factoryToDemands.clear();
+                for (var d of f.demands) {
+                    root = traverse(d, root);
+                }
+
+                if (f.extraDemand) {
+                    root = traverse(view.selectedFactory().extraDemand, root);
+                }
             }
 
-            if (f.extraDemand)
-                traverse(view.selectedFactory().extraDemand);
+            let processNode = node => {
+                if (!node)
+                    return;
 
-            for (var c of chain) {
-                var factor = 1;
+                if (!node.buildings) {
+                    var factor = 1;
 
-                if (c.factory.extraGoodFactor)
-                    factor = c.factory.extraGoodFactor();
+                    if (node.factory.extraGoodFactor)
+                        factor = node.factory.extraGoodFactor();
 
-                var inputAmount = c.amount / factor;
-                c.buildings = Math.max(0, inputAmount) / c.factory.tpmin / c.factory.boost();
+                    var inputAmount = node.amount / factor;
+                    node.buildings = Math.max(0, inputAmount) / node.factory.tpmin / node.factory.boost();
+                }
+
+                node.children.forEach(c => processNode(c));
+                node.children = node.children.filter(c => c && c.amount > ACCURACY);
             }
 
-            return chain;
+            processNode(root);
+
+            return root;
         });
     }
 }
@@ -3991,7 +4017,7 @@ ko.extenders.numeric = function (target, bounds) {
 
 
 function createIntInput(init, min = -Infinity, max = Infinity) {
-   return ko.observable(init).extend({
+    return ko.observable(init).extend({
         numeric: {
             precision: 0,
             min: min,
@@ -4167,19 +4193,19 @@ function installImportConfigListener() {
                             island.storage.save();
                             localStorage.setItem("islandName", config.islandName);
                         } else {
-                        localStorage.clear();
-                        for (var a in config)
-                            localStorage.setItem(a, config[a]);
-                        localStorage.setItem("versionCalculator", versionCalculator);
+                            localStorage.clear();
+                            for (var a in config)
+                                localStorage.setItem(a, config[a]);
+                            localStorage.setItem("versionCalculator", versionCalculator);
 
-                        if (!config.islandNames) { // old save, restore islands
-                            for (var island of view.islands()) {
-                                if (!island.isAllIslands())
-                                    island.storage.save();
+                            if (!config.islandNames) { // old save, restore islands
+                                for (var island of view.islands()) {
+                                    if (!island.isAllIslands())
+                                        island.storage.save();
+                                }
+                                let islandNames = JSON.stringify(view.islands().filter(i => !i.isAllIslands()).map(i => i.name()));
+                                localStorage.setItem("islandNames", islandNames);
                             }
-                            let islandNames = JSON.stringify(view.islands().filter(i => !i.isAllIslands()).map(i => i.name()));
-                            localStorage.setItem("islandNames", islandNames);
-                        }
                         }
                         location.reload();
 
