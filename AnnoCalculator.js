@@ -1853,7 +1853,7 @@ class Item extends NamedElement {
             this.extraGoods = this.additionalOutputs.map(p => assetsMap.get(p.Product));
         }
 
-        this.factories = this.factories.map(f => assetsMap.get(f));
+        this.factories = this.factories.map(f => assetsMap.get(f)).filter(f => !!f);
         this.equipments =
             this.factories.map(f => new EquippedItem({ item: this, factory: f, locaText: this.locaText }, assetsMap));
 
@@ -3020,8 +3020,13 @@ class ProductionChainView {
                     children: []
                 }
 
-                for (var d of f.needs)
-                    root.children.push(traverse(d));
+                for (var d of f.needs) {
+                    if (d instanceof ItemDemandSwitch || d instanceof FactoryDemandSwitch)
+                        for (var e of d.demands)
+                            root.children.push(traverse(e));
+                    else
+                        root.children.push(traverse(d));
+                }
             } else {
 
 

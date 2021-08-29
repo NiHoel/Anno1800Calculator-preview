@@ -217,6 +217,18 @@ nav {
     padding: 10px;
 }
 
+.ui-fchain-item-small {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 12rem;
+}
+
+.ui-fchain-item-xl {
+    width: 30rem;
+    height: unset;
+}
+
     .ui-fchain-item.danger {
         border-color: #FF0000;
         background-color: #FFBBBB;
@@ -830,19 +842,6 @@ right connector from last child*/
 	-webkit-transition: all 0.5s;
 	-moz-transition: all 0.5s;
 }
-
-/*Time for some hover effects*/
-/*We will apply the hover effect the the lineage of the element also*/
-/*.tree li a:hover, .tree li a:hover+ul li a {
-	background: #c8e4f8; color: #000; border: 1px solid #94a0b4;
-}*/
-/*Connector styles on hover*/
-/*.tree li a:hover+ul li::after, 
-.tree li a:hover+ul li::before, 
-.tree li a:hover+ul::before, 
-.tree li a:hover+ul ul::before{
-	border-color:  #94a0b4;
-}*/
 
 .tree > ul > li > div > ul > li {
     margin-bottom: 2rem !important; /* if the tree wraps over liner, add margin to the first line */

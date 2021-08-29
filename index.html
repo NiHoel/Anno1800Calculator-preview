@@ -262,7 +262,7 @@
                         <hr />
 
                         <div data-bind="foreach: $root.island().replaceInputItems">
-                            <div data-bind="visible: $data.visible" class="ui-fchain-item" style="display: flex; flex-direction: column; justify-content:space-between; height: 12rem">
+                            <div data-bind="visible: $data.visible, css:{'ui-fchain-item-xl': $data.equipments.length > 2}" class="ui-fchain-item ui-fchain-item-small">
 
                                 <div class="ui-fchain-item-tr-checkbox">
                                     <div data-bind="foreach: $data.equipments" style="display:flex">
