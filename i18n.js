@@ -382,6 +382,11 @@ texts = {
         german: "Ist:",
         korean: "현재:"
     },
+    requiredNumberOfBuildings: {
+        english: "Required:",
+        german: "Benötigt:",
+        korean: "필요:"
+    },
     requiredNumberOfBuildingsDescription: {
         english: "Required number of buildings to produce consumer products",
         german: "Benötigte Gebäudeanzahl zur Produktion von Verbrauchsgütern",

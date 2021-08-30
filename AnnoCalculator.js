@@ -531,6 +531,8 @@ class Island {
                     a.workforceDemand.percentBoost(100);
             }
             if (a instanceof Factory) {
+                if(a.clipped)
+                    a.clipped(false);
                 if (a.moduleChecked)
                     a.moduleChecked(false);
                 if (a.palaceBuffChecked)
@@ -741,6 +743,9 @@ class Factory extends Consumer {
         this.percentBoost = createIntInput(100, 0);
         this.boost = ko.computed(() => parseInt(this.percentBoost()) / 100);
 
+        if(config.canClip)
+            this.clipped = ko.observable(false);
+
         if (this.module) {
             this.module = assetsMap.get(this.module);
             this.moduleChecked = ko.observable(false);
@@ -766,12 +771,12 @@ class Factory extends Consumer {
                 factor += 1 / this.module.additionalOutputCycle;
 
             if (this.palaceBuff && this.palaceBuffChecked())
-                factor += 1 / this.palaceBuff.additionalOutputCycle;
+                factor += (this.clipped && this.clipped() && this.palaceBuff.guid !== 191141 /* bronce age gives no benefit from boosting */? 2 : 1) / this.palaceBuff.additionalOutputCycle;
 
             if (this.extraGoodProductionList && this.extraGoodProductionList.selfEffecting && this.extraGoodProductionList.checked())
                 for (var e of this.extraGoodProductionList.selfEffecting())
                     if (e.item.checked())
-                        factor += (e.Amount || 1) / e.additionalOutputCycle;
+                        factor += (this.clipped && this.clipped() ? 2 : 1)*(e.Amount || 1) / e.additionalOutputCycle;
 
             return factor;
         });
@@ -980,6 +985,9 @@ class Factory extends Consumer {
                 other.items[i].checked(this.items[i].checked());
 
             other.percentBoost(this.percentBoost());
+
+            if (this.clipped)
+                other.clipped(this.clipped());
 
             if (this.moduleChecked)
                 other.moduleChecked(this.moduleChecked());
@@ -1915,7 +1923,7 @@ class ExtraGoodProduction {
         this.additionalOutputCycle = config.AdditionalOutputCycle;
         this.Amount = config.Amount;
 
-        this.amount = ko.computed(() => !!this.item.checked() * config.Amount * this.factory.outputAmount() / this.additionalOutputCycle);
+        this.amount = ko.computed(() => !!this.item.checked() * config.Amount * (this.factory.clipped && this.factory.clipped() ? 2 : 1) * this.factory.outputAmount() / this.additionalOutputCycle);
 
         for (var f of this.product.factories) {
             f.extraGoodProductionList.entries.push(this);

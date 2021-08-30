@@ -1084,7 +1084,7 @@
         <!-- #/population-level-config-dialog -->
         <!-- #factory-config-dialog -->
         <div id="factory-config-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
+            <div class="modal-dialog modal-xl">
                 <div class="modal-content" data-bind="with: $root.selectedFactory()">
                     <div class="modal-header">
                         <h4 data-bind="text: $data.name">Factory Name</h4>
@@ -1174,20 +1174,20 @@
                                             </td> <!-- island name -->
                                             <!-- factory summary -->
                                             <!--<td data-bind="with: $data.getOpposite($parent)">
-                                                <div style="display: flex; flex-flow: wrap; justify-content: center">
-                                                    <span class="mr-3">
-                                                        <img src="icon_resource_storage_amount.png" width="25" height="25">
-                                                    </span>
-                                                    <span data-bind="if: !$data.top5Factories().length">0</span>
-                                                    <span data-bind="foreach: $data.top5Factories" style="display: flex; flex-flow: wrap; justify-content: center">
-                                                        <span class="mr-1">
-                                                            <img src="" width="25" height="25" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
+                            <div style="display: flex; flex-flow: wrap; justify-content: center">
+                                <span class="mr-3">
+                                    <img src="icon_resource_storage_amount.png" width="25" height="25">
+                                </span>
+                                <span data-bind="if: !$data.top5Factories().length">0</span>
+                                <span data-bind="foreach: $data.top5Factories" style="display: flex; flex-flow: wrap; justify-content: center">
+                                    <span class="mr-1">
+                                        <img src="" width="25" height="25" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
 
-                                                        </span>
-                                                        <span class="mr-3" data-bind="text: $root.settings.missingBuildingsHighlight.checked() ? $data.existingBuildings() : Math.ceil($data.buildings())"></span>
-                                                    </span>
-                                                </div>
-                                            </td> -->
+                                    </span>
+                                    <span class="mr-3" data-bind="text: $root.settings.missingBuildingsHighlight.checked() ? $data.existingBuildings() : Math.ceil($data.buildings())"></span>
+                                </span>
+                            </div>
+                        </td> -->
 
                                             <td>
                                                 <div data-bind="if: $data.isExport($parent) && $parent.factory.overProduction() > ACCURACY">
@@ -1599,7 +1599,7 @@
                                     <td>
                                         <div class="float-right">
                                             <img class="mr-2 icon-sm" src="" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name}">
-                                            <span data-bind="text: formatNumber($data.outputAmount() / $data.palaceBuff.additionalOutputCycle)"></span><span> t/min</span>
+                                            <span data-bind="text: formatNumber(($data.clipped && $data.clipped()  && this.palaceBuff.guid !== 191141 ? 2 : 1) * $data.outputAmount() / $data.palaceBuff.additionalOutputCycle)"></span><span> t/min</span>
                                         </div>
                                     </td>
                                 </tr>
@@ -1633,7 +1633,46 @@
                                 </tr>
                             </tbody>
                         </table>
+                        <div class="ui-fchain-item-module" data-bind="visible: !$root.settings.simpleView.checked() && (!!$data.module || !!$data.palaceBuff || !!$data.clipped)">
+                            <div style="flex: 100 1 auto;"></div>
 
+                            <!-- module -->
+                            <div data-bind="if: !!$data.module" style="flex: auto;">
+                                <div class="custom-control custom-checkbox" data-bind="visible: !!$data.module">
+                                    <input type="checkbox" class="custom-control-input" data-bind="checked: $data.moduleChecked, attr: { id: $data.guid + '-module' }">
+                                    <label class="custom-control-label" data-bind="attr: { for: $data.guid + '-module', title: $data.module.name }" src-only style="vertical-align: top;">
+
+                                    </label>
+                                </div>
+                            </div>
+                            <div data-bind="if: !!$data.module" style="flex: auto;">
+                                <img class="icon-sm" src="" data-bind="attr: { src: $data.module.icon ? $data.module.icon  : null, alt: $data.module.name, for: $data.guid + '-module', title: $data.module.name }" style="margin-right: 0.75em;margin-left: -0.25em;" />
+                            </div>
+
+                            <!-- palace buff -->
+                            <div data-bind="if: !!$data.palaceBuff" style="flex: auto;">
+                                <div class="custom-control custom-checkbox" data-bind="visible: !!$data.palaceBuff">
+                                    <input type="checkbox" class="custom-control-input" data-bind="checked: $data.palaceBuffChecked, attr: { id: $data.guid + '-palaceBuff' }">
+                                    <label class="custom-control-label" data-bind="attr: { for: $data.guid + '-palaceBuff', title: $data.palaceBuff.name }" src-only style="vertical-align: top;">
+
+                                    </label>
+                                </div>
+                            </div>
+                            <div data-bind="if: !!$data.palaceBuff" style="flex: auto;">
+                                <img class="icon-sm" src="" data-bind="attr: { src: $data.palaceBuff.icon ? $data.palaceBuff.icon  : null, alt: $data.palaceBuff.name, for: $data.guid + '-palaceBuff', title: $data.palaceBuff.name }" style="margin-right: 0.75em;margin-left: -0.25em;" />
+                            </div>
+
+                            <!-- clipping  -->
+                            <div data-bind="if: !!$data.clipped" style="flex: auto;">
+                                <div class="custom-control custom-checkbox" data-bind="visible: !!$data.clipped">
+                                    <input type="checkbox" class="custom-control-input" data-bind="checked: $data.clipped, attr: { id: $data.guid + '-clipped' }">
+                                    <label class="custom-control-label" data-bind="attr: { for: $data.guid + '-clipped', title: 'Clipping' }" src-only style="vertical-align: top;">
+                                        Clipping
+                                    </label>
+                                </div>
+                            </div>
+                            <div style="flex: 100 1 auto;"></div>
+                        </div>
 
                         <div data-bind="if: $data instanceof Factory && ($data.extraGoodProductionList.nonZero().length && $root.settings.additionalProduction.checked())">
                             <hr />
@@ -1663,7 +1702,7 @@
                         </div>
                         <div data-bind="if: $root.productionChain.tree() && $root.productionChain.tree().buildings > ACCURACY">
                             <hr />
-                            <div class="tree" data-bind="with: $root.productionChain.tree()"style="justify-content: center">
+                            <div class="tree" data-bind="with: $root.productionChain.tree()" style="justify-content: center">
                                 <ul data-bind="template: { name: 'treeElement'}"></ul>
                             </div>
                         </div>
@@ -1680,7 +1719,7 @@
         <!-- #/factory-config-dialog -->
         <!-- #good-consumption-upgrade-dialog -->
         <div id="good-consumption-upgrade-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-lg">
                 <div class="modal-content" data-bind="with: $root.selectedGoodConsumptionUpgradeList()">
                     <div class="modal-header">
                         <h4 data-bind="text: $root.texts.needConsumption.name">Need Consumption</h4>

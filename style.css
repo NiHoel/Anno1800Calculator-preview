@@ -280,7 +280,7 @@ nav {
 .ui-fchain-item-name {
     font-size: 12px;
     text-align: center;
-    word-wrap: break-word;
+    /*word-wrap: break-word;*/
     height: 2rem;
 }
 
