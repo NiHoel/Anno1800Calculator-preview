@@ -264,6 +264,9 @@ class Island {
             this.consumers.push(f);
             this.factories.push(f);
 
+            if (f.clipped)
+                persistBool(f, "clipped", `${f.guid}.clipped.checked`)
+
             // set moduleChecked before boost, otherwise boost would be increased
             persistBool(f, "moduleChecked", `${f.guid}.module.checked`);
             persistBool(f, "palaceBuffChecked", `${f.guid}.palaceBuff.checked`);
