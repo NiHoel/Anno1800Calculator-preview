@@ -611,7 +611,11 @@ texts = {
         english: "Identical to 'complex', but all extensions activated by default.",
         german: "Identisch zu 'komplex', aber alle Erweiterungen standardmäßig aktiviert."
     },
-    // calculator and server managment
+    panoramaEffectNotConsidered: {
+        english: "The panorama effect is not considered.",
+        german: "Der Panoramaeffekt wird nicht berücksichtigt."
+    },
+    // calculator and server management
     download: {
         english: "Downloads",
         german: "Downloads",
