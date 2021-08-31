@@ -1026,7 +1026,7 @@
 
                                             <span data-bind="foreach: $data.basicNeeds" class="inline-list-centered">
 
-                                                <span style="flex-basis: fit-content;" data-bind="visible: !$data.visible || $data.visible()">
+                                                <span style="flex-basis: fit-content;" data-bind="hidden: $data.hidden && $data.hidden()">
                                                     <span class="custom-control custom-checkbox" data-bind="css:{inactive: $data.isInactive}">
                                                         <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, disable: $data.isInactive, attr: { id: $parent.guid + '-' + $data.product.guid + '-checked' }">
                                                         <label class="custom-control-label" data-bind="attr: { for: $parent.guid + '-' + $data.product.guid + '-checked', title: $data.product.name() }" src-only style="vertical-align: top;">
