@@ -3137,6 +3137,10 @@ class PopulationReader {
             for (let key in json) {
                 let asset = island.assetsMap.get(parseInt(key));
                 if (asset instanceof PopulationLevel) {
+                    if (asset.floorsSummedExistingBuildings && asset.floorsSummedExistingBuildings() != 0) {
+                        continue; // do not update summary values if skyscrapers are used
+                    }
+
                     if (json[key].existingBuildings && view.settings.populationLevelExistingBuildings.checked()) {
                         asset.existingBuildings(json[key].existingBuildings);
 
@@ -3203,7 +3207,7 @@ class PopulationReader {
                     }
 
                 } else if (asset instanceof ResidenceBuilding) {
-                    if (json[key].existingBuildings && view.settings.factoryExistingBuildings.checked())
+                    if (json[key].existingBuildings)
                         asset.existingBuildings(parseInt(json[key].existingBuildings));
                 }
 
