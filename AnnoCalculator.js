@@ -251,11 +251,9 @@ class Island {
             this.consumers.push(f);
         }
 
-        if (!this.region || this.region.guid === 5000000) {
-            for (let buff of (params.palaceBuffs || [])) {
-                let f = new PalaceBuff(buff, assetsMap);
-                assetsMap.set(f.guid, f);
-            }
+        for (let buff of (params.palaceBuffs || [])) {
+            let f = new PalaceBuff(buff, assetsMap);
+            assetsMap.set(f.guid, f);
         }
 
         for (let factory of params.factories) {
@@ -1432,7 +1430,7 @@ class ResidenceBuilding extends NamedElement {
 
         this.existingBuildings.subscribe(val => {
             if (this.fixLimitPerHouse()) {
-               this.limit(Math.floor(val * this.limitPerHouse()));
+                this.limit(Math.floor(val * this.limitPerHouse()));
             } else {
                 var perHouse = this.limit() / val;
                 if (Math.abs(this.limitPerHouse() - perHouse) > ACCURACY)
@@ -1455,7 +1453,7 @@ class ResidenceBuilding extends NamedElement {
         });
 
         this.limitPerHouse.subscribe(val => {
-             this.limit(val * this.existingBuildings());
+            this.limit(val * this.existingBuildings());
         });
     }
 }
