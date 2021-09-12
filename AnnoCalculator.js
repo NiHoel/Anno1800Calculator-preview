@@ -766,6 +766,11 @@ class Factory extends Consumer {
         if (config.palaceBuff) {
             this.palaceBuff = assetsMap.get(config.palaceBuff);
             this.palaceBuffChecked = ko.observable(false);
+
+            this.buffAmount = ko.computed(() => {
+                var f = this.clipped && this.clipped() && this.palaceBuff.guid !== 191141 ? 2 : 1;
+                return f * this.outputAmount() / this.palaceBuff.additionalOutputCycle;
+            });
         }
 
         this.extraGoodFactor = ko.computed(() => {
@@ -790,7 +795,7 @@ class Factory extends Consumer {
         });
 
         this.producedOutputAmount = ko.computed(() => {
-            return parseInt(this.existingBuildings()) * this.boost() * this.tpmin;
+            return this.existingBuildings() * this.boost() * this.tpmin;
         });
 
         this.outputAmount = ko.computed(() => Math.max(this.requiredOutputAmount(), this.producedOutputAmount()));
