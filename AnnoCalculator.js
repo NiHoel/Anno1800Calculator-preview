@@ -814,6 +814,7 @@ class Factory extends Consumer {
 
         // use the history to break the cycle: extra good (lumberjack) -> building materials need (timber) -> production (sawmill) -> production (lumberjack)
         // that cycles between two values by adding a damper
+        // [[prev val, timestamp], [prev prev val, timestamp]]
         this.computedExtraAmountHistory = [];
         this.computedExtraAmount = ko.computed(() => {
             var val = (this.extraGoodProductionList.checked() ? - this.extraGoodProductionList.amount() : 0) +
@@ -821,17 +822,20 @@ class Factory extends Consumer {
                 (this.contractList ? this.contractList.amount() : 0);
 
 
-            if (this.computedExtraAmountHistory.length && Math.abs(val - this.computedExtraAmountHistory[0]) < ACCURACY)
-                return this.computedExtraAmountHistory[0];
+            if (this.computedExtraAmountHistory.length && Math.abs(val - this.computedExtraAmountHistory[0][0]) < ACCURACY)
+                return this.computedExtraAmountHistory[0][0];
+
+            var time = new Date();
 
             if (this.computedExtraAmountHistory.length >= 2) {
                 // after initialization, we have this.computedExtraAmountHistory = [val, 0]
                 // when the user manually sets it to 0, the wrong value is propagated
-                if (Math.abs(this.computedExtraAmountHistory[1] - val) < ACCURACY && this.computedExtraAmountHistory[1] !== 0)
-                    val = (val + this.computedExtraAmountHistory[0]) / 2;
+                // restrict to cycles triggered by automatic updates, i.e. update interval < 200 ms
+                if (Math.abs(this.computedExtraAmountHistory[1][0] - val) < ACCURACY && this.computedExtraAmountHistory[1][0] !== 0 && time - this.computedExtraAmountHistory[1][1] < 200)
+                    val = (val + this.computedExtraAmountHistory[0][0]) / 2;
             }
 
-            this.computedExtraAmountHistory.unshift(val);
+            this.computedExtraAmountHistory.unshift([val,time]);
             if (this.computedExtraAmountHistory.length > 2)
                 this.computedExtraAmountHistory.pop();
             return val;
