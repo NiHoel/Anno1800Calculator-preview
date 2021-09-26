@@ -1408,6 +1408,9 @@ class BuildingMaterialsNeed extends Need {
         var existingBuildingsOutput =
             this.factory().existingBuildings() * this.factory().tpmin * this.factory().boost() * this.factory().extraGoodFactor();
 
+        if (this.factory().existingBuildings() === 0)
+            otherDemand = Math.max(0, otherDemand);
+
         var amount = Math.max(0, existingBuildingsOutput - otherDemand - EPSILON);
 
         if (Math.abs(amount - this.amount()) >= EPSILON)
