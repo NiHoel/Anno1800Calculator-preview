@@ -582,6 +582,10 @@ texts = {
         english: "Use as input on main page",
         german: "Verwende als Eingabe auf der Hauptseite"
     },
+    notes: {
+        english: "Note",
+        german: "Notizen"
+    },
     // view mode
     viewMode: {
         english: "View Mode",

@@ -140,7 +140,7 @@ class Island {
         });
 
         // procedures to persist inputs
-        var persistBool, persistInt, persistFloat;
+        var persistBool, persistInt, persistFloat, persistString;
 
         if (localStorage) {
             persistBool = (obj, attributeName, storageName) => {
@@ -192,8 +192,21 @@ class Island {
                     });
                 }
             }
+
+            persistString = (obj, attributeName, storageName) => {
+
+                var attr = obj[attributeName];
+                if (attr) {
+                    let id = storageName ? storageName : (obj.guid + "." + attributeName);
+                    if (localStorage.getItem(id) != null)
+                        attr(localStorage.getItem(id));
+
+                    attr.subscribe(val => localStorage.setItem(id, val));
+                }
+            }
+
         } else {
-            persistBool = persistFloat = persistInt = () => { };
+            persistBool = persistFloat = persistInt = persistString = () => { };
         }
 
         // objects
@@ -385,11 +398,12 @@ class Island {
             persistInt(l, "amount");
             persistBool(l, "fixLimitPerHouse");
             persistBool(l, "fixAmountPerHouse");
+            persistString(l, "notes");
 
             for (let n of l.needs) {
                 persistBool(n, "checked", `${l.guid}[${n.guid}].checked`);
                 persistFloat(n, "percentBoost", `${l.guid}[${n.guid}].percentBoost`);
-
+                persistString(n, "notes", `${l.guid}[${n.guid}].notes`);
             }
 
             for (let n of l.buildingNeeds) {
@@ -466,6 +480,7 @@ class Island {
 
         for (let f of this.consumers) {
             persistInt(f, "existingBuildings");
+            persistString(f, "notes");
             if (f.workforceDemand)
                 persistInt(f.workforceDemand, "percentBoost", `${f.guid}.workforce.percentBoost`);
         }
@@ -556,13 +571,17 @@ class Island {
                 a.limit(0);
                 a.fixAmountPerHouse(true);
                 a.fixLimitPerHouse(true);
+                for (n of a.needs)
+                    if (n.notes)
+                        n.notes("");
             }
             if (a instanceof Item) {
                 a.checked(false);
                 for (var i of a.equipments)
                     i.checked(false);
             }
-
+            if (a.notes)
+                a.notes("");
         });
 
         setDefaultFixedFactories(this.assetsMap);
@@ -612,6 +631,8 @@ class Consumer extends NamedElement {
 
         if (params.tradeContracts && (!this.island.region || this.island.region.guid == 5000000))
             this.contractList = new ContractList(island, this);
+
+        this.notes = ko.observable("");
     }
 
     getInputs() {
@@ -1274,6 +1295,8 @@ class PopulationNeed extends Need {
 
         this.checked = ko.observable(true);
         this.optionalAmount = ko.observable(0);
+
+        this.notes = ko.observable("");
     }
 
     initBans(level, assetsMap) {
@@ -1479,6 +1502,7 @@ class PopulationLevel extends NamedElement {
         this.region = assetsMap.get(config.region);
 
         this.allResidences = [];
+        this.notes = ko.observable("");
 
         if (this.residence) {
             this.residence = assetsMap.get(this.residence);
@@ -3936,6 +3960,9 @@ function init(isFirstRun) {
         if (evt.altKey || evt.ctrlKey || evt.shiftKey)
             return true;
 
+        if (evt.target.tagName === 'TEXTAREA')
+            return true;
+
         if (evt.target.tagName === 'INPUT' && evt.target.type === "text")
             return true;
 
@@ -3989,6 +4016,13 @@ ko.components.register('number-input-increment', {
                                                         <button class="btn btn-default" type="button" data-bind="click: () => {var val = parseFloat(obs()) + getStep(id) + ACCURACY; var step = getStep(id); obs(Math.floor(val/step)*step)}, enable: obs() < getMax(id)"><i class="fa fa-caret-up"></i></button>
                                                         <button class="btn btn-default" type="button" data-bind="click: () => {var val = parseFloat(obs()) - getStep(id) - ACCURACY; var step = getStep(id); obs(Math.ceil(val/step)*step)}, enable: obs() > getMin(id)"><i class="fa fa-caret-down"></i></button>
                                                     </div>`
+});
+
+ko.components.register('notes-section', {
+    template:
+        `<div class="form-group" data-bind="if: $data.notes != null">
+              <textarea class="form-control" data-bind="textInput: $data.notes, attr: {placeholder: $root.texts.notes.name()}"></textarea>
+        </div>`
 });
 
 function formatPercentage(number) {

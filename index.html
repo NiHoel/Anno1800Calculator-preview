@@ -141,7 +141,7 @@
             </div>
         </div>
     </div>
-    <!-- #/settings-dialog -->
+    <!-- #/view-mode-dialog -->
     <!-- #settings-dialog -->
     <div id="settings-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -968,11 +968,11 @@
 
 
                                                 <!--<div data-bind="if: $data.unique && !$data.island.isAllIslands()">
-                        <div class="custom-control custom-checkbox" data-bind="if: $data.unique && !$data.island.isAllIslands()">
-                            <input id="checkbox-unique-residence" type="checkbox" class="custom-control-input" data-bind="checked: $data.existingBuildings">
-                            <label class="custom-control-label" for="checkbox-unique-residence"></label>
-                        </div>
-                    </div>-->
+                                <div class="custom-control custom-checkbox" data-bind="if: $data.unique && !$data.island.isAllIslands()">
+                                    <input id="checkbox-unique-residence" type="checkbox" class="custom-control-input" data-bind="checked: $data.existingBuildings">
+                                    <label class="custom-control-label" for="checkbox-unique-residence"></label>
+                                </div>
+                            </div>-->
                                             </td>
 
                                             <td data-bind="if: !$root.settings.simpleView.checked()">
@@ -1078,7 +1078,7 @@
 
                         </div>
 
-
+                        <div data-bind="component: { name: 'notes-section', params:{ $data: $data}}"></div>
                     </div>
                     <div class="modal-footer">
                         <btn class="btn btn-light" data-bind="click: $data.applyConfigGlobally, visible: $root.islands().length > 1">
@@ -1715,6 +1715,7 @@
                             </div>
                         </div>
 
+                        <div data-bind="component: { name: 'notes-section', params:{ $data: $data}}"></div>
                     </div>
                     <div class="modal-footer">
                         <btn class="btn btn-light" data-bind="click: $data.applyConfigGlobally, visible: $root.islands().length > 1">
@@ -1778,6 +1779,7 @@
                             </tbody>
                         </table>
 
+                        <div data-bind="component: { name: 'notes-section', params:{ $data: $data.need}}"></div>
                     </div>
                     <div class="modal-footer">
                         <span data-bind="text: $root.texts.total.name">Total</span>
