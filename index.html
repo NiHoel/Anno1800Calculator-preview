@@ -1117,6 +1117,7 @@
                                             </div>
                                         </td>
                                         <td>
+                                            <!-- extra goods -->
                                             <span data-bind="if: $data.item.extraGoods">
                                                 <span data-bind="foreach: $data.item.extraGoods" class="inline-list-centered">
                                                     <!-- icon extra goods -->
@@ -1129,7 +1130,8 @@
                                                     <span style="flex: 100 1 auto;"></span>
                                                 </span>
                                             </span>
-                                            <div dat-bind="if: $data.replacementArray">
+                                            <!-- input replacements -->
+                                            <div data-bind="if: $data.replacementArray">
                                                 <div data-bind="foreach: $data.replacementArray">
                                                     <div class="ui-fchain-item-icon-replacement">
                                                         <span class="strike-through">
@@ -1140,6 +1142,18 @@
                                                         </div>
                                                         <img src="" data-bind="attr: { src: $data.new.icon ? $data.new.icon : null, alt: $data.new.name }" width="30" height="30">
                                                     </div>
+                                                </div>
+                                            </div>
+                                            <!-- workforce replacement -->
+                                            <div data-bind="if: $data.replacingWorkforce && ($parent.workforceDemand instanceof WorkforceDemandSwitch)">                                                
+                                                <div class="ui-fchain-item-icon-replacement">
+                                                    <span class="strike-through">
+                                                        <img src="" data-bind="attr: { src: $parent.workforceDemand.defaultWorkforce.icon ? $parent.workforceDemand.defaultWorkforce.icon : null, alt: $parent.workforceDemand.defaultWorkforce.name }" width="30" height="30">
+                                                    </span>
+                                                    <div class="ui-replacement-spacer">
+                                                        →
+                                                    </div>
+                                                    <img src="" data-bind="attr: { src: $parent.workforceDemand.replacingWorkforce.icon ? $parent.workforceDemand.replacingWorkforce.icon : null, alt: $parent.workforceDemand.replacingWorkforce.name }" width="30" height="30">
                                                 </div>
                                             </div>
                                         </td>
@@ -1561,7 +1575,7 @@
                                             <div>
 
                                                 <span data-bind="text: formatNumber($data.amount())"></span>
-                                                <img class="mr-2 icon-sm" src="" data-bind="attr: { src: $data.workforce.icon ? $data.workforce.icon : null, alt: $data.workforce.name}">
+                                                <img class="mr-2 icon-sm" src="" data-bind="attr: { src: $data.workforce().icon ? $data.workforce().icon : null, alt: $data.workforce().name}">
                                             </div>
                                         </div>
 

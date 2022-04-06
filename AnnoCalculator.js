@@ -355,7 +355,10 @@ class Island {
         });
 
         // must be set after items so that extraDemand is correctly handled
-        this.consumers.forEach(f => f.referenceProducts(assetsMap));
+        this.consumers.forEach(f => {
+            f.createWorkforceDemand(assetsMap);
+            f.referenceProducts(assetsMap);
+        });
 
         // setup demands induced by modules
         for (let factory of params.factories) {
@@ -621,12 +624,6 @@ class Consumer extends NamedElement {
 
         this.outputAmount = ko.computed(() => this.amount());
 
-        this.workforceDemand = this.getWorkforceDemand(assetsMap);
-        if (this.workforceDemand) {
-            this.existingBuildings.subscribe(val => this.workforceDemand.updateAmount(Math.max(val, this.buildings())));
-            this.buildings.subscribe(val => this.workforceDemand.updateAmount(Math.max(val, this.buildings())));
-        }
-
         this.tradeList = new TradeList(island, this);
 
         if (params.tradeContracts && (!this.island.region || this.island.region.guid == 5000000))
@@ -645,11 +642,19 @@ class Consumer extends NamedElement {
     }
 
 
-    getWorkforceDemand(assetsMap) {
+    createWorkforceDemand(assetsMap) {
         for (let m of this.maintenances || []) {
             let a = assetsMap.get(m.Product);
-            if (a instanceof Workforce)
-                return new WorkforceDemand($.extend({ factory: this, workforce: a }, m), assetsMap);
+            if (a instanceof Workforce) {
+                let items = this.items.filter(item => item.replacingWorkforce);
+                if (items.length)
+                    this.workforceDemand = new WorkforceDemandSwitch($.extend({ factory: this, workforce: a }, m), items[0], assetsMap);
+                else
+                    this.workforceDemand = new WorkforceDemand($.extend({ factory: this, workforce: a }, m), assetsMap);
+
+                this.existingBuildings.subscribe(val => this.workforceDemand.updateAmount(Math.max(val, this.buildings())));
+                this.buildings.subscribe(val => this.workforceDemand.updateAmount(Math.max(val, this.buildings())));
+            }
         }
         return null;
     }
@@ -856,7 +861,7 @@ class Factory extends Consumer {
                     val = (val + this.computedExtraAmountHistory[0][0]) / 2;
             }
 
-            this.computedExtraAmountHistory.unshift([val,time]);
+            this.computedExtraAmountHistory.unshift([val, time]);
             if (this.computedExtraAmountHistory.length > 2)
                 this.computedExtraAmountHistory.pop();
             return val;
@@ -1852,7 +1857,7 @@ class Workforce extends NamedElement {
 
     updateAmount() {
         var sum = 0;
-        this.demands.forEach(d => sum += d.amount());
+        this.demands.forEach(d => sum += d.workforce() == this ? d.amount() : 0);
         this.amount(sum);
     }
 
@@ -1872,9 +1877,10 @@ class WorkforceDemand extends NamedElement {
             this.updateAmount(this.buildings);
         });
 
-        this.workforce.add(this);
+        this.workforce = ko.observable(config.workforce);
+        this.workforce().add(this);
 
-        this.amount.subscribe(val => this.workforce.updateAmount());
+        this.amount.subscribe(val => this.workforce().updateAmount());
     }
 
     updateAmount(buildings) {
@@ -1882,6 +1888,23 @@ class WorkforceDemand extends NamedElement {
 
         var perBuilding = Math.ceil(this.Amount * this.percentBoost() / 100);
         this.amount(Math.ceil(buildings) * perBuilding);
+    }
+}
+
+class WorkforceDemandSwitch extends WorkforceDemand {
+    constructor(config, item, assetsMap) {
+        super(config, assetsMap)
+        this.item = item;
+        this.defaultWorkforce = this.workforce();
+        this.replacingWorkforce = this.item.replacingWorkforce;
+
+        this.replacingWorkforce.add(this);
+
+        this.item.checked.subscribe(checked => {
+            this.workforce(checked ? this.replacingWorkforce : this.defaultWorkforce);
+            this.defaultWorkforce.updateAmount();
+            this.replacingWorkforce.updateAmount();
+        });
     }
 }
 
@@ -1906,6 +1929,9 @@ class Item extends NamedElement {
         if (this.additionalOutputs) {
             this.extraGoods = this.additionalOutputs.map(p => assetsMap.get(p.Product));
         }
+
+        if (this.replacingWorkforce)
+            this.replacingWorkforce = assetsMap.get(this.replacingWorkforce);
 
         this.factories = this.factories.map(f => assetsMap.get(f)).filter(f => !!f);
         this.equipments =
@@ -1948,6 +1974,7 @@ class EquippedItem extends Option {
 
         this.replacements = config.item.replacements;
         this.replacementArray = config.item.replacementArray;
+        this.replacingWorkforce = config.item.replacingWorkforce;
 
         if (config.item.additionalOutputs) {
             this.extraGoods = config.item.additionalOutputs.map(cfg => {
