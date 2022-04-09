@@ -1653,6 +1653,34 @@
                                         </div>
                                     </td>
                                 </tr>
+                                <tr data-bind="if: $data.fertilizerModule && $data.fertilizerModuleChecked()">
+                                    <!-- extra goods fertilizer fertilizerModule -->
+                                    <td>
+                                        <span data-bind="text: $root.texts.extraGoods.name"></span>
+                                        <span>: </span>
+                                        <span data-bind="text: $data.fertilizerModule.name"></span>
+                                    </td>
+                                    <td>
+                                        <div class="float-right">
+                                            <img class="mr-2 icon-sm" src="" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name}">
+                                            <span data-bind="text: formatNumber($data.outputAmount() / $data.fertilizerModule.additionalOutputCycle)"></span><span> t/min</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr data-bind="if: $data.fertilizerModule && $data.fertilizerModuleChecked()">
+                                    <!-- consumption fertilizerModule -->
+                                    <td>
+                                        <span data-bind="text: $root.texts.consumption.name"></span>
+                                        <span>: </span>
+                                        <span data-bind="text: $data.fertilizerModule.name"></span>
+                                    </td>
+                                    <td>
+                                        <div class="float-right">
+                                            <img class="mr-2 icon-sm" src="" data-bind="attr: { src: $data.fertilizerModuleDemand.product.icon ? $data.fertilizerModuleDemand.product.icon : null, alt: $data.fertilizerModuleDemand.product.name}">
+                                            <span data-bind="text: formatNumber($data.fertilizerModuleDemand.amount())"></span><span> t/min</span>
+                                        </div>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                         <div class="ui-fchain-item-module" data-bind="visible: !$root.settings.simpleView.checked() && (!!$data.module || !!$data.palaceBuff || !!$data.clipped)">
@@ -1669,6 +1697,19 @@
                             </div>
                             <div data-bind="if: !!$data.module" style="flex: auto;">
                                 <img class="icon-sm" src="" data-bind="attr: { src: $data.module.icon ? $data.module.icon  : null, alt: $data.module.name, for: $data.guid + '-module', title: $data.module.name }" style="margin-right: 0.75em;margin-left: -0.25em;" />
+                            </div>
+
+                            <!-- fertilizerModule -->
+                            <div data-bind="if: !!$data.fertilizerModule" style="flex: auto;">
+                                <div class="custom-control custom-checkbox" data-bind="visible: !!$data.fertilizerModule">
+                                    <input type="checkbox" class="custom-control-input" data-bind="checked: $data.fertilizerModuleChecked, attr: { id: $data.guid + '-fertilizerModule' }">
+                                    <label class="custom-control-label" data-bind="attr: { for: $data.guid + '-fertilizerModule', title: $data.fertilizerModule.name }" src-only style="vertical-align: top;">
+
+                                    </label>
+                                </div>
+                            </div>
+                            <div data-bind="if: !!$data.fertilizerModule" style="flex: auto;">
+                                <img class="icon-sm" src="" data-bind="attr: { src: $data.fertilizerModule.icon ? $data.fertilizerModule.icon  : null, alt: $data.fertilizerModule.name, for: $data.guid + '-fertilizerModule', title: $data.fertilizerModule.name }" style="margin-right: 0.75em;margin-left: -0.25em;" />
                             </div>
 
                             <!-- palace buff -->
@@ -2324,6 +2365,19 @@
                                                 </div>
                                                 <div data-bind="if: !!$data.module" style="flex: auto;">
                                                     <img class="icon-sm" src="" data-bind="attr: { src: $data.module.icon ? $data.module.icon  : null, alt: $data.module.name, for: $data.guid + '-module', title: $data.module.name }" style="margin-right: 0.75em;margin-left: -0.25em;" />
+                                                </div>
+
+                                                <!-- fertilizerModule -->
+                                                <div data-bind="if: !!$data.fertilizerModule && !(!!$data.palaceBuff && !!$data.module)" style="flex: auto;">
+                                                    <div class="custom-control custom-checkbox" data-bind="visible: !!$data.fertilizerModule">
+                                                        <input type="checkbox" class="custom-control-input" data-bind="checked: $data.instance().fertilizerModuleChecked, attr: { id: category.guid + '-' + $data.guid + '-fertilizerModule' }">
+                                                        <label class="custom-control-label" data-bind="attr: { for: category.guid + '-' + $data.guid + '-fertilizerModule', title: $data.fertilizerModule.name }" src-only style="vertical-align: top;">
+
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div data-bind="if: !!$data.fertilizerModule && !(!!$data.palaceBuff && !!$data.module)" style="flex: auto;">
+                                                    <img class="icon-sm" src="" data-bind="attr: { src: $data.fertilizerModule.icon ? $data.fertilizerModule.icon  : null, alt: $data.fertilizerModule.name, for: $data.guid + '-fertilizerModule', title: $data.fertilizerModule.name }" style="margin-right: 0.75em;margin-left: -0.25em;" />
                                                 </div>
 
                                                 <!-- palace buff -->

@@ -120,7 +120,7 @@ class Island {
             this.isAllIslands = function () { return true; };
         }
         this.storage = localStorage;
-        var isNew = !localStorage.length;
+        var isNew = localStorage.length > 1;
 
         this.session = session || this.storage.getItem("session");
         this.session = this.session instanceof Session ? this.session : view.assetsMap.get(this.session);
@@ -280,6 +280,7 @@ class Island {
 
             // set moduleChecked before boost, otherwise boost would be increased
             persistBool(f, "moduleChecked", `${f.guid}.module.checked`);
+            persistBool(f, "fertilizerModuleChecked", `${f.guid}.fertilizerModule.checked`);
             persistBool(f, "palaceBuffChecked", `${f.guid}.palaceBuff.checked`);
             persistInt(f, "percentBoost");
         }
@@ -363,8 +364,16 @@ class Island {
         // setup demands induced by modules
         for (let factory of params.factories) {
             let f = assetsMap.get(factory.guid);
-            if (f && f.module)
-                f.moduleDemand = new Demand({ guid: f.module.getInputs()[0].Product, region: f.region }, assetsMap);
+
+            if (!f)
+                continue;
+
+            for (var m of ["module", "fertilizerModule"]) {
+                var module = f[m];
+
+                if (module)
+                    f[m + "Demand"] = new Demand({ guid: module.getInputs()[0].Product, region: f.region }, assetsMap);
+            }
         }
 
 
@@ -552,8 +561,11 @@ class Island {
             if (a instanceof Factory) {
                 if (a.clipped)
                     a.clipped(false);
-                if (a.moduleChecked)
-                    a.moduleChecked(false);
+                for (var m of ["module", "fertilizerModule"]) {
+                    var checked = a[m + "Checked"];
+                    if (checked)
+                        checked(false);
+                }
                 if (a.palaceBuffChecked)
                     a.palaceBuffChecked(false);
                 a.percentBoost(100);
@@ -776,15 +788,35 @@ class Factory extends Consumer {
         if (this.module) {
             this.module = assetsMap.get(this.module);
             this.moduleChecked = ko.observable(false);
+            var workforceUpgrade = this.module.workforceAmountUpgrade ? this.module.workforceAmountUpgrade.Value : 0;
             this.moduleChecked.subscribe(checked => {
-                if (checked)
+                if (checked) {
                     this.percentBoost(parseInt(this.percentBoost()) + this.module.productivityUpgrade);
-                else {
+                    if (this.workforceDemand)
+                        this.workforceDemand.percentBoost(this.workforceDemand.percentBoost() + workforceUpgrade);
+                } else {
                     var val = Math.max(1, parseInt(this.percentBoost()) - this.module.productivityUpgrade);
                     this.percentBoost(val);
+
+                    if (this.workforceDemand)
+                        this.workforceDemand.percentBoost(Math.max(0, this.workforceDemand.percentBoost() - workforceUpgrade));
                 }
             });
             //moduleDemand created in island constructor after referencing products
+        }
+
+        if (this.fertilizerModule) {
+            this.fertilizerModule = assetsMap.get(this.fertilizerModule);
+            this.fertilizerModuleChecked = ko.observable(false);
+            this.fertilizerModuleChecked.subscribe(checked => {
+                if (checked) {
+                    this.percentBoost(parseInt(this.percentBoost()) + this.fertilizerModule.productivityUpgrade);
+                } else {
+                    var val = Math.max(1, parseInt(this.percentBoost()) - this.fertilizerModule.productivityUpgrade);
+                    this.percentBoost(val);
+                }
+            });
+            //fertilizerModuleDemand created in island constructor after referencing products
         }
 
         if (config.palaceBuff) {
@@ -799,8 +831,14 @@ class Factory extends Consumer {
 
         this.extraGoodFactor = ko.computed(() => {
             var factor = 1;
-            if (this.module && this.moduleChecked() && this.module.additionalOutputCycle)
-                factor += 1 / this.module.additionalOutputCycle;
+
+            for (var m of ["module", "fertilizerModule"]) {
+                var module = this[m];
+                var checked = this[m + "Checked"];
+
+                if (module && checked() && module.additionalOutputCycle)
+                    factor += 1 / module.additionalOutputCycle;
+            }
 
             if (this.palaceBuff && this.palaceBuffChecked())
                 factor += (this.clipped && this.clipped() && this.palaceBuff.guid !== 191141 /* bronce age gives no benefit from boosting */ ? 2 : 1) / this.palaceBuff.additionalOutputCycle;
@@ -827,11 +865,18 @@ class Factory extends Consumer {
         this.buildings = ko.computed(() => {
             var buildings = this.requiredOutputAmount() / this.tpmin / this.boost();
 
-            if (this.moduleDemand)
-                if (this.moduleChecked())
-                    this.moduleDemand.updateAmount(Math.max(Math.ceil(buildings), this.existingBuildings()) * this.module.tpmin);
-                else
-                    this.moduleDemand.updateAmount(0);
+            for (var m of ["module", "fertilizerModule"]) {
+                var module = this[m];
+                var checked = this[m + "Checked"];
+                var demand = this[m + "Demand"];
+
+                if (demand)
+                    if (checked())
+                        demand.updateAmount(Math.max(Math.ceil(buildings), this.existingBuildings()) * module.tpmin);
+                    else
+                        demand.updateAmount(0);
+            }
+
             return buildings;
         });
 
@@ -1020,19 +1065,23 @@ class Factory extends Consumer {
             for (var i = 0; i < this.items.length; i++)
                 other.items[i].checked(this.items[i].checked());
 
-            other.percentBoost(this.percentBoost());
-
             if (this.clipped)
                 other.clipped(this.clipped());
 
-            if (this.moduleChecked)
-                other.moduleChecked(this.moduleChecked());
+            for (var m of ["module", "fertilizerModule"]) {
+                var checked = this[m + "Checked"];
+                if (checked())
+                    other[m + "Checked"](checked());
+            }
 
             if (this.palaceBuffChecked)
                 other.palaceBuffChecked(this.palaceBuffChecked());
 
             if (this.workforceDemand && this.workforceDemand.percentBoost)
                 other.workforceDemand.percentBoost(this.workforceDemand.percentBoost());
+
+            // set boost after modules
+            other.percentBoost(this.percentBoost());
         }
     }
 }
@@ -1046,6 +1095,8 @@ class Product extends NamedElement {
 
         this.factories = this.producers.map(p => assetsMap.get(p)).filter(p => !!p);
         this.fixedFactory = ko.observable(null);
+        if (this.mainFactory)
+            this.mainFactory = assetsMap.get(this.mainFactory);
 
         if (this.producers && this.factories.length) {
             this.amount = ko.computed(() => this.factories.map(f => f.amount()).reduce((a, b) => a + b));
@@ -1150,22 +1201,20 @@ class Demand extends NamedElement {
     }
 
     updateFixedProductFactory(f) {
-        if (f == null) {
-            if (this.consumer || this.region) { // find factory in the same region as consumer
-                let region = this.region || this.consumer.factory().region;
-                if (region) {
-                    for (let fac of this.product.factories) {
-                        if (fac.region === region) {
-                            f = fac;
-                            break;
-                        }
+        if (f == null && (this.consumer || this.region)) { // find factory in the same region as consumer
+            let region = this.region || this.consumer.factory().region;
+            if (region && !(this.product.mainFactory && this.product.mainFactory.region === region)) {
+                for (let fac of this.product.factories) {
+                    if (fac.region === region) {
+                        f = fac;
+                        break;
                     }
                 }
             }
         }
 
         if (f == null) // region based approach not successful
-            f = this.product.factories[0];
+            f = this.product.mainFactory || this.product.factories[0];
 
         if (f != this.factory()) {
             if (this.factory())
@@ -1241,8 +1290,12 @@ class FactoryDemandSwitch {
         this.amount = amount;
         var factory = this.consumer.factory();
 
-        if (factory.module && factory.moduleChecked() && factory.module.additionalOutputCycle)
-            amount *= factory.module.additionalOutputCycle / (factory.module.additionalOutputCycle + 1);
+        for (var m of ["module", "fertilizerModule"]) {
+            var module = factory[m];
+            var checked = factory[m + "Checked"];
+            if (module && checked() && module.additionalOutputCycle)
+                amount *= module.additionalOutputCycle / (module.additionalOutputCycle + 1);
+        }
 
         if (factory != this.factory) {
             for (var d of this.demandsMap.get(this.factory)) {
@@ -4047,7 +4100,7 @@ ko.components.register('number-input-increment', {
 
 ko.components.register('notes-section', {
     template:
-        `<div class="form-group" data-bind="if: $data.notes != null">
+        `<div class="form-group notes-section" data-bind="if: $data.notes != null">
               <textarea class="form-control" data-bind="textInput: $data.notes, attr: {placeholder: $root.texts.notes.name()}"></textarea>
         </div>`
 });
@@ -4175,6 +4228,8 @@ function setDefaultFixedFactories(assetsMap) {
     assetsMap.get(1010240).fixedFactory(assetsMap.get(1010318));
     assetsMap.get(1010257).fixedFactory(assetsMap.get(1010340));
     assetsMap.get(120032).fixedFactory(assetsMap.get(101252));
+    assetsMap.get(1010216).fixedFactory(assetsMap.get(1010294));
+    assetsMap.get(1010214).fixedFactory(assetsMap.get(1010292));
 }
 
 function isLocal() {
