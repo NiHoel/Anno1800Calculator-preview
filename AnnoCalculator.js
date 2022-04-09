@@ -1118,6 +1118,11 @@ class PublicBuildingNeed extends Option {
 
         this.product = assetsMap.get(this.guid);
         this.initBans = PopulationNeed.prototype.initBans;
+
+        if (this.requiredToBeBuilding) {
+            this.residence = assetsMap.get(this.requiredToBeBuilding);
+            this.hidden = ko.pureComputed(() => !this.residence.existingBuildings());
+        }
     }
 }
 
@@ -1364,7 +1369,7 @@ class PopulationNeed extends Need {
                 if (!config || !view.settings.needUnlockConditions.checked())
                     return false;
 
-                if (level.floorsSummedExistingBuildings && level.hasSkyscrapers())
+                if (level.skyscraperLevels && level.hasSkyscrapers())
                     return false;
 
                 if (config.populationLevel != level.guid) {
@@ -1435,7 +1440,14 @@ class PopulationNeed extends Need {
 class PopulationLevelNeed extends PopulationNeed {
     constructor(config, level, assetsMap) {
         super(config, assetsMap);
-        level.limit.subscribe(limit => this.updateAmount(limit - (level.skylineTower ? level.skylineTower.existingBuildings() * level.skylineTower.freeResidents : 0)));
+
+        this.freeResidents = 0;
+        if (level.specialResidence && level.specialResidence.freeResidents) {
+            this.freeResidents = level.specialResidence.freeResidents;
+            level.limit.subscribe(limit => this.updateAmount(limit - level.specialResidence.existingBuildings() * this.freeResidents));
+        } else {
+            level.limit.subscribe(limit => this.updateAmount(limit));
+        }
     }
 }
 
@@ -1458,6 +1470,22 @@ class SkyscraperPopulationNeed extends PopulationNeed {
                     return false;
 
             return true;
+        });
+    }
+}
+
+class SpecialResidenceNeed extends PopulationNeed {
+    constructor(config, assetsMap) {
+        super(config, assetsMap);
+
+        this.residence = assetsMap.get(this.requiredToBeBuilding);
+
+        this.residenceSubscription = ko.computed(() => {
+            this.updateAmount(this.residence.limit());
+        });
+
+        this.hidden = ko.computed(() => {
+            return !this.residence.existingBuildings();
         });
     }
 }
@@ -1572,9 +1600,9 @@ class PopulationLevel extends NamedElement {
             this.skyscraperLevels = config.skyscraperLevels.map(l => assetsMap.get(l));
             this.allResidences = this.allResidences.concat(this.skyscraperLevels);
         }
-        if (config.skylineTower) {
-            this.skylineTower = assetsMap.get(config.skylineTower);
-            this.allResidences.push(this.skylineTower);
+        if (config.specialResidence) {
+            this.specialResidence = assetsMap.get(config.specialResidence);
+            this.allResidences.push(this.specialResidence);
         }
 
         this.amount = createIntInput(0, 0);
@@ -1612,6 +1640,8 @@ class PopulationLevel extends NamedElement {
             if (n.tpmin > 0 && assetsMap.get(n.guid)) {
                 if (n.requiredFloorLevel)
                     need = new SkyscraperPopulationNeed(n, this.skyscraperLevels, assetsMap);
+                else if (n.requiredToBeBuilding)
+                    need = new SpecialResidenceNeed(n, assetsMap);
                 else
                     need = new PopulationLevelNeed(n, this, assetsMap);
                 this.needs.push(need);
@@ -1663,18 +1693,20 @@ class PopulationLevel extends NamedElement {
                 this.amount(val * this.existingBuildings());
         });
 
-        if (this.skyscraperLevels) {
+        if (this.skyscraperLevels || this.specialResidence) {
             // ensure that the value for the population level and those summed over the buildings match
             // the observables are only used for change propagation, the up-to-date values are available via the functions
             this.getFloorsSummedExistingBuildings = () => {
-                var tower = this.skylineTower ? this.skylineTower.existingBuildings() : 0;
-                return tower + this.skyscraperLevels.map(s => s.existingBuildings()).reduce((a, b) => a + b);
+                var specialResidence = this.specialResidence ? this.specialResidence.existingBuildings() : 0;
+                var levelSum = this.skyscraperLevels ? this.skyscraperLevels.map(s => s.existingBuildings()).reduce((a, b) => a + b) : 0;
+                return specialResidence + levelSum;
             };
             this.floorsSummedExistingBuildings = ko.computed(() => this.getFloorsSummedExistingBuildings());
 
             this.getFloorsSummedLimit = () => {
-                var tower = this.skylineTower ? this.skylineTower.limit() : 0;
-                return tower + this.skyscraperLevels.map(s => s.limit()).reduce((a, b) => a + b);
+                var specialResidence = this.specialResidence ? this.specialResidence.limit() : 0;
+                var levelSum = this.skyscraperLevels ? this.skyscraperLevels.map(s => s.limit()).reduce((a, b) => a + b) : 0;
+                return specialResidence + levelSum;
             };
             this.floorsSummedLimit = ko.computed(() => this.getFloorsSummedLimit());
 
@@ -1887,8 +1919,8 @@ class PopulationLevel extends NamedElement {
                 other.skyscraperLevels.fixLimitPerHouse(true);
             }
 
-            if (this.skylineTower && other.skylineTower) {
-                other.skylineTower.limitPerHouse(this.skylineTower.limitPerHouse());
+            if (this.specialResidence && other.specialResidence) {
+                other.specialResidence.limitPerHouse(this.specialResidence.limitPerHouse());
             }
         }
     }

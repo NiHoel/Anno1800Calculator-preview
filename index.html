@@ -930,17 +930,17 @@
                         </table>
 
                         <!-- Separate configuration for skyscrapers and houses -->
-                        <fieldset class="collapsable-section" data-bind="if: $data.skyscraperLevels">
+                        <fieldset class="collapsable-section" data-bind="if: $data.skyscraperLevels || $data.specialResidence">
                             <legend class="collapser collapsed" data-toggle="collapse" data-target="#population-level-building-configuration">
                                 <span class="fa fa-chevron-right"></span>
                                 <span class="fa fa-chevron-down"></span>
-                                <span data-bind="text:$root.texts.skyscrapers.name">Skyscrapers</span>
+                                <span data-bind="text:$data.skyscraperLevels ? $root.texts.skyscrapers.name : $root.texts.residences.name">Skyscrapers</span>
                             </legend>
 
                             <div id="population-level-building-configuration" class="collapse" data-bind="class: $root.skyscraperDropdownStatus">
 
 
-                                <div data-bind="visible: $root.settings.simpleView.checked()">
+                                <div data-bind="visible: $data.skyscraperLevels && $root.settings.simpleView.checked()">
                                     <span class="mb-1" data-bind="text: $root.texts.panoramaEffectNotConsidered.name()">The panorama effect is not considered.</span>
                                     <button type="button" class="help" data-dismiss="modal" data-bind="click: () => {setTimeout(() => { $('#help-dialog').modal('show')}, 500);}">?</button>
                                 </div>
@@ -2122,7 +2122,7 @@
                     <div data-bind="foreach: $root.template.powerPlants">
 
                         <!-- power plants -->
-                        <div class="ui-fchain-item" data-bind="visible: $data.instance().visible">
+                        <div class="ui-service-building-item" data-bind="visible: $data.instance().visible">
                             <div class="ui-fchain-item-tr-button">
                                 <div>
                                     <button class="btn btn-light btn-sm" data-bind="click: () => {$root.selectedFactory($data.instance())}" data-toggle="modal" data-target="#factory-config-dialog">
@@ -2174,7 +2174,7 @@
                     <!-- public recipe buildings -->
                     <div data-bind="foreach: $root.island().recipeLists">
 
-                        <div class="ui-fchain-item" data-bind="visible: $data.unusedRecipes().length">
+                        <div class="ui-service-building-item" data-bind="visible: $data.unusedRecipes().length">
 
 
                             <div class="ui-fchain-item-name" data-bind="text: $data.name, visible: !$root.settings.hideNames.checked()"></div>

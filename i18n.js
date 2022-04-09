@@ -39,6 +39,20 @@ texts = {
         "korean": "주민",
         "russian": "Жители"
     },
+    residences: {
+        "chinese": "住所",
+        "english": "Residences",
+        "french": "Résidences",
+        "german": "Wohngebäude",
+        //"guid": 22976,
+        "italian": "Residenze",
+        "japanese": "住居",
+        "korean": "주거지",
+        "polish": "Domy mieszkalne",
+        "russian": "Жилые здания",
+        "spanish": "Residencias",
+        "taiwanese": "住所"
+    },
     buildings: {
         "english": "Buildings",
         //"guid": 22659,

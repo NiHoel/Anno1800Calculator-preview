@@ -17481,14 +17481,14 @@ params={
             ],
             "region": 5000000,
             "residence": 1010347,
-            "skylineTower": 406,
             "skyscraperLevels": [
                 601882,
                 601883,
                 601884,
                 601886,
                 601891
-            ]
+            ],
+            "specialResidence": 406
         },
         {
             "fullHouse": 10,
@@ -17511,6 +17511,18 @@ params={
             },
             "name": "Jornaleros",
             "needs": [
+                {
+                    "guid": 120020,
+                    "requiredToBeBuilding": 101254,
+                    "residents": 5,
+                    "tpmin": null
+                },
+                {
+                    "guid": 25546,
+                    "requiredToBeBuilding": 24792,
+                    "residents": 7,
+                    "tpmin": null
+                },
                 {
                     "guid": 120033,
                     "residents": 3,
@@ -17548,10 +17560,31 @@ params={
                         "amount": 300,
                         "populationLevel": 15000005
                     }
+                },
+                {
+                    "guid": 1010216,
+                    "requiredToBeBuilding": 24792,
+                    "residents": 4,
+                    "tpmin": 0.003333336,
+                    "unlockCondition": {
+                        "amount": 300,
+                        "populationLevel": 15000005
+                    }
+                },
+                {
+                    "guid": 25506,
+                    "requiredToBeBuilding": 24792,
+                    "residents": 4,
+                    "tpmin": 0.00250002,
+                    "unlockCondition": {
+                        "amount": 300,
+                        "populationLevel": 15000005
+                    }
                 }
             ],
             "region": 5000001,
-            "residence": 101254
+            "residence": 101254,
+            "specialResidence": 24792
         },
         {
             "fullHouse": 20,
@@ -17574,6 +17607,18 @@ params={
             },
             "name": "Obreros",
             "needs": [
+                {
+                    "guid": 120020,
+                    "requiredToBeBuilding": 101255,
+                    "residents": 5,
+                    "tpmin": null
+                },
+                {
+                    "guid": 25546,
+                    "requiredToBeBuilding": 24793,
+                    "residents": 7,
+                    "tpmin": null
+                },
                 {
                     "guid": 120033,
                     "residents": 3,
@@ -17600,6 +17645,18 @@ params={
                     "guid": 120035,
                     "residents": 4,
                     "tpmin": 0.00142857
+                },
+                {
+                    "guid": 25506,
+                    "requiredToBeBuilding": 24793,
+                    "residents": 4,
+                    "tpmin": 0.001428573
+                },
+                {
+                    "guid": 25131,
+                    "requiredToBeBuilding": 24793,
+                    "residents": 4,
+                    "tpmin": 0.002857143
                 },
                 {
                     "guid": 120032,
@@ -17660,7 +17717,8 @@ params={
                 }
             ],
             "region": 5000001,
-            "residence": 101255
+            "residence": 101255,
+            "specialResidence": 24793
         },
         {
             "fullHouse": 500,
