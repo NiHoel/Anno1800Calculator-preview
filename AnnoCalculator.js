@@ -673,7 +673,7 @@ class Consumer extends NamedElement {
 
     getRegionExtendedName() {
         if (!this.region || !this.product || this.product.factories.length <= 1)
-            return this.name;
+            return this.name();
 
         return `${this.name()} (${this.region.name()})`;
     }
@@ -1441,6 +1441,8 @@ class PopulationLevelNeed extends PopulationNeed {
     constructor(config, level, assetsMap) {
         super(config, assetsMap);
 
+        this.region = level.region;
+
         this.freeResidents = 0;
         if (level.specialResidence && level.specialResidence.freeResidents) {
             this.freeResidents = level.specialResidence.freeResidents;
@@ -1456,6 +1458,7 @@ class SkyscraperPopulationNeed extends PopulationNeed {
         super(config, assetsMap);
 
         this.floors = typeof floors[0] === 'number' ? floors.map(f => assetsMap.get(f)) : floors;
+        this.region = this.floors[0].region
         this.floorSubscription = ko.computed(() => {
             var amount = 0;
             for (var i = this.requiredFloorLevel - 1; i < floors.length; i++)
@@ -1479,6 +1482,7 @@ class SpecialResidenceNeed extends PopulationNeed {
         super(config, assetsMap);
 
         this.residence = assetsMap.get(this.requiredToBeBuilding);
+        this.region = this.residence.region;
 
         this.residenceSubscription = ko.computed(() => {
             this.updateAmount(this.residence.limit());
@@ -2446,9 +2450,9 @@ class TradeList {
             var sIdxB = view.sessions.indexOf(b.session);
 
             if (sIdxA == sIdxB) {
-                return a.name() > b.name();
+                return a.name().localeCompare(b.name());
             } else {
-                return sIdxA > sIdxB;
+                return sIdxA - sIdxB;
             }
         });
         var overProduction = this.factory.overProduction();
@@ -2935,7 +2939,7 @@ class ContractUpgradeManager {
         this.products = ko.computed(() => {
             return [...this.productsMap.values()]
                 .filter(p => !this.upgradesMap().has(p.guid))
-                .sort((a, b) => a.name() > b.name());
+                .sort((a, b) => a.name().localeCompare(b.name()));
         });
         this.product = ko.observable(null);
         this.factors = ko.computed(() => {
@@ -2966,9 +2970,9 @@ class ContractUpgradeManager {
     sortUpgrades() {
         this.upgrades.sort((a, b) => {
             if (a.factor != b.factor)
-                return a.factor < b.factor;
+                return b.factor - a.factor;
 
-            return a.product.name() > b.product.name();
+            return a.product.name().localeCompare(b.product.name());
         });
     }
 }
@@ -2987,7 +2991,7 @@ class ContractCreatorFactory {
             var contractList = i.isAllIslands()
                 ? f.contractList.imports().concat(f.contractList.exports())
                 : i.contractManager.contracts();
-            var usedProducts = new Set(contractList.map(c => c.product));
+            var usedProducts = new Set(contractList.map(c => c.importProduct).concat(contractList.map(c => c.exportProduct)));
             usedProducts.add(f.product);
 
             var list;
@@ -2998,7 +3002,7 @@ class ContractCreatorFactory {
                 list = i.products
                     .filter(p => p.guid != 1010566 && p.guid != 270042 && !usedProducts.has(p));
 
-            return list.sort((a, b) => a.name() > b.name());
+            return list.sort((a, b) => a.name().localeCompare(b.name()));
         });
         this.exchangeProduct = ko.observable(null);
 
@@ -3010,7 +3014,7 @@ class ContractCreatorFactory {
                 list = this.exchangeProducts().flatMap(p => p.factories);
 
 
-            return list.sort((a, b) => a.getRegionExtendedName() > b.getRegionExtendedName());
+            return list.sort((a, b) => a.getRegionExtendedName().localeCompare(b.getRegionExtendedName()));
         });
         this.exchangeFactory = ko.observable();
         this.exchangeFactory.subscribe(f => this.exchangeProduct(f ? f.product : null));
@@ -3616,15 +3620,15 @@ class IslandManager {
     sortIslands() {
         view.islands.sort((a, b) => {
             if (a.isAllIslands() || a.name() == ALL_ISLANDS)
-                return false;
+                return -Infinity;
             else if (b.isAllIslands() || b.name() == ALL_ISLANDS)
-                return true;
+                return Infinity;
 
             var sIdxA = view.sessions.indexOf(a.session);
             var sIdxB = view.sessions.indexOf(b.session);
 
             if (sIdxA == sIdxB) {
-                return a.name() - b.name();
+                return a.name().localeCompare(b.name());
             } else {
                 return sIdxA - sIdxB;
             }
@@ -3637,7 +3641,7 @@ class IslandManager {
             var sIdxB = view.sessions.indexOf(b.session);
 
             if (sIdxA == sIdxB) {
-                return a.name - b.name;
+                return a.name.localeCompare(b.name);
             } else {
                 return sIdxA - sIdxB;
             }

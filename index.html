@@ -2182,7 +2182,7 @@
 
 
                             <div class="form-group">
-                                <select class="custom-select form-control" data-bind="value: $data.selectedRecipe, options: $data.unusedRecipes, optionsText: r => r.goodConsumptionUpgrade.name()"></select>
+                                <select class="custom-select form-control" data-bind="value: $data.selectedRecipe, options: $data.unusedRecipes, optionsText: r => r.recipeName()"></select>
                             </div>
 
                             <div style="margin: -10px;">
@@ -2436,7 +2436,7 @@
                         <legend class="collapser" data-toggle="collapse" data-bind="attr: {'data-target' : '#consumption-' +  guid}">
                             <span class="fa fa-chevron-right"></span>
                             <span class="fa fa-chevron-down"></span>
-                                <span data-bind="text:name"></span>v
+                                <span data-bind="text:name"></span>
                         </legend>
                         <div class="collapse show" data-bind="foreach: needs, attr:{id: 'consumption-' +  guid}">
                                 <div class="ui-fchain" data-bind="hidden: $data.instance().hidden && $data.instance().hidden(), css:{inactive: $data.instance().banned}">

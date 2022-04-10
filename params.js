@@ -1,6 +1,342 @@
 params={
     "factories": [
         {
+            "fertilizerModule": 25241,
+            "guid": 24798,
+            "iconPath": "data/ui/2kimages/main/3dicons/icon_cane_sugar_1.png",
+            "locaText": {
+                "chinese": "庄园甘蔗农场",
+                "english": "Hacienda Sugar Cane Farm",
+                "french": "Ferme de canne à sucre (hacienda)",
+                "german": "Hacienda-Zuckerrohrplantage",
+                "italian": "Fattoria di canne da zucchero della hacienda",
+                "japanese": "大農園のさとうきび農場",
+                "korean": "대농장 - 사탕수수 농장",
+                "polish": "Pole trzciny cukr. obok hacjendy",
+                "russian": "Асьенда – плантация сахарного тростника",
+                "spanish": "Granja de caña de azúcar de hacienda",
+                "taiwanese": "莊園甘蔗農場"
+            },
+            "maintenances": [
+                {
+                    "Amount": 20,
+                    "InactiveAmount": 10,
+                    "Product": 1010017
+                },
+                {
+                    "Amount": 10,
+                    "Product": 1010366
+                }
+            ],
+            "module": 269849,
+            "modulesLimit": 64,
+            "modulesSize": 1,
+            "name": "Hacienda Sugar Cane Farm",
+            "outputs": [
+                {
+                    "Amount": 1,
+                    "Product": 1010251,
+                    "StorageAmount": 4
+                }
+            ],
+            "region": 5000001,
+            "tpmin": 2
+        },
+        {
+            "fertilizerModule": 25241,
+            "guid": 25003,
+            "iconPath": "data/ui/2kimages/main/3dicons/icon_corn.png",
+            "locaText": {
+                "chinese": "庄园玉米农场",
+                "english": "Hacienda Corn Farm",
+                "french": "Exploitation de maïs (hacienda)",
+                "german": "Hacienda-Maisplantage",
+                "italian": "Fattoria di mais della hacienda",
+                "japanese": "大農園のトウモロコシ農場",
+                "korean": "대농장 - 옥수수 농장",
+                "polish": "Uprawa kukurydzy przy hacjendzie",
+                "russian": "Асьенда – кукурузная ферма",
+                "spanish": "Granja de maíz de hacienda",
+                "taiwanese": "莊園玉米農場"
+            },
+            "maintenances": [
+                {
+                    "Amount": 25,
+                    "InactiveAmount": 13,
+                    "Product": 1010017
+                },
+                {
+                    "Amount": 10,
+                    "Product": 1010366
+                }
+            ],
+            "module": 269849,
+            "modulesLimit": 64,
+            "modulesSize": 1,
+            "name": "Hacienda Corn Farm",
+            "outputs": [
+                {
+                    "Amount": 1,
+                    "Product": 120034,
+                    "StorageAmount": 4
+                }
+            ],
+            "region": 5000001,
+            "tpmin": 1
+        },
+        {
+            "fertilizerModule": 25241,
+            "guid": 25005,
+            "iconPath": "data/ui/2kimages/main/3dicons/icon_coffee_beans.png",
+            "locaText": {
+                "chinese": "庄园咖啡农场",
+                "english": "Hacienda Coffee Farm",
+                "french": "Ferme de café (hacienda)",
+                "german": "Hacienda-Kaffeeplantage",
+                "italian": "Fattoria di caffè della hacienda",
+                "japanese": "大農園のコーヒー農場",
+                "korean": "대농장 - 커피 농장",
+                "polish": "Uprawa kawy przy hacjendzie",
+                "russian": "Асьенда – кофейная плантация",
+                "spanish": "Granja de café de hacienda",
+                "taiwanese": "莊園咖啡農場"
+            },
+            "maintenances": [
+                {
+                    "Amount": 25,
+                    "InactiveAmount": 13,
+                    "Product": 1010017
+                },
+                {
+                    "Amount": 10,
+                    "Product": 1010366
+                }
+            ],
+            "module": 269849,
+            "modulesLimit": 64,
+            "modulesSize": 1,
+            "name": "Hacienda Coffee Farm",
+            "outputs": [
+                {
+                    "Amount": 1,
+                    "Product": 120031,
+                    "StorageAmount": 2
+                }
+            ],
+            "region": 5000001,
+            "tpmin": 1
+        },
+        {
+            "fertilizerModule": 25241,
+            "guid": 25006,
+            "iconPath": "data/ui/2kimages/main/3dicons/icon_caoutchouc.png",
+            "locaText": {
+                "chinese": "庄园橡胶园",
+                "english": "Hacienda Caoutchouc Plantation",
+                "french": "Plantation de latex (hacienda)",
+                "german": "Hacienda-Kautschukplantage",
+                "italian": "Piantagione di caucciù della hacienda",
+                "japanese": "大農園の天然ゴム農園",
+                "korean": "대농장 - 생고무 농장",
+                "polish": "Plantacja kauczuku przy hacjendzie",
+                "russian": "Асьенда – плантация каучука",
+                "spanish": "Plantación de caucho de hacienda",
+                "taiwanese": "莊園橡膠園"
+            },
+            "maintenances": [
+                {
+                    "Amount": 25,
+                    "InactiveAmount": 13,
+                    "Product": 1010017
+                },
+                {
+                    "Amount": 10,
+                    "Product": 1010366
+                }
+            ],
+            "module": 269849,
+            "modulesLimit": 64,
+            "modulesSize": 1,
+            "name": "Hacienda Caoutchouc Plantation",
+            "outputs": [
+                {
+                    "Amount": 1,
+                    "Product": 1010255,
+                    "StorageAmount": 4
+                }
+            ],
+            "region": 5000001,
+            "tpmin": 1
+        },
+        {
+            "fertilizerModule": 25241,
+            "guid": 25009,
+            "iconPath": "data/ui/2kimages/main/3dicons/icon_cocoa.png",
+            "locaText": {
+                "chinese": "庄园可可农场",
+                "english": "Hacienda Cocoa Farm",
+                "french": "Ferme de cacao (hacienda)",
+                "german": "Hacienda-Kakaoplantage",
+                "italian": "Fattoria di cacao della hacienda",
+                "japanese": "大農園のココア農場",
+                "korean": "대농장 - 코코아 농장",
+                "polish": "Uprawa kakao przy hacjendzie",
+                "russian": "Асьенда – плантация какао",
+                "spanish": "Granja de cacao de hacienda",
+                "taiwanese": "莊園可可農場"
+            },
+            "maintenances": [
+                {
+                    "Amount": 5,
+                    "InactiveAmount": 3,
+                    "Product": 1010017
+                },
+                {
+                    "Amount": 10,
+                    "Product": 1010366
+                }
+            ],
+            "module": 269849,
+            "modulesLimit": 64,
+            "modulesSize": 1,
+            "name": "Hacienda Cocoa Farm",
+            "outputs": [
+                {
+                    "Amount": 1,
+                    "Product": 1010254,
+                    "StorageAmount": 2
+                }
+            ],
+            "region": 5000001,
+            "tpmin": 1
+        },
+        {
+            "fertilizerModule": 25241,
+            "guid": 25019,
+            "iconPath": "data/ui/2kimages/main/3dicons/icon_potatoes.png",
+            "locaText": {
+                "chinese": "庄园土豆农场",
+                "english": "Hacienda Potato Farm",
+                "french": "Exploitation de pommes de terre (hacienda)",
+                "german": "Hacienda-Kartoffelhof",
+                "italian": "Fattoria di patate della hacienda",
+                "japanese": "大農園のジャガイモ農場",
+                "korean": "대농장 - 감자 농장",
+                "polish": "Uprawa ziemniaków przy hacjendzie",
+                "russian": "Асьенда – картофельная ферма",
+                "spanish": "Granja de patatas de hacienda",
+                "taiwanese": "莊園馬鈴薯農場"
+            },
+            "maintenances": [
+                {
+                    "Amount": 20,
+                    "InactiveAmount": 10,
+                    "Product": 1010017
+                },
+                {
+                    "Amount": 10,
+                    "Product": 1010366
+                }
+            ],
+            "module": 269849,
+            "modulesLimit": 64,
+            "modulesSize": 1,
+            "name": "Hacienda Potato Farm",
+            "outputs": [
+                {
+                    "Amount": 1,
+                    "Product": 1010195,
+                    "StorageAmount": 4
+                }
+            ],
+            "region": 5000001,
+            "tpmin": 2
+        },
+        {
+            "fertilizerModule": 25241,
+            "guid": 25020,
+            "iconPath": "data/ui/2kimages/main/3dicons/goods_africa/icon_spices.png",
+            "locaText": {
+                "chinese": "庄园辛香料农场",
+                "english": "Hacienda Spice Farm",
+                "french": "Ferme d'épices (hacienda)",
+                "german": "Hacienda-Gewürzfarm",
+                "italian": "Fattoria di spezie della hacienda",
+                "japanese": "大農園の香辛料農場",
+                "korean": "대농장 - 향신료 농장",
+                "polish": "Uprawa przypraw przy hacjendzie",
+                "russian": "Асьенда – ферма пряностей",
+                "spanish": "Granja de especias de hacienda",
+                "taiwanese": "莊園辛香料農場"
+            },
+            "maintenances": [
+                {
+                    "Amount": 25,
+                    "InactiveAmount": 13,
+                    "Product": 1010017
+                },
+                {
+                    "Amount": 10,
+                    "Product": 1010366
+                }
+            ],
+            "module": 269849,
+            "modulesLimit": 64,
+            "modulesSize": 1,
+            "name": "Hacienda Spice Farm",
+            "outputs": [
+                {
+                    "Amount": 1,
+                    "Product": 114369,
+                    "StorageAmount": 2
+                }
+            ],
+            "region": 5000001,
+            "tpmin": 1
+        },
+        {
+            "fertilizerModule": 25241,
+            "guid": 25128,
+            "iconPath": "data/ui/2kimages/main/3dicons/icon_cereals_2.png",
+            "locaText": {
+                "chinese": "庄园谷物农场",
+                "english": "Hacienda Grain Farm",
+                "french": "Ferme céréalière (hacienda)",
+                "german": "Hacienda-Getreidefarm",
+                "italian": "Fattoria di grano della hacienda",
+                "japanese": "大農園の穀物農場",
+                "korean": "대농장 - 곡물 농장",
+                "polish": "Uprawa zboża przy hacjendzie",
+                "russian": "Асьенда – зерновая ферма",
+                "spanish": "Granja de cereales de hacienda",
+                "taiwanese": "莊園穀物農場"
+            },
+            "maintenances": [
+                {
+                    "Amount": 10,
+                    "InactiveAmount": 5,
+                    "Product": 1010017
+                },
+                {
+                    "Amount": 10,
+                    "Product": 1010366
+                }
+            ],
+            "module": 269849,
+            "modulesLimit": 64,
+            "modulesSize": 1,
+            "name": "Hacienda Grain Farm",
+            "outputs": [
+                {
+                    "Amount": 1,
+                    "Product": 1010192,
+                    "StorageAmount": 2
+                }
+            ],
+            "region": 5000001,
+            "tpmin": 1
+        },
+        {
             "guid": 24801,
             "iconPath": "data/ui/2kimages/main/3dicons/icon_rum_barrel.png",
             "inputs": [
@@ -11045,7 +11381,7 @@ params={
         "data/ui/2kimages/main/3dicons/icon_reinforced_concrete.png": "data:image/webp;base64,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",
         "data/ui/2kimages/main/3dicons/icon_residence_scholars.png": "data:image/webp;base64,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",
         "data/ui/2kimages/main/3dicons/icon_resident.png": "data:image/webp;base64,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",
-        "data/ui/2kimages/main/3dicons/icon_restaurant.png": "data:image/webp;base64,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",
+        "data/ui/2kimages/main/3dicons/icon_restaurant.png": "data:image/webp;base64,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",
         "data/ui/2kimages/main/3dicons/icon_rich_sea_2.png": "data:image/webp;base64,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",
         "data/ui/2kimages/main/3dicons/icon_rum.png": "data:image/webp;base64,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",
         "data/ui/2kimages/main/3dicons/icon_rum_barrel.png": "data:image/webp;base64,UklGRmwPAABXRUJQVlA4WAoAAAAQAAAASgAASgAAQUxQSDIFAAANsHTb1iHb1lzrC+3I3Mw8Pte2bdu2Snqv/H7Kq9u2bdvGNhI7A9+3ViEzIjMi2qtHxATg/y1N0kbRGIEMKSnIAnAACNBGGNaQGEZZLEkKhhWluhGIxfgqbYTG9zilFLnmuSjUOUBrwyAN1ffIHcLuveeeGjkHWvvs6qbvcod9Z0VyqNaCyfgeYgRheNIdFySACkU48aGj+bqz//vtXpKkI+SiWgOfzJzhI0cWzz71ACYSATDwTznYbp1yvveNn2xqL0uhrrIIXhtHnjsXsz94/62/fFeQpkML1WrmQSu332xQ8QNP/+BTwVaWWEgFpmUXznkEqlVh+Y6z3+t6SWahs2LyefHyh+FgKgOuuu+jm6NR7mRGTF44//BRwBDqePT1j24PRyNyMyEycfsJ1Lj99s/u9Pcz1emINOCVW7ROWHnoMxhlCWYZUNy+r1447dwfjVJNp2MEfOFritIKqsq777d7Q8ncNKxReOAh1J2DS/+a7pHoFERz/rN2GqoOeODHIxlOFczjihBTai1w2b93xZYjQzj9XjTy7L/7qZVSMK34QUxNVSmNHUuHVkXKcCT3p9NVThg/uBW6TFE2CPzr0FBz2r9TkTLMuFyaAl/YQYrIt90nmwNfHMp6c50A40oN6G47X10J4wVobhpCGJNZGNG5Y0rUhH5kiAoANubQGKGRqyvk5QVKxHzm2LRKSnXoITSGtMiDMVMpiFDP7Vh9cMG4F04FKCnV4rdnp55HKCTxXTAVASDU0a57ccCoXEF12N1YWmCUVBbZ6c6AUEf91kXG91mKAIf+0gzqOUwWhEEombH+/YyGuHP/wCBXQr1EegcasnjRP1ad2hIQsX+4qCHAQZdl1pXI/bTfbcyxfiJOS2Coq4OLm3L1n7ORkzKc8AefMkUKqtOBfXEiUqQ5hmvxiUV1n1fNYLUAcJn90a1NOWWQywgWWpCn6bfPObOAanbLxmjPjjJFocUo/NxDBXVUKtN9MPrs9oCdThLKRsO/ZbfWh1A6uuj0z8p+jkIV3Um+df2JtZk6WNrLVQugWSqbH335YCOUfnaBRg4lhAZ29M27l5uAP3f8VmpKQCVJsrX8/Ihqp/vfuzjkkEo5TRPvcVXU15kJ9PuwFUReqYkkXKPVv1w3IfveGWE4R9MYkxlQbf7764W9eCE2K8koDFqGUJo9dkuo785XTgp+tK+qW8GdC4vOoLyPVnxNfba/fBGJUiak6IRzRsr5Jjz2otZm8JODsWGi3CmbsOUzpuCz34Haul92DmZMKiIKJkNUzqh3IQoVVJW58E8DOBKoAEyYlpQ2OwV1bD+2+3WbWVUoZug8+tlf7wtqA++av+6llGC2Kn39zO/fOjyBagA/dLmKzgYp78AP4zHCZGcgAkOz6cWGQLMS5Lvc4TH57/cpDbtRJ1poMwgz3f/a9b5vGDNWK26Yh3FIuvarzg6PdnjIA9ftLC0sRmEUUDn52pFDQaQ0K4iOeu9cOzm/zP3zgiXJ2WSUMvX7e9YmnC63D598Chf9NF6GF6NCp8O+t4Ufe5cYz/dgnTpYJ5wSNFyjnWHyxHKBbrlw3lagajHc7RmGW/Rjo+Ic1DkLTbxMkXMWDK8t+HcYIEKVKqnLNBO0nKcAIOKETSLW+haZ5Jl/om8IQO8fh8NYK4HAacKAY0xWwDkiIHUszhv8+CtHusdXuvT5Gzuhj6pVoZhaFQBEXYLeVtLfHW7uP9iZm/Mqq1bz1A6SjDIE1G7Nodlq0zxBzyeS+QikjYI454RTZY+YFTMEVlA4IBQKAABQKACdASpLAEsAPjEWiEKiISEVy448IAMEsgBjG8Sop1jfH7nzPXlSc2eeL/AeobzAP1h81X1Afsj6i/Nn9EH+A9Rn/Sf2brIvQg8uD2SP289I7//5w7/IO0vvP8JHrv279YLGP1BYK/6Xyy71eAF6v/0Xh77PwAX1M/5P9w8UzUg72ewB+qf+i9WP+B4UFAD+Xf3P/n+zL/S/+3ylfSn/b9wf+Y/1H/mf372xfXZ+53si/rs2LpfJLV2Mg7t+kHNlx1vMZnLJe/l46ERzyO/OqgwT2bFKZ3lndNgqXBZTXL51pLTV9iSYjy5jpL3DqtajW3K7CBQ7tXWvvPP35JDmm3p1j17tkgVJEYbFWmB20IifBE6tRjIxJybbzBHM1d9pfClh6lEXRH+LDLX4BuAdNRupGLJEnwMyHWfXxh2prOQZiNwcexPYlRDYAP7/uQ7+kTwU/KspzSAu6bp1JP3schOWaUFfpAz97gMuiQkuZ8uDbUTetzyWv8VUDKuS3vemwNb6g5DxtXyUt+qrESPTGJNT+FihyxbUCw4kfEJBgm0bMjr2jif+1AK3MMfiWTY4/sv4a97gMkoG8jox77s/zF6HYp68tZuikom7dQwDFW9G/H0KtA03vAuhdpDkwaaPhmnYBNIhyheOH3U/qMx8HbF0NAAx5h7Bk3jAvG3eeOLF3zPHVJ9wxv/8NrkyGnn3gSabT/f6LiQ+HUO3ZWKTikgXHpeK1jZUJLslkVcJNl6Py9kYq5cHY+yGkN4RKN+DRiM9A1XWPPUlCdRZPtGPCTuJtfDMBI+iNOsJl3vc+1iEGxxwfwLO62RgS2fTALVDuqEx3Q/iSxgD2g5L1+E7nCLn8PNVe97+eBYAMQHuBfLVBAVW9x5aj/qrvi1PhXYVzKOv34SmK2f2zYp8mfF3fwH8KXf7myi/2Ukg/DalfYTgqj6tk+oR+MQ1M/QYBMRp8+nY2aBWS5nBpvFktjhlYDFaZks4T0N1zvdRhJlDTS7WoZWA46xgCJcH5nhpRoCB8iaO+xT+w8PgfygZ3EEiQrg3BlYPm5/69pRn4pv0NEnMK1DfbG8XkTD4IuTZmypi5oEV3k8+r/D5eoGfge3yr5YA9QEurv1tZbiWxyFysNPZdZKYAe4ZNkzm7FnebcPfJBUSvraJs2jUS4ud/qT0FeNLhVjheh29xG2KMwQ7a8MTSutWM9VvWx8HrHqTEqby2OSI2NsvFtYYDhal2raKBcAPubO9aeCXM6BFhIm9M3+2tFkaHvFn2xh9wIdKpV5INQL8RRKU/cutAwmqbHZKSCXeGVfFL+0L8Ry++Dr2J3X5Zm13MDNE9QIeOHtdNVJwTonjEUC18TGSa4WwQlQpc90hKkacla+e8BXxd18gdH03PavTb6eIWNHLqrTBF15V4PXMsnXoHepMwhHAH0WzQ3dyW9PGK33WLXEw8ERwItrax5jxW7cqd4R6fN2+5gfxsLuotigBHVDm7xhCz4dtp31VO3rLKdSCbDxjrcUJ/gAUP4iwb8u8Qua2bE4nzLaoqrnmDUzqgyiWt6GgoxfBrQE+eKnF4U9nlUnOarKxWi+gWuBqu2aX+5kSgWgxiLLsxh3m8WbeeRZOKOwzegHGtS9he/B3s9A9JtL2fFP1nnQ+kfk+Ih7nEtIOJPzCkkrTQ+bOLnB6nhPker++6RpQBbkGBzxwPONQX9oYIPIR/h0uWmz2UNVnXrAFkG2wteer5c8apZALUL9rrklFhlNE2yB4SAuV9DYAQP4+MWZr+wCD7I5xBuCg67vA7A6nACAaPy3O1kNePlIHUiHRaHtIhMxrNo9V2cM+OTHSex93YnC+xPQlGIQ58tuf9i5/Wt+P7tB6okFfw6R+s+R5wd/HYf2aaKBQveDoAxLLvVn831j4ghDAerfmxo1VYDV19ZeIan+SmJpGIIieeuymSI5RXa/OF8m0UVdkko9ZS7RHHARY2aR/yG6X4msI42WTpxNNjY5k1HHfVeURYcThSedESj3EkwtNdELSLa3rx2uxz1+Kh0HQde9xDfG6cQHQplgZ7pYv85g3Xa/7B1xD8bGAHhHBmudYDx/oHeMkhaMS7uZNEObNXP/qmNCOy4LjuE/qBydKjtari4zsbBGPaR9qYSRDJ27QsBliK1uFd8wYqxaFNghCU4UO0Y7HOIGr2THYaPm4jxThkMNKRsNVhgFwy9H1PPgpydh3bW2XTDtAykf+4S/nmu0dJOTYmiFIICIfZvaVZpnG032RGzOS+4G5PkTpmiVbRGAEQv72gDbB64V4RzJxBx2Yi9stH8PRijHNRBZrvlRbLkUiFoPyYOLAXeRlL+UQKRea4xVstLZ3V0p4bO1tPW11KbR+yY1zMn7140bypxCzlVGHVxkGSAhiUC9kltZ0+MZdUrASkjtciyvnS3bUydxdITLlr+GLuE8CHmRfvAQv7NNz4bA3kJTNwafcKM4QyLLvy/AQX4nx6ILCUqs3oI2Vx19c7Bn0N7hbeZX3iChCVFM7EzDZT+Szl8KwwqKUw34mefhK22d770iCG8cnkdQkZRsDcjkQYjxefO0gXUJEsWMPObj+OZxMpu8gpvhxpSTnXr6aFYC5BZrv5Xh2Svvml2m/gs+FHetKOUVOoV5zq0nvfrWHEgUnsLRfknCQ2jD9FIct3n/tT4Gs/q8FQS3bMROEb0V6HSsFdYqb+cT2tKP8dgtOC9zSvAdFkRkiLzobZGlAl4U+hrqJZC+HKfjRyZco76McqvgQCwkj4WauqQxWmWdSxtUpWtzjwBwEb6tWv2gsvl/eZmVDsjJv6rcqgBYYMytR6V32dknbbRONptHKWvmaxgh+lOPotcfwBMgLzp9aYWVeZPAMyJBvb2HFrku3zGnYeKtG6gAETn1WMiuB+hdPW3EX4wk1L5QZ+wqr1Hr58urEUtd/IKDoxt7VU7f7qTYyu6o4eBXqk+inTvwOZ/YgoTr55Kf8RMkV2x0z60wbzjFHzjE9GITSwe33fc+9l7IzII7YIS+9yjBxgIFJsnMGGHlUm5TPD3dhF8IxxUP7hVdV2PG0o4km3ZfHfX/Swzl6LvxB0/UEjpXEM0c6KtIpH+KtoH464lfO/+qZ8ivyk4bYOfeyb0Ttvxvds/gGFtj7cqZsOPE3qcQRDPT9MjIafzDOqzkNaxXN+usmeEo964wRLCc7CFZDeM0oE46UJ8qTEM/QJ8O2t2gGefdDUqkY10viXmuvm/ARQiR8t/hzzIzmwrouujuOeLtgcRGO0GZexkpm8y2aOqn3ZRTNzqggzQ/zWlPv31P8HTiuepeFSKxvefMOCE0a2xH1cqs/2pXSMyDJq+cZEcfDhGvLo3TbJ2hoJAM2u6tKvFtwVyoCjv+JyO86uYQ1qn5uYvrirpHPO5GmJ6qy56dU2iYQGClxsqTAS4AS+rx77bSduhap98sgFsAAAAA=",
@@ -11667,7 +12003,9 @@ params={
             "factories": [
                 1010329,
                 1010330,
-                101270
+                101270,
+                24798,
+                25003
             ],
             "guid": 190689,
             "iconPath": "data/ui/2kimages/main/3dicons/specialists/systemic/icon_farmer_201.png",
@@ -11701,7 +12039,10 @@ params={
                 1010333,
                 1010331,
                 101251,
-                101263
+                101263,
+                25009,
+                25006,
+                25005
             ],
             "guid": 190690,
             "iconPath": "data/ui/2kimages/main/3dicons/specialists/systemic/icon_farmer_403.png",
@@ -11743,7 +12084,9 @@ params={
             "factories": [
                 1010329,
                 1010330,
-                101270
+                101270,
+                24798,
+                25003
             ],
             "guid": 190691,
             "iconPath": "data/ui/2kimages/main/3dicons/specialists/systemic/icon_normaldress_308.png",
@@ -11787,7 +12130,10 @@ params={
                 1010333,
                 1010331,
                 101251,
-                101263
+                101263,
+                25005,
+                25006,
+                25009
             ],
             "guid": 190692,
             "iconPath": "data/ui/2kimages/main/3dicons/specialists/systemic/icon_farmer_105.png",
@@ -11844,7 +12190,15 @@ params={
                 1010333,
                 101251,
                 101263,
-                101270
+                101270,
+                24798,
+                25003,
+                25005,
+                25006,
+                25009,
+                25019,
+                25020,
+                25128
             ],
             "guid": 190693,
             "iconPath": "data/ui/2kimages/main/3dicons/specialists/systemic/icon_farmer_102_b.png",
@@ -11998,7 +12352,8 @@ params={
             ],
             "factories": [
                 1010265,
-                1010264
+                1010264,
+                25019
             ],
             "guid": 190750,
             "iconPath": "data/ui/2kimages/main/3dicons/specialists/systemic/icon_farmer_302.png",
@@ -12030,7 +12385,8 @@ params={
             "factories": [
                 1010262,
                 100654,
-                100655
+                100655,
+                25128
             ],
             "guid": 190751,
             "iconPath": "data/ui/2kimages/main/3dicons/specialists/systemic/icon_normal_dressed_105.png",
@@ -13991,7 +14347,8 @@ params={
                 1010264,
                 1010265,
                 100655,
-                100654
+                100654,
+                25019
             ],
             "guid": 193187,
             "iconPath": "data/ui/2kimages/main/3dicons/specialists/influencer/icon_influencer_alex_hancock.png",
@@ -14211,7 +14568,15 @@ params={
                 114450,
                 114451,
                 114452,
-                114453
+                114453,
+                24798,
+                25003,
+                25005,
+                25006,
+                25009,
+                25019,
+                25020,
+                25128
             ],
             "guid": 116187,
             "iconPath": "data/ui/2kimages/main/3dicons/machine_items/icon_cigars_roller.png",
@@ -14289,7 +14654,15 @@ params={
                 114450,
                 114451,
                 114452,
-                114453
+                114453,
+                24798,
+                25003,
+                25005,
+                25006,
+                25009,
+                25019,
+                25020,
+                25128
             ],
             "guid": 116190,
             "iconPath": "data/ui/2kimages/main/3dicons/machine_items/icon_electric_potato_harvester.png",
@@ -14317,13 +14690,8 @@ params={
                 }
             ],
             "factories": [
-                1010263,
-                1010267,
-                1010269,
                 101269,
-                101272,
-                114456,
-                114439
+                101272
             ],
             "guid": 24806,
             "iconPath": "data/ui/2kimages/main/3dicons/icon_dung.png",
@@ -15116,7 +15484,8 @@ params={
             ],
             "factories": [
                 132786,
-                133533
+                133533,
+                24805
             ],
             "guid": 136746,
             "iconPath": "data/ui/2kimages/main/3dicons/highlife/icon_chemical_plant_item_2.png",
@@ -15323,7 +15692,8 @@ params={
                 25064,
                 25126,
                 25350,
-                25508
+                25508,
+                24805
             ],
             "guid": 136827,
             "iconPath": "data/ui/2kimages/main/3dicons/highlife/icon_chemical_plant_item_1.png",
@@ -18863,7 +19233,7 @@ params={
             "name": "Influence"
         },
         {
-            "exchangeWeight": 462.19998999999996,
+            "exchangeWeight": 35,
             "guid": 25131,
             "iconPath": "data/ui/2kimages/main/3dicons/scenario/goods/icon_atole.png",
             "locaText": {
@@ -18879,14 +19249,13 @@ params={
                 "spanish": "Atole",
                 "taiwanese": "玉米粥"
             },
-            "mainFactory": 25126,
             "name": "Atole",
             "producers": [
                 25126
             ]
         },
         {
-            "exchangeWeight": 0,
+            "exchangeWeight": 5,
             "guid": 24807,
             "iconPath": "data/ui/2kimages/main/3dicons/icon_dung.png",
             "locaText": {
@@ -18902,14 +19271,13 @@ params={
                 "spanish": "Estiércol",
                 "taiwanese": "糞便"
             },
-            "mainFactory": 190872,
             "name": "Dung",
             "producers": [
                 190872
             ]
         },
         {
-            "exchangeWeight": 137.03999399999998,
+            "exchangeWeight": 20,
             "guid": 24808,
             "iconPath": "data/ui/2kimages/main/3dicons/scenario/goods/icon_fertilizer_good.png",
             "locaText": {
@@ -18925,14 +19293,13 @@ params={
                 "spanish": "Fertilizante",
                 "taiwanese": "肥料"
             },
-            "mainFactory": 24805,
             "name": "Fertiliser",
             "producers": [
                 24805
             ]
         },
         {
-            "exchangeWeight": 312.10590379999996,
+            "exchangeWeight": 35,
             "guid": 25506,
             "iconPath": "data/ui/2kimages/main/3dicons/icon_tabasco_sauce.png",
             "locaText": {
@@ -18948,7 +19315,6 @@ params={
                 "spanish": "Salsa picante",
                 "taiwanese": "辣醬"
             },
-            "mainFactory": 25508,
             "name": "Hot Sauce",
             "producers": [
                 25508
@@ -19715,6 +20081,7 @@ params={
             "mainFactory": 1010262,
             "name": "Grain",
             "producers": [
+                25128,
                 1010262
             ]
         },
@@ -19797,6 +20164,7 @@ params={
             "mainFactory": 1010265,
             "name": "Potatoes",
             "producers": [
+                25019,
                 1010265
             ]
         },
@@ -21276,6 +21644,7 @@ params={
             "mainFactory": 1010329,
             "name": "Sugar Cane",
             "producers": [
+                24798,
                 1010329
             ]
         },
@@ -21353,6 +21722,7 @@ params={
             "mainFactory": 1010332,
             "name": "Cocoa",
             "producers": [
+                25009,
                 1010332
             ]
         },
@@ -21380,6 +21750,7 @@ params={
             "mainFactory": 1010333,
             "name": "Caoutchouc",
             "producers": [
+                25006,
                 1010333
             ]
         },
@@ -21405,6 +21776,7 @@ params={
             "mainFactory": 101251,
             "name": "Coffee Beans",
             "producers": [
+                25005,
                 101251
             ]
         },
@@ -21432,6 +21804,7 @@ params={
             "mainFactory": 101270,
             "name": "Corn",
             "producers": [
+                25003,
                 101270
             ]
         },
@@ -22545,6 +22918,7 @@ params={
             "mainFactory": 114452,
             "name": "Spices",
             "producers": [
+                25020,
                 114452
             ]
         },
@@ -25990,7 +26364,7 @@ params={
             },
             "name": "Hacienda Obrera Quarters",
             "populationLevel": 15000006,
-            "residentMax": 30
+            "residentMax": 40
         },
         {
             "guid": 1010343,
