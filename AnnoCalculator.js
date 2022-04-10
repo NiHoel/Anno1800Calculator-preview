@@ -399,6 +399,10 @@ class Island {
             this.populationLevels.push(l);
         }
 
+        for (let b of this.residenceBuildings)
+            if (typeof b.populationLevel === "number")
+                b.populationLevel = assetsMap.get(parseInt(b.populationLevel));
+
         for (let l of this.populationLevels) {
             l.initBans(assetsMap);
 
@@ -3786,6 +3790,7 @@ class Template {
         this.index = index;
 
         this.name = asset.name;
+        this.recipeName = asset.recipeName;
         this.guid = asset.guid;
         this.getRegionExtendedName = asset.getRegionExtendedName;
         this.editable = asset.editable;
