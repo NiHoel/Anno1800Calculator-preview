@@ -8627,12 +8627,12 @@ params={
             ],
             "outputs": [
                 {
-                    "Amount": 0.3333333333333333,
+                    "Amount": 1,
                     "Product": 24807
                 }
             ],
             "region": 5000001,
-            "tpmin": 2
+            "tpmin": 0.6666666666666666
         }
     ],
     "goodConsumptionUpgrades": [

@@ -110,7 +110,7 @@ class Option extends NamedElement {
 }
 
 class Island {
-    constructor(params, localStorage, session) {
+    constructor(params, localStorage, isNew, session) {
         if (localStorage instanceof Storage) {
             this.name = ko.observable(localStorage.key);
             this.name.subscribe(name => this.storage.updateKey(name));
@@ -120,7 +120,6 @@ class Island {
             this.isAllIslands = function () { return true; };
         }
         this.storage = localStorage;
-        var isNew = localStorage.length > 1;
 
         this.session = session || this.storage.getItem("session");
         this.session = this.session instanceof Session ? this.session : view.assetsMap.get(this.session);
@@ -3399,7 +3398,7 @@ class PopulationReader {
 }
 
 class IslandManager {
-    constructor(params) {
+    constructor(params, isFirstRun = false) {
         let islandKey = "islandName";
         let islandsKey = "islandNames";
 
@@ -3429,7 +3428,7 @@ class IslandManager {
         view.island.subscribe(isl => window.document.title = isl.name());
 
         for (var name of islandNames) {
-            var island = new Island(params, new Storage(name));
+            var island = new Island(params, new Storage(name), false);
             view.islands.push(island);
             this.serverNamesMap.set(island.name(), island);
 
@@ -3439,7 +3438,7 @@ class IslandManager {
 
         this.sortIslands();
 
-        var allIslands = new Island(params, localStorage);
+        var allIslands = new Island(params, localStorage, isFirstRun);
         this.allIslands = allIslands;
         view.islands.unshift(allIslands);
         this.serverNamesMap.set(allIslands.name(), allIslands);
@@ -3480,7 +3479,7 @@ class IslandManager {
         if (this.serverNamesMap.has(name) && this.serverNamesMap.get(name).name() == name)
             return;
 
-        var island = new Island(this.params, new Storage(name), session);
+        var island = new Island(this.params, new Storage(name), true, session);
         view.islands.push(island);
         this.sortIslands();
 
@@ -3953,7 +3952,7 @@ function init(isFirstRun) {
     }
 
     // set up island management
-    view.islandManager = new IslandManager(params);
+    view.islandManager = new IslandManager(params, isFirstRun);
 
     if (localStorage) {
         let id = "language";
