@@ -661,7 +661,7 @@ class Consumer extends NamedElement {
         for (let m of this.maintenances || []) {
             let a = assetsMap.get(m.Product);
             if (a instanceof Workforce) {
-                let items = this.items.filter(item => item.replacingWorkforce);
+                let items = this.items.filter(item => item.replacingWorkforce && item.replacingWorkforce != a);
                 if (items.length)
                     this.workforceDemand = new WorkforceDemandSwitch($.extend({ factory: this, workforce: a }, m), items[0], assetsMap);
                 else
