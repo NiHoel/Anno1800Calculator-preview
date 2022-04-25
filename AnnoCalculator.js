@@ -2990,11 +2990,18 @@ class ContractCreatorFactory {
                 return [];
 
             var f = view.selectedFactory();
-            var i = f.contractList.island;
-            var contractList = i.isAllIslands()
-                ? f.contractList.imports().concat(f.contractList.exports())
-                : i.contractManager.contracts();
-            var usedProducts = new Set(contractList.map(c => c.importProduct).concat(contractList.map(c => c.exportProduct)));
+            var fl = f.contractList;
+            var i = fl.island
+            var il = i.contractManager.contracts();
+
+            var usedProducts = fl.imports().map(c => c.exportProduct).concat(fl.exports().map(c => c.importProduct));
+            if (!i.isAllIslands())
+                if (this.export())
+                    usedProducts.concat(il.map(c => c.exportProduct))
+                else
+                    usedProducts.concat(il.map(c => c.importProduct))
+
+            usedProducts = new Set(usedProducts);
             usedProducts.add(f.product);
 
             var list;
@@ -3055,7 +3062,9 @@ class ContractCreatorFactory {
                 this.export(false);
                 this.newAmount(Math.abs(Math.min(0, overProduction)));
             } else {
-                if (overProduction < 0 && this.canImport()) {
+                if (overProduction < 0 &&
+                    (f.product.canImport && (f.contractList.island.isAllIslands() || !f.contractList.exports().length))) {
+                    // do not use this.canImport() since it may not be updated yet
                     this.export(false);
                     this.newAmount(Math.abs(overProduction));
                 } else {
@@ -3079,24 +3088,26 @@ class ContractCreatorFactory {
         if (!l)
             return;
 
+        var otherF = this.exchangeFactory();
+
         if (this.export()) {
             var contract = new TradeContract({
                 exportFactory: f,
-                importFactory: this.exchangeFactory(),
+                importFactory: otherF,
                 exportAmount: this.newAmount()
             });
 
             l.exports.push(contract);
-            this.exchangeFactory().contractList.imports.push(contract);
+            otherF.contractList.imports.push(contract);
         } else {
             var contract = new TradeContract({
-                exportFactory: this.exchangeFactory(),
+                exportFactory: otherF,
                 importFactory: f,
                 importAmount: this.newAmount()
             });
 
             l.imports.push(contract);
-            this.exchangeFactory().contractList.exports.push(contract);
+            otherF.contractList.exports.push(contract);
         }
 
         l.island.contractManager.add(contract);
