@@ -15716,9 +15716,7 @@ params={
             "factories": [
                 134622,
                 135148,
-                135361,
-                1010302,
-                1010303
+                135361
             ],
             "guid": 137631,
             "iconPath": "data/ui/2kimages/main/3dicons/highlife/icon_assembly_line_item_new_2.png",
