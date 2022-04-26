@@ -1753,6 +1753,10 @@ class PopulationLevel extends NamedElement {
                         this.amount(Math.floor(val * this.amountPerHouse()));
                 } else {
                     var perHouse = this.amount() / val;
+                    if (perHouse < 1) {
+                        this.amount(val);
+                        perHouse = 1;
+                    }
                     if (Math.abs(this.amountPerHouse() - perHouse) > ACCURACY)
                         this.amountPerHouse(perHouse);
                 }
