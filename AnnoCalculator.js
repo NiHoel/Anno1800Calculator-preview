@@ -589,7 +589,7 @@ class Island {
                 a.limit(0);
                 a.fixAmountPerHouse(true);
                 a.fixLimitPerHouse(true);
-                for (n of a.needs)
+                for (var n of (a.needs || []))
                     if (n.notes)
                         n.notes("");
             }
