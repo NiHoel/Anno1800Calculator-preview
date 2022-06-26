@@ -1357,9 +1357,10 @@ class Need extends Demand {
 }
 
 class PopulationNeed extends Need {
-    constructor(config, assetsMap) {
+    constructor(config, level, assetsMap) {
         super(config, assetsMap);
 
+        this.region = level.region;
         this.population = 0;
         this.goodConsumptionUpgradeList = new GoodConsumptionUpgradeList(this);
 
@@ -1451,7 +1452,7 @@ class PopulationNeed extends Need {
 
 class PopulationLevelNeed extends PopulationNeed {
     constructor(config, level, assetsMap) {
-        super(config, assetsMap);
+        super(config, level, assetsMap);
 
         this.region = level.region;
 
@@ -1466,9 +1467,10 @@ class PopulationLevelNeed extends PopulationNeed {
 }
 
 class SkyscraperPopulationNeed extends PopulationNeed {
-    constructor(config, floors, assetsMap) {
-        super(config, assetsMap);
+    constructor(config, level, assetsMap) {
+        super(config, level, assetsMap);
 
+        var floors = level.skyscraperLevels;
         this.floors = typeof floors[0] === 'number' ? floors.map(f => assetsMap.get(f)) : floors;
         this.region = this.floors[0].region
         this.floorSubscription = ko.computed(() => {
@@ -1490,11 +1492,10 @@ class SkyscraperPopulationNeed extends PopulationNeed {
 }
 
 class SpecialResidenceNeed extends PopulationNeed {
-    constructor(config, assetsMap) {
-        super(config, assetsMap);
+    constructor(config, level, assetsMap) {
+        super(config, level, assetsMap);
 
         this.residence = assetsMap.get(this.requiredToBeBuilding);
-        this.region = this.residence.region;
 
         this.residenceSubscription = ko.computed(() => {
             this.updateAmount(this.residence.limit());
@@ -1549,6 +1550,8 @@ class ResidenceBuilding extends NamedElement {
     constructor(config, assetsMap, island) {
         super(config);
         this.island = island;
+
+        this.region = assetsMap.get(config.region)
 
         this.existingBuildings = createIntInput(0, 0);
         this.limit = createIntInput(0, 0);
@@ -1655,9 +1658,9 @@ class PopulationLevel extends NamedElement {
             var need;
             if (n.tpmin > 0 && assetsMap.get(n.guid)) {
                 if (n.requiredFloorLevel)
-                    need = new SkyscraperPopulationNeed(n, this.skyscraperLevels, assetsMap);
+                    need = new SkyscraperPopulationNeed(n, this, assetsMap);
                 else if (n.requiredToBeBuilding)
-                    need = new SpecialResidenceNeed(n, assetsMap);
+                    need = new SpecialResidenceNeed(n, this, assetsMap);
                 else
                     need = new PopulationLevelNeed(n, this, assetsMap);
                 this.needs.push(need);
