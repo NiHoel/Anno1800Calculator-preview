@@ -734,9 +734,9 @@
                                             <span class="fa fa-exclamation-triangle danger-icon"></span>
                                         </span>
                                         <div class="input-group input-group-short spinner">
-                                            <input step="0.1" min="0" class="form-control" type="number" value="0" data-bind="value: amount, attr: { id: $data.from.name() + '-' + $data.to.name() + '-' + $data.toFactory.guid + '-amount-input' }" />
+                                            <input step="0.1" min="0" class="form-control" type="number" value="0" data-bind="value: amount, attr: { id: $data.from.name().replaceAll(' ', '-') + '-' + $data.to.name().replaceAll(' ', '-') + '-' + $data.toFactory.guid + '-amount-input' }" />
                                             <div class="input-group-append">
-                                                <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.amount, id: $data.from.name() + '-' + $data.to.name() + '-' + $data.toFactory.guid + '-amount-input' }}"></div>
+                                                <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.amount, id: $data.from.name().replaceAll(' ', '-') + '-' + $data.to.name().replaceAll(' ', '-') + '-' + $data.toFactory.guid + '-amount-input' }}"></div>
                                                 <span class="input-group-text">t/min</span>
                                             </div>
                                         </div>
@@ -866,7 +866,7 @@
                                                 </div>
                                                 <input class="form-control" type="number" value="10" step="1" min="10" data-bind="value: amountPerHouse, disable: $data.fixAmountPerHouse(), attr: {id: $data.guid + '-amountPerHouse-input'}" />
                                                 <div class="input-group-append">
-                                                    <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.amountPerHouse, id: $parent.guid + '-amountPerHouse-input' }}"></div>
+                                                    <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.amountPerHouse, id: $data.guid + '-amountPerHouse-input' }}"></div>
                                                     <span class="input-group-text" data-bind="text: $root.texts.perHouse.name">Per House</span>
                                                 </div>
                                             </div>
@@ -909,7 +909,7 @@
                                                 </div>
                                                 <input class="form-control" type="number" value="10" step="1" min="10" data-bind="value: limitPerHouse, disable: $data.fixLimitPerHouse() || !$data.canEditPerHouse(), attr: {id: $data.guid + '-limitPerHouse-input'}" />
                                                 <div class="input-group-append">
-                                                    <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.limitPerHouse, id: $parent.guid + '-limitPerHouse-input' }}"></div>
+                                                    <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.limitPerHouse, id: $data.guid + '-limitPerHouse-input' }}"></div>
                                                     <span class="input-group-text" data-bind="text: $root.texts.perHouse.name">Per House</span>
                                                 </div>
                                             </div>

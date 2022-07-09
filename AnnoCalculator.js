@@ -4,7 +4,6 @@ let EPSILON = 0.0000001;
 let ALL_ISLANDS = "All Islands";
 
 
-
 view = {
     settings: {
         language: ko.observable("english")
@@ -4133,23 +4132,55 @@ function formatNumber(num) {
     return formater(rounded);
 }
 
-function getStep(id) {
-    return parseFloat($('#' + id).attr('step') || 1);
+class NumberInputHandler {
+    constructor(params) {
+        this.obs = params.obs;
+        this.id = params.id;
+        this.max = parseFloat($('#' + this.id).attr('max') || Infinity);
+        this.min = parseFloat($('#' + this.id).attr('min') || -Infinity);
+        this.step = parseFloat($('#' + this.id).attr('step') || 1);
+        this.input = $('#' + this.id);
+        if (this.input.length != 1)
+            console.log("Invalid binding", this.id, this.input);
+        this.input.on("wheel", evt => {
+            evt.preventDefault();
+            var deltaY = evt.deltaY || (evt.originalEvent || {}).deltaY;
+            var sign = -Math.sign(deltaY);
+            var factor = this.getInputFactor(evt);
+            console.log(sign, factor)
+            var val = parseFloat(this.obs()) + sign * factor * this.step + ACCURACY;
+            this.obs(Math.floor(val / this.step) * this.step);
+
+            return false;
+        });
+    }
+
+    getInputFactor(evt) {
+        var factor = 1
+        if (evt.ctrlKey)
+            factor *= 10
+        if (evt.shiftKey)
+            factor *= 100
+        return factor
+    }
 }
 
-function getMin(id) {
-    return parseFloat($('#' + id).attr('min') || -Infinity);
-}
-
-function getMax(id) {
-    return parseFloat($('#' + id).attr('max') || Infinity);
-}
 
 ko.components.register('number-input-increment', {
+    viewModel: {
+            // - 'params' is an object whose key/value pairs are the parameters
+            //   passed from the component binding or custom element
+            // - 'componentInfo.element' is the element the component is being
+            //   injected into. When createViewModel is called, the template has
+            //   already been injected into this element, but isn't yet bound.
+            // - 'componentInfo.templateNodes' is an array containing any DOM
+            //   nodes that have been supplied to the component. See below.
+        createViewModel: (params, componentInfo) => new NumberInputHandler(params)
+    },
     template:
         `<div class="input-group-btn-vertical" >
-                                                        <button class="btn btn-default" type="button" data-bind="click: () => {var val = parseFloat(obs()) + getStep(id) + ACCURACY; var step = getStep(id); obs(Math.floor(val/step)*step)}, enable: obs() < getMax(id)"><i class="fa fa-caret-up"></i></button>
-                                                        <button class="btn btn-default" type="button" data-bind="click: () => {var val = parseFloat(obs()) - getStep(id) - ACCURACY; var step = getStep(id); obs(Math.ceil(val/step)*step)}, enable: obs() > getMin(id)"><i class="fa fa-caret-down"></i></button>
+                                                        <button class="btn btn-default" type="button" data-bind="click: (_, evt) => {var factor = getInputFactor(evt); var val = parseFloat(obs()) + factor * step + ACCURACY; obs(Math.floor(val/step)*step)}, enable: obs() < max"><i class="fa fa-caret-up"></i></button>
+                                                        <button class="btn btn-default" type="button" data-bind="click: (_, evt) => {var factor = getInputFactor(evt); var val = parseFloat(obs()) - factor * step - ACCURACY; obs(Math.ceil(val/step)*step)}, enable: obs() > min"><i class="fa fa-caret-down"></i></button>
                                                     </div>`
 });
 
