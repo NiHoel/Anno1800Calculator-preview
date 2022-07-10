@@ -261,6 +261,20 @@ texts = {
         "japanese": "高級品の需要",
         "russian": "Потребность в роскоши"
     },
+    "comfortNeed": {
+        "chinese": "舒适度需求",
+        "english": "Comfort Needs",
+        "french": "Besoins de confort",
+        "german": "Komfortbedürfnisse",
+        //"guid": 13431,
+        "italian": "Beni di conforto",
+        "japanese": "楽になりたい",
+        "korean": "사치품 요구",
+        "polish": "Potrzeby wygody",
+        "russian": "Потребность в комфорте",
+        "spanish": "Necesidades de comodidad",
+        "taiwanese": "療癒需求"
+    },
     "reducedNeeds": {
         "english": "Reduced Needs",
         "guid": 21387,

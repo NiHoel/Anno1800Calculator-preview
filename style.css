@@ -643,6 +643,16 @@ input[type=number]::-webkit-inner-spin-button {
     align-items: center;
 }
 
+.dlc-list li {
+    display: inline-block;
+    vertical-align: top;
+    width: 32%;
+}
+
+.dlc-list li div {
+    display: inline-block;
+}
+
 /* dark-mode styles */
 .bg-darker {
     background: #222;

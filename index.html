@@ -25,7 +25,7 @@
 
     <script type="text/javascript" src="i18n.js"></script>
     <script type="text/javascript" src="AnnoCalculator.js"></script>
-    <script type="text/javascript" src="params.js"></script>
+    <script type="text/javascript" src="params_2022-07-10-16.js"></script>
 
     <script id="treeElement" type="text/html">
         <li>
@@ -194,7 +194,17 @@
                             </tbody>
                         </table>
                         <hr />
+                        <ul class="dlc-list" data-bind="foreach: settings.dlcs">
+                            <li class="inline-list">
+                                <img class="icon-sm" src="" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }" style="margin-right: 8px;">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $data.id }">
+                                    <label class="custom-control-label" data-bind="text: $data.name, attr: { for: $data.id }"></label>
 
+                                </div>
+                            </li>
+                        </ul>
+                        <hr />
                         <h6>Server<button type="button" class="help" data-toggle="modal" data-target="#download-dialog">?</button></h6>
                         <div data-bind="foreach: settings.serverOptions">
                             <div class="custom-control custom-checkbox">
@@ -1017,6 +1027,9 @@
                                     <tr>
                                         <th data-bind="text: $root.texts.basicNeed.name">Basic Needs</th>
                                         <th data-bind="text: $root.texts.luxuryNeed.name">Luxury Needs</th>
+                                        <!-- ko if: $data.hasBonusNeeds() -->
+                                        <th data-bind="text: $root.texts.comfortNeed.name">Comfort Needs</th>
+                                        <!-- /ko -->
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -1031,7 +1044,7 @@
                                                         <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, disable: $data.isInactive, attr: { id: $parent.guid + '-' + $data.product.guid + '-checked' }">
                                                         <label class="custom-control-label" data-bind="attr: { for: $parent.guid + '-' + $data.product.guid + '-checked', title: $data.product.name() }" src-only style="vertical-align: top;">
                                                             <span class="mr-2" style="flex-basis: fit-content;">
-                                                                <img src="" width="25" height="25" data-bind="attr: { src: $data.product.icon ? $data.product.icon  : null, alt: $data.product.name, for: $parent.guid + '-' + $data.product.guid + '-checked', title: $data.product.name() }" style="margin-right: 0.75em; margin-left: -0.25em;" />
+                                                                <img src="" class="icon-sm" data-bind="attr: { src: $data.product.icon ? $data.product.icon  : null, alt: $data.product.name, for: $parent.guid + '-' + $data.product.guid + '-checked', title: $data.product.name() }" style="margin-right: 0.75em; margin-left: -0.25em;" />
                                                             </span>
                                                         </label>
                                                     </span>
@@ -1049,7 +1062,7 @@
                                                         <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, disable: isInactive, attr: { id: $parent.guid + '-' + $data.product.guid + '-checked' }">
                                                         <label class="custom-control-label" data-bind="attr: { for: $parent.guid + '-' + $data.product.guid + '-checked', title: $data.product.name() }" src-only style="vertical-align: top;">
                                                             <span class="mr-2" style="flex-basis: fit-content;">
-                                                                <img src="" width="25" height="25" data-bind="attr: { src: $data.product.icon ? $data.product.icon  : null, alt: $data.product.name, for: $parent.guid + '-' + $data.product.guid + '-checked', title: $data.product.name() }" style="margin-right: 0.75em; margin-left: -0.25em;" />
+                                                                <img src="" class="icon-sm" data-bind="attr: { src: $data.product.icon ? $data.product.icon  : null, alt: $data.product.name, for: $parent.guid + '-' + $data.product.guid + '-checked', title: $data.product.name() }" style="margin-right: 0.75em; margin-left: -0.25em;" />
                                                             </span>
                                                         </label>
                                                     </span>
@@ -1057,6 +1070,23 @@
                                             </span>
                                         </td>
 
+                                        <!-- ko if: $data.hasBonusNeeds() -->
+                                        <td>
+                                            <span data-bind="foreach: $data.bonusNeeds" class="inline-list-centered">
+
+                                                <span style="flex-basis: fit-content;">
+                                                    <span class="custom-control custom-checkbox" data-bind="css:{inactive: $data.isInactive}">
+                                                        <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, disable: isInactive, attr: { id: $parent.guid + '-' + $data.product.guid + '-checked' }">
+                                                        <label class="custom-control-label" data-bind="attr: { for: $parent.guid + '-' + $data.product.guid + '-checked', title: $data.product.name() }" src-only style="vertical-align: top;">
+                                                            <span class="mr-2" style="flex-basis: fit-content;">
+                                                                <img src="" class="icon-sm" data-bind="attr: { src: $data.product.icon ? $data.product.icon  : null, alt: $data.product.name, for: $parent.guid + '-' + $data.product.guid + '-checked', title: $data.product.name() }" style="margin-right: 0.75em; margin-left: -0.25em;" />
+                                                            </span>
+                                                        </label>
+                                                    </span>
+                                                </span>
+                                            </span>
+                                        </td>
+                                        <!-- /ko -->
                                     </tr>
                                     <tr>
                                         <td>
@@ -1071,6 +1101,9 @@
                                                 <label class="custom-control-label" data-bind="text: $data.name, attr: { for: $data.id }"></label>
                                             </div>
                                         </td>
+                                        <!-- ko if: $data.hasBonusNeeds() -->
+                                        <td></td>
+                                        <!-- /ko -->
                                     </tr>
                                 </tbody>
                             </table>
@@ -2451,7 +2484,7 @@
                                 <span data-bind="text:name"></span>
                             </legend>
                             <div class="collapse show" data-bind="foreach: needs, attr:{id: 'consumption-' +  guid}">
-                                <div class="ui-fchain" data-bind="hidden: $data.instance().hidden && $data.instance().hidden(), css:{inactive: $data.instance().banned}">
+                                <div class="ui-fchain" data-bind="hidden: !$data.instance().available() || $data.instance().hidden && $data.instance().hidden(), css:{inactive: $data.instance().banned}">
                                     <div>
                                         <div class="ui-fchain-item">
                                             <div class="ui-fchain-item-tr-checkbox">
