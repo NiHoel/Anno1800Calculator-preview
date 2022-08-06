@@ -2140,23 +2140,25 @@
                     <span data-bind="text:$root.texts.workforce.name"></span>
                 </legend>
 
-                <div id="workforce" class="collapse show">
-
-                    <div class="ui-tier-input fleft">
-                        <!-- <div class="ui-tier-icon">
-                            <img src="/img/icons/gui_icon_map_0-17-10.png" alt="Old World" width="46" height="46">
-                        </div> -->
-                        <div data-bind="foreach: $root.template.workforce">
-                            <div class="ui-tier-unit">
-                                <div class="ui-tier-unit-icon"><img class="icon-tile" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }"></div>
-                                <!--<div class="ui-tier-unit-name" data-bind="text: name"></div>-->
-                                <div class="ui-fchain-item-count">
-                                    <span data-bind="text: formatNumber($data.instance().amount())"></span>
+                <div id="workforce" class="collapse show" data-bind="with: $root.island()">
+                    <div class="inline-list-stretched">
+                        <div class="ui-tier-input fleft">
+                            <div data-bind="foreach: $data.commuterPier.checked() ? $data.session.workforce : $data.workforce">
+                                <div class="ui-tier-unit">
+                                    <div class="ui-tier-unit-icon"><img class="icon-tile" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }"></div>
+                                    <!--<div class="ui-tier-unit-name" data-bind="text: name"></div>-->
+                                    <div class="ui-fchain-item-count">
+                                        <span data-bind="text: formatNumber($data.amount())"></span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
+                        <div class="custom-control custom-checkbox float-right align-middle" data-bind="visible: $data.commuterPier.visible()">
+                            <input id="commuterPier" class="custom-control-input" type="checkbox" data-bind="checked: $data.commuterPier.checked" />
+                            <label class="custom-control-label" data-bind="text: $data.commuterPier.name" for="commuterPier">Commuter Pier</label>
+                        </div>
+                    </div>
 
 
                     <div class="clear"></div>
@@ -2602,11 +2604,11 @@
                                                         <div style="height: calc(2.25rem + 2px);"></div>
                                                     </div>
                                                     <div class="ui-fchain-item-count">
-                                                            <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
-                                                                <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? formatNumber($data.instance().buildings()) : formatNumber(Math.ceil($data.instance().buildings()))"></span>
-                                                                <span>x</span>
-                                                            </span>
-                                                      
+                                                        <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
+                                                            <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? formatNumber($data.instance().buildings()) : formatNumber(Math.ceil($data.instance().buildings()))"></span>
+                                                            <span>x</span>
+                                                        </span>
+
                                                     </div>
                                                     <div class="ui-fchain-item-load">
                                                         <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">

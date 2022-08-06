@@ -124,6 +124,22 @@ class Session extends NamedElement {
         super(config);
 
         this.region = assetsMap.get(config.region);
+        this.islands = ko.observableArray([]);
+
+        this.workforce = [];
+
+        for (let workforce of params.workforce) {
+            let w = new CommuterWorkforce(workforce, this);
+            this.workforce.push(w);
+        }
+    }
+
+    addIsland(isl) {
+        this.islands.push(isl);
+    }
+
+    deleteIsland(isl) {
+        this.islands.remove(isl);
     }
 }
 
@@ -243,7 +259,6 @@ class Island {
         this.consumers = [];
         this.factories = [];
         this.categories = [];
-        this.workforce = [];
         this.buildingMaterialsNeeds = [];
         this.multiFactoryProducts = [];
         this.items = [];
@@ -251,6 +266,14 @@ class Island {
         this.extraGoodItems = [];
         this.allGoodConsumptionUpgrades = new GoodConsumptionUpgradeIslandList();
         this.recipeLists = [];
+        this.workforce = [];
+
+        this.commuterPier = new Option({
+            name: "Commuter Pier",
+            locaText: texts.commuterPier
+        });
+        this.commuterPier.visible(this.region && (this.region.guid === 5000000 || this.region.guid === 5000001));
+        persistBool(this.commuterPier, "checked", "settings.commuterPier.checked");
 
         for (let workforce of params.workforce) {
             let w = new Workforce(workforce, assetsMap);
@@ -566,9 +589,15 @@ class Island {
 
         if (isNew)
             this.allGoodConsumptionUpgrades.apply();
+
+        if (this.session)
+            this.session.addIsland(this);
     }
 
     reset() {
+        if (this.commuterPier)
+            this.commuterPier.checked(false);
+
         {
             var deletedRoutes = view.tradeManager.routes().filter(r => r.to === this || r.from === this);
             deletedRoutes.forEach(r => view.tradeManager.remove(r));
@@ -2174,6 +2203,25 @@ class ProductCategory extends NamedElement {
     constructor(config, assetsMap) {
         super(config);
         this.products = config.products.map(p => assetsMap.get(p)).filter(p => p != null && p instanceof Product);
+    }
+}
+
+class CommuterWorkforce extends NamedElement {
+    constructor(config, session) {
+        super(config);
+
+        this.session = session;
+
+        this.amount = ko.pureComputed(() => {
+            var amount = 0;
+          
+            for (var isl of this.session.islands()) {
+                if (isl.commuterPier.checked())
+                    amount += isl.assetsMap.get(this.guid).amount();
+            }
+
+            return amount;
+        })
     }
 }
 
@@ -3796,6 +3844,7 @@ class IslandManager {
         }
 
         view.islands.remove(island);
+        island.session.deleteIsland(island);
         if (localStorage)
             localStorage.removeItem(island.name());
 
@@ -4334,8 +4383,7 @@ function init(isFirstRun) {
         consumers: arrayToTemplate("consumers"),
         powerPlants: arrayToTemplate("powerPlants"),
         publicRecipeBuildings: arrayToTemplate("publicRecipeBuildings"),
-        buildingMaterialsNeeds: arrayToTemplate("buildingMaterialsNeeds"),
-        workforce: arrayToTemplate("workforce")
+        buildingMaterialsNeeds: arrayToTemplate("buildingMaterialsNeeds")
     }
 
     view.viewMode = new ViewMode(isFirstRun);

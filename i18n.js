@@ -86,6 +86,20 @@ texts = {
         german: "Benötigte Arbeitskraft",
         korean: "필요한 인력"
     },
+    commuterPier: {
+        "chinese": "运输码头",
+        "english": "Commuter Pier",
+        "french": "Embarcadère",
+        "german": "Pendler-Anlegestelle",
+        //"guid": 601455,
+        "italian": "Molo per pendolari",
+        "japanese": "通勤用埠頭",
+        "korean": "인력 수송항",
+        "polish": "Molo dla pasażerów",
+        "russian": "Пассажирский причал",
+        "spanish": "Muelle de cercanías",
+        "taiwanese": "運輸碼頭"
+    },
     productionBoost: {
         "french": "Productivité",
         "brazilian": "Production",
