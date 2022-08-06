@@ -25,7 +25,7 @@
 
     <script type="text/javascript" src="i18n.js"></script>
     <script type="text/javascript" src="AnnoCalculator.js"></script>
-    <script type="text/javascript" src="params_2022-07-24-21.js"></script>
+    <script type="text/javascript" src="params_2022-08-06-21.js"></script>
 
     <script id="treeElement" type="text/html">
         <li>
@@ -2224,6 +2224,34 @@
 
                     </div>
                     <!-- /power plants -->
+                    <!-- products without factories: mail and research papers -->
+                    <div data-bind="foreach: $root.island().noFactoryProducts">
+                        <div class="ui-service-building-item" data-bind="visible: $data.visible">
+
+
+                            <div class="ui-fchain-item-name" data-bind="text: $data.name(), visible: !$root.settings.hideNames.checked()"></div>
+                            <div class="ui-fchain-item-icon mb-2"><img class="icon-tile" src="" data-bind="attr: { src: $data.icon, alt: $data.name }"></div>
+
+                            <div style="margin-top: 1rem; display: flex; flex-flow: column; height: calc(100% - 3rem  - 55px); justify-content: space-between;">
+                                <div class="ui-fchain-item-count">
+
+                                    <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.residents.name}">
+                                        <img class="icon-sm icon-light" src="icon_resource_population.png" />
+                                        <span data-bind="text: formatNumber(Math.round($data.residentsInput()))"></span>
+                                    </span>
+
+
+                                </div>
+
+                                <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
+                                    <div class="ui-fchain-item-load"><span data-bind="text: formatNumber($data.amount())"></span><span> t/min</span></div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- /products without factories: mail and research papers -->
                     <!-- public recipe buildings -->
                     <div data-bind="foreach: $root.island().recipeLists">
 
@@ -2535,18 +2563,19 @@
 
                                             <div style="margin: auto">
                                                 <div class="ui-fchain-item-count">
-                                                    <div data-bind="if: !$data.instance().product.mainFactory || !$data.instance().product.mainFactory.residents">
+                                                    <div data-bind="if: $data.instance() instanceof NoFactoryNeed">
+                                                        <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.residents.name}">
+                                                            <img class="icon-sm icon-light" src="icon_resource_population.png" />
+                                                            <span data-bind="text: formatNumber(Math.round($data.instance().product.residentsInput()))"></span>
+                                                        </span>
+                                                    </div>
+                                                    <div data-bind="if: !($data.instance() instanceof NoFactoryNeed)">
                                                         <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
                                                             <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? formatNumber($data.instance().buildings()) : formatNumber(Math.ceil($data.instance().buildings()))"></span>
                                                             <span>x</span>
                                                         </span>
                                                     </div>
-                                                    <div data-bind="if: !!($data.instance().product.mainFactory && $data.instance().product.mainFactory.residents)">
-                                                        <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.residents.name}">
-                                                            <img class="icon-sm icon-light" src="icon_resource_population.png" />
-                                                            <span data-bind="text: formatNumber($data.instance().product.mainFactory.residents())"></span>
-                                                        </span>
-                                                    </div>
+
                                                 </div>
                                                 <div class="ui-fchain-item-load">
                                                     <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">

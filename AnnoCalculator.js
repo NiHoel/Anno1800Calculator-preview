@@ -311,8 +311,13 @@ class Island {
         }
 
         let products = [];
+        let noFactoryProducts = [];
         for (let product of params.products) {
-            if (product.producers && product.producers.length) {
+            if (product.residentsInputFactor) {
+                let p = new NoFactoryProduct(product, assetsMap);
+                noFactoryProducts.push(p);
+                assetsMap.set(p.guid, p);
+            } else if (product.producers && product.producers.length) {
                 let p = new Product(product, assetsMap);
 
                 products.push(p);
@@ -536,6 +541,7 @@ class Island {
 
         this.assetsMap = assetsMap;
         this.products = products;
+        this.noFactoryProducts = noFactoryProducts;
 
         this.top2Population = ko.computed(() => {
             var useHouses = view.settings.populationInput() == "0";
@@ -824,12 +830,6 @@ class Factory extends Consumer {
 
         this.percentBoost = createIntInput(100, 0);
         this.boost = ko.computed(() => parseInt(this.percentBoost()) / 100);
-
-        if (this.residentsInputFactor) {
-            this.residents = ko.pureComputed(() => {
-                return this.amount() * this.residentsInputFactor;
-            });
-        }
 
         if (config.canClip)
             this.clipped = ko.observable(false);
@@ -1159,6 +1159,27 @@ class MetaProduct extends NamedElement {
     }
 }
 
+class NoFactoryProduct extends NamedElement {
+    constructor(config, assetsMap) {
+        super(config);
+
+        this.needs = ko.observableArray([]);
+        this.amount = ko.computed(() => this.needs().map(n => n.amount()).reduce((a, b) => a + b, 0));
+
+        this.residentsInput = ko.pureComputed(() => {
+            return this.amount() * this.residentsInputFactor;
+        });
+
+        this.visible = ko.computed(() => {
+            return this.available() && this.amount() > 0;
+        });
+    }
+
+    addNeed(need) {
+        this.needs.push(need);
+    }
+}
+
 class PublicBuildingNeed extends Option {
     constructor(config, assetsMap) {
         super(config);
@@ -1166,6 +1187,8 @@ class PublicBuildingNeed extends Option {
         this.checked(true);
 
         this.product = assetsMap.get(this.guid);
+        if (!this.product)
+            throw `No Product ${this.guid}`;
         this.initBans = PopulationNeed.prototype.initBans;
 
         if (this.requiredBuildings) {
@@ -1178,6 +1201,71 @@ class PublicBuildingNeed extends Option {
                 return true;
             });
         }
+    }
+}
+
+class NoFactoryNeed extends PublicBuildingNeed {
+    constructor(config, level, assetsMap) {
+        super(config, assetsMap);
+        this.updateAmount = PopulationNeed.prototype.updateAmount;
+
+        this.amount = ko.observable(0);
+        if (this.factor == null)
+            this.factor = 1;
+
+
+        this.allDemands = []; // compatibility with Need
+
+        this.region = level.region;
+        this.level = level;
+        this.population = 0;
+
+        this.goodConsumptionUpgradeList = new GoodConsumptionUpgradeList(this);
+
+        this.percentBoost = createFloatInput(100, 0);
+        this.boost = ko.computed(() => parseInt(this.percentBoost()) / 100);
+
+        this.boost.subscribe(() => this.updateAmount(this.population));
+        this.optionalAmount = ko.observable(0);
+        this.notes = ko.observable("");
+
+        this.residentsInput = ko.pureComputed(() => {
+            return this.amount() * this.residentsInputFactor;
+        });
+
+        if (this.requiredBuildings) {
+            this.residences = this.requiredBuildings.map(r => assetsMap.get(r));
+
+            this.residencesSubscription = ko.computed(() => {
+                var amount = 0;
+                this.residences.forEach(r => {
+                    amount += r.limit();
+                });
+
+                this.updateAmount(amount);
+            });
+
+            this.hidden = ko.computed(() => {
+                for (var r of this.residences)
+                    if (r.existingBuildings() > 0)
+                        return false;
+
+                return true;
+            });
+        } else {
+            this.residences = level.allResidences;
+            level.limit.subscribe(limit => this.updateAmount(limit));
+        }
+
+        this.product.addNeed(this);
+    }
+
+    incrementPercentBoost() {
+        this.percentBoost(parseInt(this.percentBoost()) + 1);
+    }
+
+    decrementPercentBoost() {
+        this.percentBoost(parseInt(this.percentBoost()) - 1);
     }
 }
 
@@ -1664,8 +1752,11 @@ class ResidenceBuilding extends NamedElement {
                 this.populationLevel.limitPerHouse(lpH);
         });
 
-        if (need.available())
-            this.limitPerHouse(this.limitPerHouse() + this.residentsPerNeed.get(need.guid));        
+        if (need.available()) {
+            var inc = this.residentsPerNeed.get(need.guid);
+            this.limitLowerBound += inc;
+            this.limitPerHouse(this.limitPerHouse() + inc);
+        }
     }
 
     getNoConsumptionResidents() {
@@ -1750,15 +1841,17 @@ class PopulationLevel extends NamedElement {
 
         config.needs.forEach(n => {
             var need;
-            if (n.isBonusNeed || n.excludePopulationFromMoneyAndConsumptionCalculation) {
-                if (n.tpmin > 0 && assetsMap.get(n.guid)) {
-                    need = new PopulationNeed(n, this, assetsMap);
-                    this.needs.push(need);
-                } else {
-                    need = new PublicBuildingNeed(n, assetsMap);
-                    this.buildingNeeds.push(need);
-                }
+            var product = assetsMap.get(n.guid);
+            
+            if (n.tpmin > 0 && product) {
+                need = product instanceof NoFactoryProduct ? new NoFactoryNeed(n, this, assetsMap) : new PopulationNeed(n, this, assetsMap);
+                this.needs.push(need);
+            } else {
+                need = new PublicBuildingNeed(n, assetsMap);
+                this.buildingNeeds.push(need);
+            }
 
+            if (n.isBonusNeed || n.excludePopulationFromMoneyAndConsumptionCalculation) {
                 need.checked(false);
                 for (var dlc of (need.dlcs || []))
                     dlc.checked.subscribe(checked => {
@@ -1770,15 +1863,6 @@ class PopulationLevel extends NamedElement {
                 this.needsMap.set(need.guid, need);
                 this.allResidences.forEach(r => r.handleBonusNeed(need));
                 return;
-            }
-
-
-            if (n.tpmin > 0 && assetsMap.get(n.guid)) {
-                need = new PopulationNeed(n, this, assetsMap);
-                this.needs.push(need);
-            } else {
-                need = new PublicBuildingNeed(n, assetsMap);
-                this.buildingNeeds.push(need);
             }
 
             if (n.residents || n.requiredFloorLevel)
