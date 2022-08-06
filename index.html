@@ -25,7 +25,7 @@
 
     <script type="text/javascript" src="i18n.js"></script>
     <script type="text/javascript" src="AnnoCalculator.js"></script>
-    <script type="text/javascript" src="params_2022-07-10-16.js"></script>
+    <script type="text/javascript" src="params_2022-07-24-21.js"></script>
 
     <script id="treeElement" type="text/html">
         <li>
@@ -36,10 +36,18 @@
                     <img class="icon-tile" src="" data-bind="attr: { src: $data.factory.icon ? $data.factory.icon : null, alt: $data.factory.name }">
                 </div>
                 <div class="ui-fchain-item-count mb-2">
-                    <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
-                        <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? formatNumber($data.buildings) : formatNumber(Math.ceil($data.buildings))"></span>
-                        <span>x</span>
-                    </span>
+                    <div data-bind="if: !$data.residents">
+                        <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
+                            <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? formatNumber($data.buildings) : formatNumber(Math.ceil($data.buildings))"></span>
+                            <span>x</span>
+                        </span>
+                    </div>
+                    <div data-bind="if: !!$data.residents">
+                        <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.residents.name}">
+                            <img class="icon-sm icon-light" src="icon_resource_population.png" />
+                            <span data-bind="text: formatNumber($data.residents())"></span>
+                        </span>
+                    </div>
                 </div>
                 <div class="tree-node-item-name">
                     <a href="#" data-bind="text: $data.factory.name, visible: !$root.settings.hideNames.checked(), click: () => $root.selectedFactory($data.factory)"></a>
@@ -1028,7 +1036,7 @@
                                         <th data-bind="text: $root.texts.basicNeed.name">Basic Needs</th>
                                         <th data-bind="text: $root.texts.luxuryNeed.name">Luxury Needs</th>
                                         <!-- ko if: $data.hasBonusNeeds() -->
-                                        <th data-bind="text: $root.texts.comfortNeed.name">Comfort Needs</th>
+                                        <th data-bind="text: $root.texts.lifestyleNeeds.name">Lifestyle Needs</th>
                                         <!-- /ko -->
                                     </tr>
                                 </thead>
@@ -2527,10 +2535,18 @@
 
                                             <div style="margin: auto">
                                                 <div class="ui-fchain-item-count">
-                                                    <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
-                                                        <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? formatNumber($data.instance().buildings()) : Math.ceil($data.instance().buildings())"></span>
-                                                        <span>x</span>
-                                                    </span>
+                                                    <div data-bind="if: !$data.instance().product.mainFactory || !$data.instance().product.mainFactory.residents">
+                                                        <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
+                                                            <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? formatNumber($data.instance().buildings()) : formatNumber(Math.ceil($data.instance().buildings()))"></span>
+                                                            <span>x</span>
+                                                        </span>
+                                                    </div>
+                                                    <div data-bind="if: !!($data.instance().product.mainFactory && $data.instance().product.mainFactory.residents)">
+                                                        <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.residents.name}">
+                                                            <img class="icon-sm icon-light" src="icon_resource_population.png" />
+                                                            <span data-bind="text: formatNumber($data.instance().product.mainFactory.residents())"></span>
+                                                        </span>
+                                                    </div>
                                                 </div>
                                                 <div class="ui-fchain-item-load">
                                                     <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
@@ -2557,10 +2573,11 @@
                                                         <div style="height: calc(2.25rem + 2px);"></div>
                                                     </div>
                                                     <div class="ui-fchain-item-count">
-                                                        <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
-                                                            <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? formatNumber($data.instance().buildings()) : Math.ceil($data.instance().buildings())"></span>
-                                                            <span>x</span>
-                                                        </span>
+                                                            <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
+                                                                <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? formatNumber($data.instance().buildings()) : formatNumber(Math.ceil($data.instance().buildings()))"></span>
+                                                                <span>x</span>
+                                                            </span>
+                                                      
                                                     </div>
                                                     <div class="ui-fchain-item-load">
                                                         <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">

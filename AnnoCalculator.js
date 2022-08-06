@@ -825,6 +825,12 @@ class Factory extends Consumer {
         this.percentBoost = createIntInput(100, 0);
         this.boost = ko.computed(() => parseInt(this.percentBoost()) / 100);
 
+        if (this.residentsInputFactor) {
+            this.residents = ko.pureComputed(() => {
+                return this.amount() * this.residentsInputFactor;
+            });
+        }
+
         if (config.canClip)
             this.clipped = ko.observable(false);
 
@@ -2173,8 +2179,11 @@ class Item extends NamedElement {
                 if (p.ForceProductSameAsFactoryOutput)
                     for (var f of this.factories)
                         this.extraGoods.push(assetsMap.get(f.getOutputs()[0].Product));
-                else
-                    this.extraGoods.push(assetsMap.get(p.Product));
+                else {
+                    p = assetsMap.get(p.Product);
+                    if(p)
+                        this.extraGoods.push(p);
+                }
             }
         }
 
@@ -2225,10 +2234,13 @@ class EquippedItem extends Option {
         this.replacingWorkforce = config.item.replacingWorkforce;
 
         if (config.item.additionalOutputs) {
-            this.extraGoods = config.item.additionalOutputs.map(cfg => {
-                var config = $.extend(true, {}, cfg, { item: this, factory: this.factory });
-                return new ExtraGoodProduction(config, assetsMap);
-            })
+            this.extraGoods = []
+            for (var cfg of config.item.additionalOutputs) {
+                try {
+                    var config = $.extend(true, {}, cfg, { item: this, factory: this.factory });
+                    this.extraGoods.push(new ExtraGoodProduction(config, assetsMap));
+                } catch (e) { }
+            }
         }
 
         this.factory.items.push(this);
@@ -2242,6 +2254,9 @@ class ExtraGoodProduction {
 
         var product = config.ForceProductSameAsFactoryOutput ? config.factory.getOutputs()[0].Product : config.Product;
         this.product = assetsMap.get(product);
+        if (!this.product)
+            throw "Product " + product + " not found";
+
         this.additionalOutputCycle = config.AdditionalOutputCycle;
         this.Amount = config.Amount;
 
