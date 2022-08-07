@@ -2856,7 +2856,7 @@ class ContractManager {
         if (!this.contracts().length)
             return;
 
-        var transferTime = params.tradeContracts.traderTransferMinutes + 4;
+        var transferTime = this.traderTransferTime();
 
         var totalAmount = 0;
         var productToAmount = new Map();
