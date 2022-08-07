@@ -1643,6 +1643,8 @@ class PopulationNeed extends Need {
                 else
                     this.amount(this.optionalAmount());
             });
+            if (this.banned())
+                this.amount(0); //bonus needs disabled by default, but amount already set before initializing this.banned
 
             this.isInactive = ko.computed(() => {
                 return this.locked && this.locked() || this.happiness && view.settings.noOptionalNeeds.checked();
