@@ -2776,7 +2776,7 @@ class ContractManager {
 
             var transferTime = this.traderTransferTime();
 
-            if (totalAmount >= 60 * this.traderLoadingSpeed()) {
+            if (totalAmount >= 60 * this.traderLoadingSpeed() * params.tradeContracts.loadingSpeedFactor) {
                 for (var c of this.contracts()) {
                     c.importCount(Infinity);
                     c.exportCount(Infinity);
