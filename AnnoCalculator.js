@@ -1,3 +1,5 @@
+// @ts-check
+
 let versionCalculator = "v8.1";
 let ACCURACY = 0.01;
 let EPSILON = 0.0000001;
@@ -16,6 +18,10 @@ for (var code in languageCodes)
         view.settings.language(languageCodes[code]);
 
 class Storage {
+    /**
+     * 
+     * @param {string} key
+     */
     constructor(key) {
         this.key = key;
         var text = localStorage.getItem(key);
@@ -55,6 +61,10 @@ class Storage {
         return null;
     }
 
+    /**
+     * 
+     * @param {string} key
+     */
     updateKey(key) {
         localStorage.removeItem(this.key);
         this.key = key;
@@ -330,7 +340,7 @@ class Island {
                 let oldId = i.guid + ".checked";
                 var oldChecked = false;
                 if (localStorage.getItem(oldId) != null)
-                    oldChecked = parseInt(localStorage.getItem(oldId));
+                    oldChecked = !!parseInt(localStorage.getItem(oldId));
 
                 for (var equip of i.equipments) {
                     let id = `${equip.factory.guid}[${i.guid}].checked`;
@@ -348,9 +358,9 @@ class Island {
             }
         }
 
-        this.extraGoodItems.sort((a, b) => a.name() > b.name());
+        this.extraGoodItems.sort((a, b) => a.name().localeCompare(b.name()));
         view.settings.language.subscribe(() => {
-            this.extraGoodItems.sort((a, b) => a.name() > b.name());
+            this.extraGoodItems.sort((a, b) => a.name().localeCompare(b.name()));
         });
 
         // must be set after items so that extraDemand is correctly handled
@@ -533,7 +543,7 @@ class Island {
         });
 
         if (params.tradeContracts && (!this.region || this.region.guid == 5000000))
-            this.contractManager = new ContractManager(this, params.tradeContracts);
+            this.contractManager = new ContractManager(this);
 
         if (isNew)
             this.allGoodConsumptionUpgrades.apply();
@@ -770,7 +780,7 @@ class PublicConsumerBuilding extends Consumer {
 
 class PalaceBuff extends NamedElement {
     constructor(config, assetsMap) {
-        super(config, assetsMap);
+        super(config);
     }
 }
 
@@ -3917,7 +3927,7 @@ function init(isFirstRun) {
 
     view.regions = [];
     for (let region of (params.regions || [])) {
-        let r = new Region(region, view.assetsMap);
+        let r = new Region(region);
         view.assetsMap.set(r.guid, r);
         view.regions.push(r);
     }
@@ -4216,13 +4226,13 @@ ko.extenders.numeric = function (target, bounds) {
             var current = target();
 
             if (bounds.precision === 0)
-                valueToWrite = parseInt(newValue);
+                var valueToWrite = parseInt(newValue);
             else if (bounds.precision) {
-                roundingMultiplier = Math.pow(10, bounds.precision);
-                newValueAsNum = isNaN(newValue) ? 0 : +newValue;
-                valueToWrite = Math.round(newValueAsNum * roundingMultiplier) / roundingMultiplier;
+                var roundingMultiplier = Math.pow(10, bounds.precision);
+                var newValueAsNum = isNaN(newValue) ? 0 : +newValue;
+                var valueToWrite = Math.round(newValueAsNum * roundingMultiplier) / roundingMultiplier;
             } else {
-                valueToWrite = parseFloat(newValue);
+                var valueToWrite = parseFloat(newValue);
             }
 
             if (!isFinite(valueToWrite) || valueToWrite == null) {
