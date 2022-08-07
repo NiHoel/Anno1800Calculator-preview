@@ -2741,6 +2741,7 @@ class ContractManager {
 
         this.traderLoadingSpeed = createFloatInput(2, 1, 50);
         this.existingStorageCapacity = createIntInput(2000, 100, 50000);
+        this.traderTransferTime = createIntInput(params.tradeContracts.traderTransferMinutes + 4, 20)
 
         if (localStorage) {
             {
@@ -2758,6 +2759,14 @@ class ContractManager {
 
                 this.existingStorageCapacity.subscribe(val => localStorage.setItem(id, val));
             }
+
+            {
+                let id = "traderTransferTime.amount";
+                if (localStorage.getItem(id) != null)
+                    this.traderTransferTime(parseInt(localStorage.getItem(id)));
+
+                this.traderTransferTime.subscribe(val => localStorage.setItem(id, val));
+            }
         }
 
         this.traderLoadingDuration = ko.computed(() => {
@@ -2765,7 +2774,7 @@ class ContractManager {
             for (var c of this.contracts())
                 totalAmount += c.importAmount() + c.exportAmount();
 
-            var transferTime = params.tradeContracts.traderTransferMinutes + 4;
+            var transferTime = this.traderTransferTime();
 
             if (totalAmount >= 60 * this.traderLoadingSpeed()) {
                 for (var c of this.contracts()) {

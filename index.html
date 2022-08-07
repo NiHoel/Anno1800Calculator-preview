@@ -1896,7 +1896,7 @@
                         <hr />
                         <div data-bind="with: $root.selectedContractManager()">
                             <div class="inline-list-stretched">
-                                <div class="input-group spinner" style="max-width: 18rem;">
+                                <div class="input-group spinner" style="max-width: 14rem;">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text" data-bind="text: $root.texts.loadingSpeed.name()"></span>
                                     </div>
@@ -1904,6 +1904,18 @@
                                     <div class="input-group-append">
                                         <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.traderLoadingSpeed, id: 'trader-loading-speed' }}"></div>
                                         <span class="input-group-text">t/s</span>
+
+                                    </div>
+                                </div>
+
+                                <div class="input-group spinner" style="max-width: 11rem;">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" data-bind="text: $root.texts.travelTime.name()"></span>
+                                    </div>
+                                    <input step="1" min="20" class="form-control" type="number" value="24" data-bind="value: $data.traderTransferTime, attr: { id: 'trader-transfer-time' }" />
+                                    <div class="input-group-append">
+                                        <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.traderTransferTime, id: 'trader-transfer-time' }}"></div>
+                                        <span class="input-group-text">min</span>
 
                                     </div>
                                 </div>

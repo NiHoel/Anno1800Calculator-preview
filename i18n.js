@@ -477,6 +477,20 @@ texts = {
         "english": "Multiply all contracts by such a factor that the total capacity equals this value.",
         "german": "Multipliziere all Verträge mit solch einem Faktor, dass die Gesamtkapazität diesem Wert entspricht.",
     },
+    travelTime: {
+        "chinese": "航行时间",
+        "english": "Travel Time",
+        "french": "Durée du voyage",
+        "german": "Reisezeit",
+        //"guid": 12736,
+        "italian": "Durata viaggio",
+        "japanese": "移動時間",
+        "korean": "이동 시간",
+        "polish": "Czas podróży",
+        "russian": "Время путешествия",
+        "spanish": "Tiempo de viaje",
+        "taiwanese": "航行時間"
+    },
     loadingSpeed: {
         "english": "Loading Speed",
         "chinese": "装货速度",
