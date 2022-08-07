@@ -4162,11 +4162,14 @@ class NumberInputHandler {
         if (this.input.length != 1)
             console.log("Invalid binding", this.id, this.input);
         this.input.on("wheel", evt => {
+            if (document.activeElement !== this.input.get(0))
+                return;
+
             evt.preventDefault();
             var deltaY = evt.deltaY || (evt.originalEvent || {}).deltaY;
             var sign = -Math.sign(deltaY);
             var factor = this.getInputFactor(evt);
-            console.log(sign, factor)
+
             var val = parseFloat(this.obs()) + sign * factor * this.step + ACCURACY;
             this.obs(Math.floor(val / this.step) * this.step);
 
