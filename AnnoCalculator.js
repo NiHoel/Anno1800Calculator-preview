@@ -4290,6 +4290,14 @@ class ViewMode {
                 if (view.settings[option])
                     view.settings[option].visible(!checked);
         });
+        view.settings.deriveResidentsPerHouse.checked.subscribe(checked => {
+            if (!checked) { // gets disabled when using skyscrapers or special residences
+                view.settings.simpleView.checked(false);
+            }
+
+            view.settings.simpleView.visible(checked);
+        })
+
 
         this.hideSimple = false;
         if (firstRun || localStorage.getItem("simpleView") == null) {
