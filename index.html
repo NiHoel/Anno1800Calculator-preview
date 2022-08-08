@@ -25,7 +25,7 @@
 
     <script type="text/javascript" src="i18n.js"></script>
     <script type="text/javascript" src="AnnoCalculator.js"></script>
-    <script type="text/javascript" src="params_2022-08-06-21.js"></script>
+    <script type="text/javascript" src="params_2022-08-08-22.js"></script>
 
     <script id="treeElement" type="text/html">
         <li>
@@ -202,11 +202,11 @@
                             </tbody>
                         </table>
                         <hr />
-                        <ul class="dlc-list" data-bind="foreach: settings.dlcs">
-                            <li class="inline-list">
+                        <ul class="dlc-list" data-bind="foreach: $root.dlcs">
+                            <li class="inline-list" data-bind="css:{inactive: $data.used()}">
                                 <img class="icon-sm" src="" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }" style="margin-right: 8px;">
                                 <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $data.id }">
+                                    <input type="checkbox" class="custom-control-input" data-bind="disable: $data.used(), checked: $data.checked, attr: { id: $data.id }">
                                     <label class="custom-control-label" data-bind="text: $data.name, attr: { for: $data.id }"></label>
 
                                 </div>
@@ -274,7 +274,7 @@
                                     <span class="input-group-text" data-bind="text: name"></span>
                                 </div>
 
-                                <select class="custom-select" data-bind="value: $data.fixedFactory, options: $data.factories, optionsText: f => f.getRegionExtendedName(), optionsCaption: $root.texts.noFixedFactory.name()"></select>
+                                <select class="custom-select" data-bind="value: $data.fixedFactory, options: $data.availableFactories, optionsText: f => f.getRegionExtendedName(), optionsCaption: $root.texts.noFixedFactory.name()"></select>
                             </div>
                         </div>
                         <hr />
@@ -283,7 +283,7 @@
                             <div data-bind="visible: $data.visible, css:{'ui-fchain-item-xl': $data.equipments.length > 2}" class="ui-fchain-item ui-fchain-item-small">
 
                                 <div class="ui-fchain-item-tr-checkbox">
-                                    <div data-bind="foreach: $data.equipments" style="display:flex">
+                                    <div data-bind="foreach: $data.availableEquipments" style="display:flex">
                                         <span class="custom-control custom-checkbox ml-1">
                                             <input class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $parent.guid + '-' + $data.factory.guid + '-checked' }" type="checkbox">
                                             <label class="custom-control-label" src-only="" data-bind="attr: { for: $parent.guid + '-' + $data.factory.guid + '-checked' }">&#8203;</label>
@@ -396,7 +396,7 @@
                                         <!-- icon extra goods -->
                                         <span style="flex: 100 1 auto;"></span>
 
-                                        <span style="flex: auto;">
+                                        <span style="flex: auto;" data-bind="visible: $data.visible()">
                                             <img src="" width="25" height="25" data-bind="attr: { src: $data.icon ? $data.icon  : null, alt: $data.name}" />
                                         </span>
 
@@ -404,9 +404,9 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <span data-bind="foreach: $data.equipments" class="inline-list-centered">
+                                    <span data-bind="foreach: $data.availableEquipments" class="inline-list-centered">
 
-                                        <span data-bind="visible: !$root.island().region || $data.factory.region == $root.island().region" style="flex-basis: fit-content;">
+                                        <span style="flex-basis: fit-content;">
                                             <span class="custom-control custom-checkbox">
                                                 <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $data.factory.guid + '-' + $data.item.guid + '-equipped' }">
                                                 <label class="custom-control-label" data-bind="attr: { for: $data.factory.guid + '-' + $data.item.guid + '-equipped', title: $data.factory.getRegionExtendedName() }" src-only style="vertical-align: top;">
@@ -453,7 +453,7 @@
                     <form>
 
                         <div class="form mb-3" data-bind="foreach: $root.newspaperConsumption.allEffects">
-                            <span class="custom-control custom-checkbox">
+                            <span class="custom-control custom-checkbox" data-bind="visible: $data.visible()">
                                 <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $data.guid + '-checked' }">
                                 <label class="custom-control-label" data-bind="text: $data.name() + ' ' + formatPercentage($data.amount), attr: { for: $data.guid + '-checked' }" src-only style="vertical-align: top;"></label>
                             </span>
@@ -545,7 +545,7 @@
 
                     <form data-bind="submit: () => $root.islandManager.create($root.islandManager.islandNameInput(), $root.islandManager.sessionInput())">
                         <div class="input-group">
-                            <select name="session" class="form-control custom-select" id="session" data-bind="value: $root.islandManager.sessionInput, valueAllowUnset: true, options: $root.sessions, optionsText: s => s.name()" />
+                            <select name="session" class="form-control custom-select" id="session" data-bind="value: $root.islandManager.sessionInput, valueAllowUnset: true, options: $root.islandManager.availableSessions, optionsText: s => s.name()" />
 
 
                             <input name="island" class="form-control" id="island" type="text" data-bind="value: $root.islandManager.islandNameInput" />
@@ -789,7 +789,7 @@
                 <button type="button" class="btn" data-bind="visible: !$root.settings.simpleView.checked(), enable: $root.settings.additionalProduction.checked()">
                     <img data-toggle="modal" data-target="#item-equipment-dialog" class="icon-navbar" src="icon_add_goods_socket_white.png" />
                 </button>
-                <button type="button" class="btn" data-bind="enable: $root.settings.contracts.checked(), visible: $root.island().contractManager">
+                <button type="button" class="btn" data-bind="enable: $root.dlcsMap.get('dlc7').checked(), visible: $root.island().contractManager">
                     <img data-toggle="modal" data-target="#contract-management-dialog" class="icon-navbar" src="icon_docklands_2d_white.png" />
                 </button>
             </div>
@@ -948,7 +948,7 @@
                         </table>
 
                         <!-- Separate configuration for skyscrapers and houses -->
-                        <fieldset class="collapsable-section" data-bind="if: $data.skyscraperLevels || $data.specialResidence">
+                        <fieldset class="collapsable-section" data-bind="if: $data.availableResidences().length > 1">
                             <legend class="collapser collapsed" data-toggle="collapse" data-target="#population-level-building-configuration">
                                 <span class="fa fa-chevron-right"></span>
                                 <span class="fa fa-chevron-down"></span>
@@ -964,7 +964,7 @@
                                 </div>
 
                                 <table class="table table-striped">
-                                    <tbody data-bind="foreach: $data.allResidences">
+                                    <tbody data-bind="foreach: $data.availableResidences">
                                         <tr>
                                             <td>
                                                 <span data-bind="text: $data.name().split(':').slice(-1)[0].trim()"></span>
@@ -1082,7 +1082,7 @@
                                         <td>
                                             <span data-bind="foreach: $data.bonusNeeds" class="inline-list-centered">
 
-                                                <span style="flex-basis: fit-content;">
+                                                <span style="flex-basis: fit-content;" data-bind="hidden: $data.hidden()">
                                                     <span class="custom-control custom-checkbox" data-bind="css:{inactive: $data.isInactive}">
                                                         <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, disable: isInactive, attr: { id: $parent.guid + '-' + $data.product.guid + '-checked' }">
                                                         <label class="custom-control-label" data-bind="attr: { for: $parent.guid + '-' + $data.product.guid + '-checked', title: $data.product.name() }" src-only style="vertical-align: top;">
@@ -1140,10 +1140,10 @@
 
                     </div>
                     <div class="modal-body">
-                        <div data-bind="if: $data.items.length && $root.settings.additionalProduction.checked()">
+                        <div data-bind="if: $data.availableItems().length && $root.settings.additionalProduction.checked()">
                             <h6 data-bind="text: $root.texts.itemsEquipped.name">Equipped Items</h6>
                             <table class="table table-striped">
-                                <tbody data-bind="foreach: $data.items">
+                                <tbody data-bind="foreach: $data.availableItems">
                                     <tr>
                                         <td>
                                             <div class="inline-list">
@@ -1160,12 +1160,12 @@
                                         <td>
                                             <!-- extra goods -->
                                             <span data-bind="if: $data.item.extraGoods">
-                                                <span data-bind="foreach: $data.item.extraGoods" class="inline-list-centered">
+                                                <span data-bind="foreach: $data.extraGoods" class="inline-list-centered">
                                                     <!-- icon extra goods -->
                                                     <span style="flex: 100 1 auto;"></span>
 
-                                                    <span style="flex: auto;">
-                                                        <img class="icon-sm" src="" data-bind="attr: { src: $data.icon ? $data.icon  : null, alt: $data.name}" />
+                                                    <span style="flex: auto;" daba-bind="visible: $data.product.visible()">
+                                                        <img class="icon-sm" src="" data-bind="attr: { src: $data.product.icon ? $data.product.icon  : null, alt: $data.product.name}" />
                                                     </span>
 
                                                     <span style="flex: 100 1 auto;"></span>
@@ -1336,10 +1336,10 @@
                             <hr />
                         </div>
 
-                        <div data-bind="if: $root.settings.contracts && $root.settings.contracts.checked() && $data instanceof Factory && $data.getProduct().exchangeWeight">
+                        <div data-bind="if:  $root.dlcsMap.get('dlc7').checked() && $data instanceof Factory && $data.getProduct().exchangeWeight">
                             <div data-bind="with: $data.contractList">
 
-                                <h6><span data-bind="text: $root.settings.contracts.name">Trade Contracts</span></h6>
+                                <h6><span data-bind="text: $root.texts.docklands.name">Trade Contracts</span></h6>
 
 
                                 <div data-bind="if: $data.exports().length || $data.imports().length">
@@ -1532,15 +1532,15 @@
                             </div>
                         </div>
 
-                        <div data-bind="if: !$root.settings.simpleView.checked() && $data instanceof Factory && ($root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked() || $data.contractList && $root.settings.contracts.checked())">
+                        <div data-bind="if: !$root.settings.simpleView.checked() && $data instanceof Factory && ($root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked() || $data.contractList && $root.dlcsMap.get('dlc7').checked())">
                             <div class="inline-list-stretched" style="padding: .75rem;">
                                 <div data-bind="if: $root.settings.tradeRoutes.checked()">
                                     <span class="mr-3" data-bind="text: $root.settings.tradeRoutes.name"></span>
                                     <span data-bind="text: formatNumber(-$data.tradeList.amount())"></span>
                                     <span class="mr-3"> t/min</span>
                                 </div>
-                                <div data-bind="if: $data.contractList && $root.settings.contracts.checked()">
-                                    <span class="mr-3" data-bind="text: $root.settings.contracts.name"></span>
+                                <div data-bind="if: $data.contractList && $root.dlcsMap.get('dlc7').checked()">
+                                    <span class="mr-3" data-bind="text: $root.texts.docklands.name"></span>
                                     <span data-bind="text: formatNumber(-$data.contractList.amount())"></span>
                                     <span class="mr-3"> t/min</span>
                                 </div>
@@ -1563,7 +1563,7 @@
                         </div>
                         <table class="table table-striped">
                             <tbody>
-                                <tr data-bind="if: !$root.settings.simpleView.checked() && $data instanceof Factory && ($root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked() || $data.contractList && $root.settings.contracts.checked())">
+                                <tr data-bind="if: !$root.settings.simpleView.checked() && $data instanceof Factory && ($root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked() || $data.contractList && $root.dlcsMap.get('dlc7').checked())">
                                     <!-- extra goods -->
                                     <td>
                                         <span data-bind="text: $root.texts.extraNeed.name"></span>
@@ -1728,7 +1728,7 @@
                             <div style="flex: 100 1 auto;"></div>
 
                             <!-- module -->
-                            <div data-bind="if: !!$data.module" style="flex: auto;">
+                            <div data-bind="if: !!$data.module && $data.module.visible()" style="flex: auto;">
                                 <div class="custom-control custom-checkbox" data-bind="visible: !!$data.module">
                                     <input type="checkbox" class="custom-control-input" data-bind="checked: $data.moduleChecked, attr: { id: $data.guid + '-module' }">
                                     <label class="custom-control-label" data-bind="attr: { for: $data.guid + '-module', title: $data.module.name }" src-only style="vertical-align: top;">
@@ -1736,12 +1736,12 @@
                                     </label>
                                 </div>
                             </div>
-                            <div data-bind="if: !!$data.module" style="flex: auto;">
+                            <div data-bind="if: !!$data.module && $data.module.visible()" style="flex: auto;">
                                 <img class="icon-sm" src="" data-bind="attr: { src: $data.module.icon ? $data.module.icon  : null, alt: $data.module.name, for: $data.guid + '-module', title: $data.module.name }" style="margin-right: 0.75em;margin-left: -0.25em;" />
                             </div>
 
                             <!-- fertilizerModule -->
-                            <div data-bind="if: !!$data.fertilizerModule" style="flex: auto;">
+                            <div data-bind="if: !!$data.fertilizerModule && $data.fertilizerModule.visible()" style="flex: auto;">
                                 <div class="custom-control custom-checkbox" data-bind="visible: !!$data.fertilizerModule">
                                     <input type="checkbox" class="custom-control-input" data-bind="checked: $data.fertilizerModuleChecked, attr: { id: $data.guid + '-fertilizerModule' }">
                                     <label class="custom-control-label" data-bind="attr: { for: $data.guid + '-fertilizerModule', title: $data.fertilizerModule.name }" src-only style="vertical-align: top;">
@@ -1749,12 +1749,12 @@
                                     </label>
                                 </div>
                             </div>
-                            <div data-bind="if: !!$data.fertilizerModule" style="flex: auto;">
+                            <div data-bind="if: !!$data.fertilizerModule && $data.fertilizerModule.visible()" style="flex: auto;">
                                 <img class="icon-sm" src="" data-bind="attr: { src: $data.fertilizerModule.icon ? $data.fertilizerModule.icon  : null, alt: $data.fertilizerModule.name, for: $data.guid + '-fertilizerModule', title: $data.fertilizerModule.name }" style="margin-right: 0.75em;margin-left: -0.25em;" />
                             </div>
 
                             <!-- palace buff -->
-                            <div data-bind="if: !!$data.palaceBuff" style="flex: auto;">
+                            <div data-bind="if: !!$data.palaceBuff && $data.palaceBuff.visible()" style="flex: auto;">
                                 <div class="custom-control custom-checkbox" data-bind="visible: !!$data.palaceBuff">
                                     <input type="checkbox" class="custom-control-input" data-bind="checked: $data.palaceBuffChecked, attr: { id: $data.guid + '-palaceBuff' }">
                                     <label class="custom-control-label" data-bind="attr: { for: $data.guid + '-palaceBuff', title: $data.palaceBuff.name }" src-only style="vertical-align: top;">
@@ -1762,7 +1762,7 @@
                                     </label>
                                 </div>
                             </div>
-                            <div data-bind="if: !!$data.palaceBuff" style="flex: auto;">
+                            <div data-bind="if: !!$data.palaceBuff && $data.palaceBuff.visible()" style="flex: auto;">
                                 <img class="icon-sm" src="" data-bind="attr: { src: $data.palaceBuff.icon ? $data.palaceBuff.icon  : null, alt: $data.palaceBuff.name, for: $data.guid + '-palaceBuff', title: $data.palaceBuff.name }" style="margin-right: 0.75em;margin-left: -0.25em;" />
                             </div>
 
@@ -1835,7 +1835,7 @@
                         <h6 data-bind="text: $root.texts.newspaper.name">Newspaper</h6>
                         <form>
                             <div class="form mb-3" data-bind="foreach: $root.newspaperConsumption.allEffects">
-                                <span class="custom-control custom-checkbox">
+                                <span class="custom-control custom-checkbox" data-bind="visible: $data.visible()">
                                     <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $data.guid + '-checked' }">
                                     <label class="custom-control-label" data-bind="text: $data.name() + ' ' + formatPercentage($data.amount), attr: { for: $data.guid + '-checked' }" src-only style="vertical-align: top;"></label>
                                 </span>
@@ -1892,9 +1892,9 @@
         <!-- #contract-management-dialog -->
         <div id="contract-management-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-lg">
-                <div class="modal-content" data-bind="if: $root.settings.contracts">
+                <div class="modal-content" data-bind="if: $root.dlcsMap.get('dlc7')">
                     <div class="modal-header">
-                        <h4 data-bind="text: $root.settings.contracts.name">Trade Contracts</h4>
+                        <h4 data-bind="text: $root.texts.docklands.name">Trade Contracts</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 
                     </div>
@@ -2079,7 +2079,7 @@
                             <img src="/img/icons/gui_icon_map_0-17-10.png" alt="Old World" width="46" height="46">
                         </div> -->
                         <div data-bind="foreach: $root.template.populationLevels">
-                            <div class="ui-tier-unit" data-bind="visible: !$root.island().region || $root.island().region == $data.region">
+                            <div class="ui-tier-unit" data-bind="visible: $data.instance().visible()">
                                 <div style="margin-left: 100%;direction: rtl;" class="">
                                     <div style="position: absolute;">
                                         <button class="btn btn-light btn-sm" data-bind="click: () => {$root.selectedPopulationLevel($data.instance())}" data-toggle="modal" data-target="#population-level-config-dialog">
@@ -2133,7 +2133,7 @@
             </fieldset>
             <!-- /population input field -->
             <!-- required workforce field -->
-            <fieldset class="ui-fieldset" id="workforce-view">
+            <fieldset class="ui-fieldset" id="workforce-view" data-bind="visible: $root.island().workforceSectionVisible()">
                 <legend class="collapser" data-toggle="collapse" data-target="#workforce">
                     <span class="fa fa-chevron-right"></span>
                     <span class="fa fa-chevron-down"></span>
@@ -2144,7 +2144,7 @@
                     <div class="inline-list-stretched">
                         <div class="ui-tier-input fleft">
                             <div data-bind="foreach: $data.commuterPier.checked() ? $data.session.workforce : $data.workforce">
-                                <div class="ui-tier-unit">
+                                <div class="ui-tier-unit" data-bind="visible: $data.visible()">
                                     <div class="ui-tier-unit-icon"><img class="icon-tile" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }"></div>
                                     <!--<div class="ui-tier-unit-name" data-bind="text: name"></div>-->
                                     <div class="ui-fchain-item-count">
@@ -2166,7 +2166,7 @@
             </fieldset>
             <!-- /required workforce field -->
             <!-- public buildings -->
-            <fieldset class="ui-fieldset" id="categories-view" data-bind="visible: !$root.island().region || $root.island().region.guid === 5000000 || $root.island().region.guid === 160001">
+            <fieldset class="ui-fieldset" id="categories-view" data-bind="visible: $root.island().publicBuildingsSectionVisible()">
                 <legend class="collapser" data-toggle="collapse" data-bind="attr: {'data-target' : '#category-public-buildings'}">
                     <span class="fa fa-chevron-right"></span>
                     <span class="fa fa-chevron-down"></span>
@@ -2177,7 +2177,7 @@
                     <div data-bind="foreach: $root.template.powerPlants">
 
                         <!-- power plants -->
-                        <div class="ui-service-building-item" data-bind="visible: $data.instance().visible">
+                        <div class="ui-service-building-item" data-bind="visible: $data.instance().visible()">
                             <div class="ui-fchain-item-tr-button">
                                 <div>
                                     <button class="btn btn-light btn-sm" data-bind="click: () => {$root.selectedFactory($data.instance())}" data-toggle="modal" data-target="#factory-config-dialog">
@@ -2257,7 +2257,7 @@
                     <!-- public recipe buildings -->
                     <div data-bind="foreach: $root.island().recipeLists">
 
-                        <div class="ui-service-building-item" data-bind="visible: $data.unusedRecipes().length">
+                        <div class="ui-service-building-item" data-bind="visible: $data.visible()">
 
 
                             <div class="ui-fchain-item-name" data-bind="text: $data.name, visible: !$root.settings.hideNames.checked()"></div>
@@ -2438,7 +2438,7 @@
                                                 <div style="flex: 100 1 auto;"></div>
 
                                                 <!-- module -->
-                                                <div data-bind="if: !!$data.module" style="flex: auto;">
+                                                <div data-bind="if: !!$data.module && $data.module.visible()" style="flex: auto;">
                                                     <div class="custom-control custom-checkbox" data-bind="visible: !!$data.module">
                                                         <input type="checkbox" class="custom-control-input" data-bind="checked: $data.instance().moduleChecked, attr: { id: category.guid + '-' + $data.guid + '-module' }">
                                                         <label class="custom-control-label" data-bind="attr: { for: category.guid + '-' + $data.guid + '-module', title: $data.module.name }" src-only style="vertical-align: top;">
@@ -2446,12 +2446,12 @@
                                                         </label>
                                                     </div>
                                                 </div>
-                                                <div data-bind="if: !!$data.module" style="flex: auto;">
+                                                <div data-bind="if: !!$data.module && $data.module.visible()" style="flex: auto;">
                                                     <img class="icon-sm" src="" data-bind="attr: { src: $data.module.icon ? $data.module.icon  : null, alt: $data.module.name, for: $data.guid + '-module', title: $data.module.name }" style="margin-right: 0.75em;margin-left: -0.25em;" />
                                                 </div>
 
                                                 <!-- fertilizerModule -->
-                                                <div data-bind="if: !!$data.fertilizerModule && !(!!$data.palaceBuff && !!$data.module)" style="flex: auto;">
+                                                <div data-bind="if: !!$data.fertilizerModule && $data.fertilizerModule.visible() && !(!!$data.palaceBuff && !!$data.module)" style="flex: auto;">
                                                     <div class="custom-control custom-checkbox" data-bind="visible: !!$data.fertilizerModule">
                                                         <input type="checkbox" class="custom-control-input" data-bind="checked: $data.instance().fertilizerModuleChecked, attr: { id: category.guid + '-' + $data.guid + '-fertilizerModule' }">
                                                         <label class="custom-control-label" data-bind="attr: { for: category.guid + '-' + $data.guid + '-fertilizerModule', title: $data.fertilizerModule.name }" src-only style="vertical-align: top;">
@@ -2459,12 +2459,12 @@
                                                         </label>
                                                     </div>
                                                 </div>
-                                                <div data-bind="if: !!$data.fertilizerModule && !(!!$data.palaceBuff && !!$data.module)" style="flex: auto;">
+                                                <div data-bind="if: !!$data.fertilizerModule&& $data.fertilizerModule.visible() && !(!!$data.palaceBuff && !!$data.module)" style="flex: auto;">
                                                     <img class="icon-sm" src="" data-bind="attr: { src: $data.fertilizerModule.icon ? $data.fertilizerModule.icon  : null, alt: $data.fertilizerModule.name, for: $data.guid + '-fertilizerModule', title: $data.fertilizerModule.name }" style="margin-right: 0.75em;margin-left: -0.25em;" />
                                                 </div>
 
                                                 <!-- palace buff -->
-                                                <div data-bind="if: !!$data.palaceBuff" style="flex: auto;">
+                                                <div data-bind="if: !!$data.palaceBuff && $data.palaceBuff.visible()" style="flex: auto;">
                                                     <div class="custom-control custom-checkbox" data-bind="visible: !!$data.palaceBuff">
                                                         <input type="checkbox" class="custom-control-input" data-bind="checked: $data.instance().palaceBuffChecked, attr: { id: category.guid + '-' + $data.guid + '-palaceBuff' }">
                                                         <label class="custom-control-label" data-bind="attr: { for: category.guid + '-' + $data.guid + '-palaceBuff', title: $data.palaceBuff.name }" src-only style="vertical-align: top;">
@@ -2472,14 +2472,14 @@
                                                         </label>
                                                     </div>
                                                 </div>
-                                                <div data-bind="if: !!$data.palaceBuff" style="flex: auto;">
+                                                <div data-bind="if: !!$data.palaceBuff && $data.palaceBuff.visible()" style="flex: auto;">
                                                     <img class="icon-sm" src="" data-bind="attr: { src: $data.palaceBuff.icon ? $data.palaceBuff.icon  : null, alt: $data.palaceBuff.name, for: $data.guid + '-palaceBuff', title: $data.palaceBuff.name }" style="margin-right: 0.75em;margin-left: -0.25em;" />
                                                 </div>
                                                 <div style="flex: 100 1 auto;"></div>
                                             </div>
                                         </div>
                                         <div data-bind="if: !$root.settings.simpleView.checked()">
-                                            <div class="ui-fchain-item-load" data-bind="visible: $root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked() || $root.settings.contracts.checked()">
+                                            <div class="ui-fchain-item-load" data-bind="visible: $root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked() || $root.dlcsMap.get('dlc7').checked()">
                                                 <div class="ui-fchain-item-extra-input">
                                                     <div class="input-group input-group-sm spinner mb-3">
                                                         <div class="input-group-prepend">
@@ -2522,7 +2522,7 @@
                                 <span data-bind="text:name"></span>
                             </legend>
                             <div class="collapse show" data-bind="foreach: needs, attr:{id: 'consumption-' +  guid}">
-                                <div class="ui-fchain" data-bind="hidden: !$data.instance().available() || $data.instance().hidden && $data.instance().hidden(), css:{inactive: $data.instance().banned}">
+                                <div class="ui-fchain" data-bind="hidden: $data.instance().hidden && $data.instance().hidden(), css:{inactive: $data.instance().banned}">
                                     <div>
                                         <div class="ui-fchain-item">
                                             <div class="ui-fchain-item-tr-checkbox">

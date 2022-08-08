@@ -545,6 +545,20 @@ texts = {
         "japanese": "持続時間",
         "russian": "Длительность"
     },
+    "docklands": {
+        "english": "Docklands",
+        //"guid": 410083,
+        "polish": "Okno na świat",
+        "spanish": "Zona portuaria",
+        "taiwanese": "港灣",
+        "german": "Speicherstadt",
+        "chinese": "港湾",
+        "italian": "Area portuale",
+        "korean": "부둣가",
+        "french": "Zone portuaire",
+        "japanese": "港湾地区",
+        "russian": "Доки"
+    },
     exportPyramid: {
         "english": "Your Specialty Exports",
         "polish": "Specjalizacje eksportowe",
@@ -1021,6 +1035,7 @@ options = {
             "russian": "Дополнительные товары"
         }
     },
+    /*
     "contracts": {
         "name": "Contracts",
         //guid: 132271
@@ -1040,6 +1055,7 @@ options = {
             "russian": "Доки"
         }
     },
+    */
     "tradeRoutes": {
         "name": "Trade Routes",
         "dialog": "trade-routes-management-dialog",

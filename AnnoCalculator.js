@@ -11,7 +11,8 @@ view = {
         language: ko.observable("english")
     },
     texts: new Map(),
-    dlcs: new Map()
+    dlcs: [],
+    dlcsMap: new Map()
 };
 
 for (var code in languageCodes)
@@ -101,7 +102,7 @@ class NamedElement {
             this.icon = params.icons[this.iconPath];
 
         if (this.dlcs && params && params.dlcs) {
-            this.dlcs = this.dlcs.map(d => view.settings.dlcsMap.get(d)).filter(d => d);
+            this.dlcs = this.dlcs.map(d => view.dlcsMap.get(d)).filter(d => d);
             this.available  = ko.pureComputed(() => {
                 for (var d of this.dlcs) {
                     if (d.checked())
@@ -110,11 +111,27 @@ class NamedElement {
 
                 return false;
             });
+            this.dlcLockingObservables = [];
         } else {
             this.available = ko.pureComputed(() => true)
         }
+              
+    }
 
-        
+    lockDLCIfSet(obs) {
+        if (this.dlcs == null || this.dlcs.length != 1)
+            return;
+
+        this.dlcLockingObservables.push(obs);
+        this.dlcs[0].addDependentObject(obs);
+    }
+
+    delete() {
+        if (this.dlcs == null || this.dlcs.length != 1)
+            return;
+
+        for (var obs of this.dlcLockingObservables)
+            this.dlcs[0].removeDependentObject(obs);
     }
 }
 
@@ -125,6 +142,7 @@ class Session extends NamedElement {
 
         this.region = assetsMap.get(config.region);
         this.islands = ko.observableArray([]);
+        this.lockDLCIfSet(ko.pureComputed(() => this.islands().length))
 
         this.workforce = [];
 
@@ -148,6 +166,42 @@ class Option extends NamedElement {
         super(config);
         this.checked = ko.observable(false);
         this.visible = ko.observable(!!config);
+    }
+}
+
+class DLC extends Option {
+    constructor(config) {
+        super(config);
+
+        this.dependentObjects = ko.observableArray([]);
+        this.used = ko.pureComputed(() => {
+            for (var obs of this.dependentObjects())
+                if (obs() != 0) // can be int, float or bool -> non-strict comparison
+                    return true;
+
+            return false;
+        });
+
+        this.used.subscribe(val => {
+            if (val)
+                this.checked(true);
+        })
+    }
+
+    /**
+     * 
+     * @param {ko.observable} obs
+     */
+    addDependentObject(obs) {
+        this.dependentObjects.push(obs);
+    }
+
+    /**
+     *
+     * @param {ko.observable} obs
+     */
+    removeDependentObject(obs) {
+        this.dependentObjects.remove(obs);
     }
 }
 
@@ -446,7 +500,12 @@ class Island {
         for (var b of this.residenceBuildings) {
             if (b.upgradedBuilding)
                 b.upgradedBuilding = assetsMap.get(parseInt(b.upgradedBuilding));
+        }
 
+        for (let l of this.populationLevels)
+            l.initBans(assetsMap);  // must be executed before loading the values for residence buildings - otherwise banned needs are activated which activate dlcs
+
+        for (let b of this.residenceBuildings) {
             persistInt(b, "existingBuildings");
             persistFloat(b, "limitPerHouse");
             persistInt(b, "limit");
@@ -454,8 +513,6 @@ class Island {
         }
 
         for (let l of this.populationLevels) {
-            l.initBans(assetsMap);
-
             persistInt(l, "existingBuildings");
             persistFloat(l, "limitPerHouse");
             persistFloat(l, "amountPerHouse");
@@ -590,8 +647,46 @@ class Island {
         if (isNew)
             this.allGoodConsumptionUpgrades.apply();
 
+        if (view.settings.autoApplyConsumptionUpgrades.checked()) {
+            for (let l of this.populationLevels)
+                for (let n of l.needs) {
+                    let id = `${l.guid}[${n.guid}].percentBoost`;
+
+                    if (localStorage.getItem(id) == null)
+                        n.goodConsumptionUpgradeList.apply();
+                }
+        }
+
         if (this.session)
             this.session.addIsland(this);
+
+        this.workforceSectionVisible = ko.pureComputed(() => {
+            for (var w of this.commuterPier.checked() ? this.session.workforce : this.workforce)
+                if (w.visible())
+                    return true;
+
+            return false;
+        });
+
+        this.publicBuildingsSectionVisible = ko.pureComputed(() => {
+            for (var b of this.powerPlants)
+                if (b.visible())
+                    return true;
+
+            for (var b of this.noFactoryProducts)
+                if (b.visible())
+                    return true;
+
+            for (var b of this.publicRecipeBuildings)
+                if (b.visible())
+                    return true;
+
+            for (var b of this.recipeLists)
+                if (b.visible())
+                    return true;
+
+            return false;
+        });
     }
 
     reset() {
@@ -668,7 +763,10 @@ class Island {
                 else
                     n.checked(true);
             if (n.percentBoost)
-                n.percentBoost(100);
+                if (view.settings.autoApplyConsumptionUpgrades.checked())
+                    n.goodConsumptionUpgradeList.apply();
+                else
+                    n.percentBoost(100);
         }));
 
         this.populationLevels.forEach(l => l.buildingNeeds.forEach(n => {
@@ -698,7 +796,8 @@ class Consumer extends NamedElement {
         this.demands = new Set();
         this.buildings = ko.computed(() => Math.max(0, parseFloat(this.amount())) / this.tpmin);
         this.existingBuildings = createIntInput(0, 0);
-        this.items = [];
+        this.lockDLCIfSet(this.existingBuildings);
+        this.items = [];        
 
         this.outputAmount = ko.computed(() => this.amount());
 
@@ -717,6 +816,7 @@ class Consumer extends NamedElement {
 
     referenceProducts(assetsMap) {
         this.getInputs().forEach(i => i.product = assetsMap.get(i.Product));
+        this.availableItems = ko.pureComputed(() => this.items.filter(i => i.available()));
     }
 
 
@@ -791,7 +891,8 @@ class Module extends Consumer {
     constructor(config, assetsMap, island) {
         super(config, assetsMap, island);
         this.checked = ko.observable(false);
-        this.visible = !!config;
+        this.lockDLCIfSet(this.checked);
+        this.visible = ko.pureComputed(() => !!config && this.available());
     }
 }
 
@@ -809,6 +910,9 @@ class PublicConsumerBuilding extends Consumer {
         });
 
         this.visible = ko.computed(() => {
+            if (!this.available())
+                return false;
+
             if (this.region && this.island.region && this.region != this.island.region)
                 return false;
 
@@ -847,6 +951,8 @@ class PublicConsumerBuilding extends Consumer {
 class PalaceBuff extends NamedElement {
     constructor(config, assetsMap) {
         super(config);
+
+        this.visible = ko.pureComputed(() => this.available());
     }
 }
 
@@ -866,6 +972,7 @@ class Factory extends Consumer {
         if (this.module) {
             this.module = assetsMap.get(this.module);
             this.moduleChecked = ko.observable(false);
+            this.module.lockDLCIfSet(this.moduleChecked);
             var workforceUpgrade = this.module.workforceAmountUpgrade ? this.module.workforceAmountUpgrade.Value : 0;
             this.moduleChecked.subscribe(checked => {
                 if (checked) {
@@ -886,6 +993,7 @@ class Factory extends Consumer {
         if (this.fertilizerModule) {
             this.fertilizerModule = assetsMap.get(this.fertilizerModule);
             this.fertilizerModuleChecked = ko.observable(false);
+            this.fertilizerModule.lockDLCIfSet(this.fertilizerModuleChecked);
             this.fertilizerModuleChecked.subscribe(checked => {
                 if (checked) {
                     this.percentBoost(parseInt(this.percentBoost()) + this.fertilizerModule.productivityUpgrade);
@@ -900,6 +1008,7 @@ class Factory extends Consumer {
         if (config.palaceBuff) {
             this.palaceBuff = assetsMap.get(config.palaceBuff);
             this.palaceBuffChecked = ko.observable(false);
+            this.palaceBuff.lockDLCIfSet(this.palaceBuffChecked);
 
             this.buffAmount = ko.computed(() => {
                 var f = this.clipped && this.clipped() && this.palaceBuff.guid !== 191141 ? 2 : 1;
@@ -957,6 +1066,7 @@ class Factory extends Consumer {
 
             return buildings;
         });
+        this.lockDLCIfSet(this.buildings);
 
         if (this.workforceDemand)
             this.buildings.subscribe(val => this.workforceDemand.updateAmount(Math.max(val, this.buildings())));
@@ -1014,6 +1124,9 @@ class Factory extends Consumer {
         });
 
         this.visible = ko.computed(() => {
+            if (!this.available())
+                return false;
+
             if (Math.abs(this.amount()) > EPSILON ||
                 Math.abs(this.extraAmount()) > EPSILON ||
                 this.existingBuildings() > 0 ||
@@ -1172,13 +1285,18 @@ class Product extends NamedElement {
         this.amount = ko.observable(0);
 
         this.factories = this.producers.map(p => assetsMap.get(p)).filter(p => !!p);
+        this.availableFactories = ko.pureComputed(() => this.factories.filter(f => f.available()));
+
         this.fixedFactory = ko.observable(null);
         if (this.mainFactory)
             this.mainFactory = assetsMap.get(this.mainFactory);
 
         if (this.producers && this.factories.length) {
             this.amount = ko.computed(() => this.factories.map(f => f.amount()).reduce((a, b) => a + b));
+            this.lockDLCIfSet(this.amount); // if routes sum up to exactly zero, usage might still end up at 0.
         }
+
+        this.visible = ko.pureComputed(() => this.available());
     }
 }
 
@@ -1194,6 +1312,7 @@ class NoFactoryProduct extends NamedElement {
 
         this.needs = ko.observableArray([]);
         this.amount = ko.computed(() => this.needs().map(n => n.amount()).reduce((a, b) => a + b, 0));
+        this.lockDLCIfSet(this.amount);
 
         this.residentsInput = ko.pureComputed(() => {
             return this.amount() * this.residentsInputFactor;
@@ -1275,6 +1394,9 @@ class NoFactoryNeed extends PublicBuildingNeed {
             });
 
             this.hidden = ko.computed(() => {
+                if (!this.available())
+                    return true;
+
                 for (var r of this.residences)
                     if (r.existingBuildings() > 0)
                         return false;
@@ -1282,6 +1404,7 @@ class NoFactoryNeed extends PublicBuildingNeed {
                 return true;
             });
         } else {
+            this.hidden = ko.computed(() => !this.available());
             this.residences = level.allResidences;
             level.limit.subscribe(limit => this.updateAmount(limit));
         }
@@ -1584,6 +1707,9 @@ class PopulationNeed extends Need {
             });
 
             this.hidden = ko.computed(() => {
+                if (!this.available())
+                    return true;
+
                 for (var r of this.residences)
                     if (r.existingBuildings() > 0)
                         return false;
@@ -1591,6 +1717,7 @@ class PopulationNeed extends Need {
                 return true;
             });
         } else {
+            this.hidden = ko.computed(() => !this.available());
             this.residences = level.allResidences;
             level.limit.subscribe(limit => this.updateAmount(limit));
         }
@@ -1726,6 +1853,7 @@ class ResidenceBuilding extends NamedElement {
         this.region = assetsMap.get(config.region)
 
         this.existingBuildings = createIntInput(0, 0);
+        this.lockDLCIfSet(this.existingBuildings);
         this.limit = createIntInput(0, 0);
         this.limitLowerBound = config.residentMax;
         this.limitPerHouse = createFloatInput(this.limitLowerBound, this.limitLowerBound);
@@ -1839,7 +1967,7 @@ class PopulationLevel extends NamedElement {
             this.specialResidence.populationLevel = this;
             this.allResidences.push(this.specialResidence);
         }
-
+        this.availableResidences = ko.pureComputed(() => this.allResidences.filter(r => r.available()))
 
 
         this.amount = createIntInput(0, 0);
@@ -1907,7 +2035,7 @@ class PopulationLevel extends NamedElement {
 
         this.hasBonusNeeds = ko.pureComputed(() => {
             for (var n of this.bonusNeeds || [])
-                if (n.available())
+                if (!n.hidden())
                     return true;
 
             return false;
@@ -2113,6 +2241,19 @@ class PopulationLevel extends NamedElement {
             });
         }
 
+        this.visible = ko.pureComputed(() => {
+            if (!this.available())
+                return false;
+
+            if (!view.island || !view.island())
+                return true;
+
+            var region = view.island().region;
+            if (!region)
+                return true;
+
+            return this.region === region;
+        });
     }
 
     initBans(assetsMap) {
@@ -2216,14 +2357,21 @@ class CommuterWorkforce extends NamedElement {
 
         this.amount = ko.pureComputed(() => {
             var amount = 0;
-          
+
             for (var isl of this.session.islands()) {
                 if (isl.commuterPier.checked())
                     amount += isl.assetsMap.get(this.guid).amount();
             }
 
             return amount;
-        })
+        });
+
+        this.visible = ko.pureComputed(() => {
+            if (!this.available())
+                return false;
+
+            return this.amount() != 0;
+        });
     }
 }
 
@@ -2232,6 +2380,13 @@ class Workforce extends NamedElement {
         super(config);
         this.amount = ko.observable(0);
         this.demands = [];
+
+        this.visible = ko.pureComputed(() => {
+            if (!this.available())
+                return false;
+
+            return this.amount() != 0;
+        });
     }
 
     updateAmount() {
@@ -2319,6 +2474,7 @@ class Item extends NamedElement {
                         this.extraGoods.push(p);
                 }
             }
+            this.availableExtraGoods = ko.pureComputed(() => this.extraGoods.filter(p => p.available()));
         }
 
         if (this.replacingWorkforce)
@@ -2326,7 +2482,8 @@ class Item extends NamedElement {
 
         
         this.equipments =
-            this.factories.map(f => new EquippedItem({ item: this, factory: f, locaText: this.locaText }, assetsMap));
+            this.factories.map(f => new EquippedItem({ item: this, factory: f, locaText: this.locaText, dlcs: config.dlcs }, assetsMap));
+        this.availableEquipments = ko.pureComputed(() => this.equipments.filter(e => e.factory.available()));
 
         this.checked = ko.pureComputed({
             read: () => {
@@ -2343,6 +2500,12 @@ class Item extends NamedElement {
         });
 
         this.visible = ko.computed(() => {
+            if (!this.available() || this.availableEquipments().length == 0)
+                return false;
+
+            if (this.availableExtraGoods && this.availableExtraGoods().length == 0)
+                return false;
+
             if (!view.island || !view.island())
                 return true;
 
@@ -2363,6 +2526,8 @@ class EquippedItem extends Option {
     constructor(config, assetsMap) {
         super(config);
 
+        this.lockDLCIfSet(this.checked);
+
         this.replacements = config.item.replacements;
         this.replacementArray = config.item.replacementArray;
         this.replacingWorkforce = config.item.replacingWorkforce;
@@ -2378,6 +2543,20 @@ class EquippedItem extends Option {
         }
 
         this.factory.items.push(this);
+
+        this.visible = ko.pureComputed(() => {
+            if (!this.available())
+                return false;
+
+            if (!view.island || !view.island())
+                return true;
+
+            var region = view.island().region;
+            if (!region)
+                return true;
+
+            return this.factory.region === region;
+        });
     }
 }
 
@@ -2438,6 +2617,8 @@ class GoodConsumptionUpgrade extends Option {
     constructor(config, assetsMap, levels) {
         super(config, assetsMap);
 
+        this.lockDLCIfSet(this.checked);
+
         this.entries = [];
         this.entriesMap = new Map();
         this.populationLevels = config.populationLevels.map(l => assetsMap.get(l)).filter(l => !!l);
@@ -2466,6 +2647,9 @@ class GoodConsumptionUpgrade extends Option {
         }
 
         this.visible = ko.computed(() => {
+            if (!this.available())
+                return false;
+
             if (!view.island || !view.island())
                 return true;
 
@@ -2559,7 +2743,11 @@ class NewspaperNeedConsumptionEntry extends Option {
     constructor(config) {
         super(config);
 
+        this.lockDLCIfSet(this.checked);
+
         this.amount = config.articleEffects[0].ArticleValue;
+
+        this.visible = ko.pureComputed(() => this.available())
     }
 }
 
@@ -2989,6 +3177,12 @@ class ContractManager {
         this.paramKey = "tradingContractParams";
         this.island = island;
         this.contracts = ko.observableArray();
+        this.contractsLength = ko.pureComputed(() => this.contracts().length);
+
+        var dlc = view.dlcsMap.get("dlc7");
+        if (dlc) {
+            dlc.addDependentObject(this.contractsLength);
+        }
 
         var localStorage = island.storage;
         if (localStorage) {
@@ -3143,6 +3337,10 @@ class ContractManager {
     }
 
     islandDeleted(island) {
+        var dlc = view.dlcsMap.get("dlc7");
+        if (dlc) {
+            dlc.removeDependentObject(this.contractsLength);
+        }
     }
 
     setStorageCapacity() {
@@ -3322,10 +3520,10 @@ class ContractCreatorFactory {
             var list;
             if (this.export())
                 list = i.products
-                    .filter(p => p.guid != 1010566 && p.guid != 270042 && p.canImport && !usedProducts.has(p));
+                    .filter(p => p.guid != 1010566 && p.guid != 270042 && p.canImport && !usedProducts.has(p) && p.available());
             else
                 list = i.products
-                    .filter(p => p.guid != 1010566 && p.guid != 270042 && !usedProducts.has(p));
+                    .filter(p => p.guid != 1010566 && p.guid != 270042 && !usedProducts.has(p) && p.available());
 
             return list.sort((a, b) => a.name().localeCompare(b.name()));
         });
@@ -3456,6 +3654,12 @@ class RecipeList extends NamedElement {
             return this.unusedRecipes().length && this.selectedRecipe();
         });
 
+        this.visible = ko.pureComputed(() => {
+            if (!this.available())
+                return false;
+
+            return this.unusedRecipes().length != 0;
+         });
     }
 
     create() {
@@ -3738,6 +3942,7 @@ class IslandManager {
 
         // used for creation and renaming
         this.islandNameInput = ko.observable();
+        this.availableSessions = ko.pureComputed(() => view.sessions.filter(s => s.available()))
         this.sessionInput = ko.observable(view.sessions[0]);
         this.params = params;
         this.islandCandidates = ko.observableArray();
@@ -3844,6 +4049,10 @@ class IslandManager {
         if (view.tradeManager) {
             view.tradeManager.islandDeleted(island);
         }
+
+        for (var a of island.assetsMap.values())
+            if (a instanceof NamedElement)
+                a.delete();
 
         view.islands.remove(island);
         island.session.deleteIsland(island);
@@ -4105,11 +4314,14 @@ class ViewMode {
 
         view.settings.tradeRoutes.checked(true);
         view.settings.additionalProduction.checked(true);
-        view.settings.contracts.checked(true);
         view.settings.consumptionModifier.checked(true);
         view.settings.missingBuildingsHighlight.checked(true);
         view.settings.needUnlockConditions.checked(true);
         view.settings.decimalsForBuildings.checked(true);
+
+        for (var dlc of view.dlcs.values()) {
+            dlc.checked(true);
+        }
     }
 }
 
@@ -4173,12 +4385,12 @@ class Template {
 function init(isFirstRun) {
     view.darkMode = new DarkMode();
 
-    view.settings.dlcs = [];
-    view.settings.dlcsMap = new Map();
+    view.dlcs = [];
+    view.dlcsMap = new Map();
     for (let dlc of (params.dlcs || [])) {
-        d = new Option(dlc)
-        view.settings.dlcs.push(d);
-        view.settings.dlcsMap.set(d.id, d);
+        d = new DLC(dlc);
+        view.dlcs.push(d);
+        view.dlcsMap.set(d.id, d);
         if (localStorage) {
             let id = "settings." + d.id;
             if (localStorage.getItem(id) != null)
@@ -4186,6 +4398,15 @@ function init(isFirstRun) {
 
             d.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
         }
+    }
+    if (localStorage) {
+        let id = "settings.contracts";
+        if (localStorage.getItem(id) != null && parseInt(localStorage.getItem(id))){
+            var dlc = view.dlcsMap.get("dlc7");
+            if (dlc)
+                dlc.checked(true);
+        }
+        localStorage.removeItem(id);
     }
 
     // set up options
@@ -4333,7 +4554,7 @@ function init(isFirstRun) {
 
     $('#factory-choose-dialog').on('show.bs.modal',
         () => {
-            view.selectedMultiFactoryProducts(view.island().multiFactoryProducts);
+            view.selectedMultiFactoryProducts(view.island().multiFactoryProducts.filter(p => p.availableFactories().length > 1));
             view.selectedReplaceInputItems(view.island().replaceInputItems);
         });
 
@@ -4597,15 +4818,6 @@ ko.extenders.numeric = function (target, bounds) {
     return result;
 };
 
-
-/**
- * Callback for adding two numbers.
- *
- * @callback beforeValueUpdateCallback
- * @param {number} valueToWrite - value that would be written if no callback was applied.
- * @param {number} currentValue
- * @param {any} value passed to the observable - eventually a string
- */
 
 /**
  * 
