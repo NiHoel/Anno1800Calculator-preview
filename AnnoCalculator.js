@@ -1984,7 +1984,8 @@ class PopulationLevel extends NamedElement {
             return val;
         });
         this.amountPerHouse = createFloatInput(config.fullHouse, 1, Infinity, (newVal, current) => {
-            if (this.limitPerHouse && this.fixLimitPerHouse && newVal > this.limitPerHouse() + ACCURACY && this.fixLimitPerHouse())
+            if (this.limitPerHouse && this.fixLimitPerHouse && newVal > this.limitPerHouse() + ACCURACY &&
+                (this.fixLimitPerHouse() || this.canEditPerHouse && !this.canEditPerHouse()))
                 return this.limitPerHouse();
 
             return newVal;
@@ -2063,14 +2064,15 @@ class PopulationLevel extends NamedElement {
 
         this.amountPerHouse.subscribe(val => {
             if (val > this.limitPerHouse() + ACCURACY) {
-                if (this.fixLimitPerHouse()) {
+                if (this.fixLimitPerHouse() || (this.canEditPerHouse && !this.canEditPerHouse())) {
+                    this.amountPerHouse(this.limitPerHouse());
                     return;
                 } else {
                     this.limitPerHouse(val);
                 }
             }
 
-            if (!inRange(this.existingBuildings(), val, this.amount()))
+            if (view.settings.deriveResidentsPerHouse.checked() || !inRange(this.existingBuildings(), val, this.amount()))
                 this.amount(val * this.existingBuildings());
         });
 
@@ -2095,7 +2097,6 @@ class PopulationLevel extends NamedElement {
                 if (val > 0) {
                     view.settings.deriveResidentsPerHouse.checked(false);
                     this.fixLimitPerHouse(false);
-                    this.fixAmountPerHouse(false);
                 }
             });
 
@@ -2161,9 +2162,14 @@ class PopulationLevel extends NamedElement {
             this.residence.limit.subscribe(val => {
                 this.limit(val + this.getFloorsSummedLimit());
             });
+            this.limitPerHouse.subscribe(val => {
+                if (val + ACCURACY < this.amountPerHouse()) {
+                    this.amountPerHouse(val);
+                }
+            });
 
             this.canEditPerHouse = ko.pureComputed(() => {
-                return !this.hasSkyscrapers();
+                return !this.hasSkyscrapers() && !(this.specialResidence && this.specialResidence.existingBuildings());
             });
         } else {
             this.hasSkyscrapers = () => false;
@@ -2215,12 +2221,7 @@ class PopulationLevel extends NamedElement {
 
             this.limitPerHouse.subscribe(val => {
                 if (val + ACCURACY < this.amountPerHouse()) {
-                    if (this.fixAmountPerHouse()) {
-                        delayUpdate(this.limitPerHouse, this.amountPerHouse());
-                        return;
-                    } else {
-                        this.amountPerHouse(val);
-                    }
+                    this.amountPerHouse(val);
                 }
 
                 if (!inRange(this.existingBuildings(), val, this.limit()))
@@ -2269,7 +2270,7 @@ class PopulationLevel extends NamedElement {
             var perHouse = 0;
             for (var need of this.basicNeeds.concat(this.bonusNeeds))
                 if (!need.requiredFloorLevel &&
-                    (need.requiredBuildings == null || this.residence.guid in need.requiredBuildings) &&
+                    (need.requiredBuildings == null || need.requiredBuildings.indexOf(this.residence.guid) !== -1) &&
                     (!need.banned || !need.banned()) &&
                     (!need.visible || need.visible()))
                     
