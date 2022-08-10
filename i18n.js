@@ -533,12 +533,12 @@ texts = {
         "russian": "Скорость погрузки"
     },
     duration: {
-        "english": "Duration",
+        "english": "Trade Duration",
         "chinese": "持续时间",
         "taiwanese": "持續時間",
         "italian": "Durata",
         "spanish": "Duración",
-        "german": "Dauer",
+        "german": "Handelsdauer",
         "polish": "Czas trwania",
         "french": "Durée",
         "korean": "지속 시간",
