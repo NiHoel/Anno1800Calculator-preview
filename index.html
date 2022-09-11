@@ -1936,7 +1936,7 @@
                         </div>
                         <hr />
                         <div data-bind="with: $root.selectedContractManager()">
-                            <div class="inline-list-stretched">
+                            <div class="inline-list-stretched" data-bind="if: !view.island().isAllIslands()">
                                 <div class="input-group spinner" style="max-width: 14rem;">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text" data-bind="text: $root.texts.loadingSpeed.name()"></span>
@@ -1961,7 +1961,7 @@
                                     </div>
                                 </div>
 
-                                <div class="input-group spinner" data-bind="if: !view.island().isAllIslands()" style="max-width: 19rem;">
+                                <div class="input-group spinner" style="max-width: 19rem;">
                                     <input step="100" min="100" class="form-control" type="number" value="2000" data-bind="value: $data.existingStorageCapacity, attr: { id: 'existing-storage-capacity' }" />
                                     <div class="input-group-append">
                                         <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.existingStorageCapacity, id: 'existing-storage-capacity' }}"></div>

@@ -3561,12 +3561,17 @@ class ContractCreatorFactory {
             var i = fl.island
             var il = i.contractManager.contracts();
 
-            var usedProducts = fl.imports().map(c => c.exportProduct).concat(fl.exports().map(c => c.importProduct));
+            var usedProducts = [f.product]
+            if (this.export())
+                usedProducts = usedProducts.concat(fl.exports().map(c => c.importProduct))
+            else
+                usedProducts = usedProducts.concat(fl.imports().map(c => c.exportProduct));
+
             if (!i.isAllIslands())
                 if (this.export())
-                    usedProducts.concat(il.map(c => c.exportProduct))
+                    usedProducts = usedProducts.concat(il.map(c => c.exportProduct))
                 else
-                    usedProducts.concat(il.map(c => c.importProduct))
+                    usedProducts = usedProducts.concat(il.map(c => c.importProduct))
 
             usedProducts = new Set(usedProducts);
             usedProducts.add(f.product);
