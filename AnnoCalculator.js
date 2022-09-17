@@ -216,7 +216,7 @@ class DLC extends Option {
     constructor(config) {
         super(config);
 
-        this.dependentObjects = ko.observableArray([]).extend({ rateLimit: 500 }); // notify subscribers at most once per 500 ms
+        this.dependentObjects = ko.observableArray([]).extend({ deferred: true }); // notify subscribers at most once per 500 ms
 
         this.used = ko.pureComputed(() => {
             for (var obs of this.dependentObjects())
@@ -838,8 +838,8 @@ class Consumer extends NamedElement {
         this.editable = ko.observable(false);
 
         this.demands = new Set();
-        this.buildings = ko.computed(() => Math.max(0, parseFloat(this.amount())) / this.tpmin);
-        this.existingBuildings = createIntInput(0, 0);
+        this.buildings = ko.computed(() => Math.max(0, parseFloat(this.amount())) / this.tpmin).extend({ deferred: true });
+        this.existingBuildings = createIntInput(0, 0).extend({ deferred: true });
         this.lockDLCIfSet(this.existingBuildings);
         this.items = [];
 
@@ -1109,7 +1109,7 @@ class Factory extends Consumer {
             }
 
             return buildings;
-        });
+        }).extend({ deferred: true });
         this.lockDLCIfSet(this.buildings);
 
         if (this.workforceDemand)
@@ -1542,7 +1542,7 @@ class Demand extends NamedElement {
             var buildings = Math.max(0, this.inputAmount()) / factor / factory.tpmin / factory.boost();
 
             return buildings;
-        });
+        }).extend({ deferred: true });
 
     }
 
