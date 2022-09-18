@@ -1004,7 +1004,7 @@ class Factory extends Consumer {
     constructor(config, assetsMap, island) {
         super(config, assetsMap, island);
 
-        this.extraAmount = createFloatInput(0);
+        this.extraAmount = createFloatInput(0).extend({ deferred: true });
         this.extraGoodProductionList = new ExtraGoodProductionList(this);
 
         this.percentBoost = createIntInput(100, 1);
@@ -1213,14 +1213,14 @@ class Factory extends Consumer {
             this.icon = this.product.icon;
 
         this.extraDemand = new FactoryDemand({ factory: this, guid: this.product.guid }, assetsMap);
-        this.extraAmount.subscribe(val => {
+        this.extraAmountSubscription = ko.computed(() => {
             let amount = parseFloat(this.amount());
+            let val = this.extraAmount();
             if (val < -Math.ceil(amount * 100) / 100)
-                delayUpdate(this.extraAmount, - Math.ceil(amount * 100) / 100);
+                this.extraAmount(- Math.ceil(amount * 100) / 100);
             else
                 this.extraDemand.updateAmount(Math.max(val, -amount));
         });
-        this.extraDemand.updateAmount(parseFloat(this.extraAmount()));
     }
 
     getProduct() {
@@ -1765,6 +1765,9 @@ class PopulationNeed extends Need {
             this.residences = level.allResidences;
             level.limit.subscribe(limit => this.updateAmount(limit));
         }
+
+        // dependency chain: updateAmount -> getNoConsumptionResidents -> existingBuildings
+        this.residences.forEach(r => r.existingBuildings.subscribe(() => this.updateAmount(this.population)));
     }
 
     initBans(level, assetsMap) {
