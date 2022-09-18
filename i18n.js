@@ -276,18 +276,18 @@ texts = {
         "russian": "Потребность в роскоши"
     },
     "lifestyleNeeds": {
-        "chinese": "Lifestyle Needs",
+        "chinese": "生活需求",
         "english": "Lifestyle Needs",
-        "french": "Lifestyle Needs",
-        "german": "Lifestyle Needs",
-        "guid": 2291,
-        "italian": "Lifestyle Needs",
-        "japanese": "Lifestyle Needs",
-        "korean": "Lifestyle Needs",
-        "polish": "Lifestyle Needs",
-        "russian": "Lifestyle Needs",
-        "spanish": "Lifestyle Needs",
-        "taiwanese": "Lifestyle Needs"
+        "french": "Besoins de confort",
+        "german": "Lebensqualität",
+        //"guid": 2291,
+        "italian": "Bisogni di stile di vita",
+        "japanese": "ライフスタイルの需要",
+        "korean": "일용품 요구",
+        "polish": "Potrzeby stylu życia",
+        "russian": "Персональные потребности",
+        "spanish": "Necesidades de estilo de vida",
+        "taiwanese": "生活需求"
     },
     "reducedNeeds": {
         "english": "Reduced Needs",
