@@ -4618,7 +4618,9 @@ function init(isFirstRun) {
 
     $('#factory-choose-dialog').on('show.bs.modal',
         () => {
-            view.selectedMultiFactoryProducts(view.island().multiFactoryProducts.filter(p => p.availableFactories().length > 1));
+            view.selectedMultiFactoryProducts(view.island().multiFactoryProducts
+                .filter(p => p.availableFactories().length > 1)
+                .sort((a, b) => a.name().localeCompare(b.name())));
             view.selectedReplaceInputItems(view.island().replaceInputItems);
         });
 
