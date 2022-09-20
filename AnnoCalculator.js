@@ -1,6 +1,6 @@
 // @ts-check
 
-let versionCalculator = "v8.1";
+let versionCalculator = "v9.0";
 let ACCURACY = 0.01;
 let EPSILON = 0.0000001;
 let ALL_ISLANDS = "All Islands";
