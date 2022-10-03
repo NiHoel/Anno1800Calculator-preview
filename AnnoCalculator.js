@@ -3417,7 +3417,7 @@ class ContractManager {
                     continue;
 
                 var importAmount = c.importAmount() || ACCURACY;
-                var exportAmount = c.exportAmount() || ACCURACY;
+                var exportAmount = c.exportAmount() || (ACCURACY * c.ratio());
                 totalAmount += importAmount + exportAmount;
 
                 // import
@@ -4878,6 +4878,14 @@ ko.components.register('notes-section', {
     template:
         `<div class="form-group notes-section" data-bind="if: $data.notes != null">
               <textarea class="form-control" data-bind="textInput: $data.notes, attr: {placeholder: $root.texts.notes.name()}"></textarea>
+        </div>`
+});
+
+ko.components.register('lock-toggle', {
+    template:
+        `<div style="cursor: pointer" data-bind="click: () => {checked(!checked());}">
+             <img class="icon-sm icon-light" src="icon_unlock.png" data-bind="style: {display : checked()? 'none' : 'inherit'}">
+             <img class="icon-sm icon-light" src="icon_lock.png" style="display: none;"  data-bind="style: {display : checked()? 'inherit' : 'none'}">
         </div>`
 });
 

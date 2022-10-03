@@ -1998,21 +1998,7 @@
                             <table class="table table-striped table-sm mt-3">
                                 <tbody data-bind="foreach: contracts">
                                     <tr>
-                                        <td  data-bind="visible: !view.island().isAllIslands()">
-                                            <div class="input-group-text">
-                                                <div class="mr-2">
-
-                                                    <img class="icon-sm icon-light" src="icon_unlock.png" />
-                                                </div>
-
-                                                <div class="custom-control custom-switch">
-                                                    <input type="checkbox" class="custom-control-input" data-bind="checked: $data.fixed, attr: { id: $data.exportFactory.guid + '-' + $data.importFactory.guid + '-contract-fixed' }">
-                                                    <label class="custom-control-label" data-bind="attr: { for: $data.exportFactory.guid + '-' + $data.importFactory.guid + '-contract-fixed' }">
-
-                                                        <img class="icon-sm icon-light" src="icon_lock.png" />
-                                                    </label>
-                                                </div>
-                                            </div>
+                                        <td  data-bind="visible: !view.island().isAllIslands(), component: { name: 'lock-toggle', params: { checked: $data.fixed }, attr: {'title': $root.texts.fixContractTooltip.name()}} ">
                                         </td>
                                         <td>
                                             <div>
