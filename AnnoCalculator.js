@@ -3195,6 +3195,7 @@ class TradeContract {
 
         this.importCount = ko.observable(0);
         this.exportCount = ko.observable(0);
+        this.fixed = ko.observable(this.fixed || false);
     }
 
     delete() {
@@ -3252,7 +3253,8 @@ class ContractManager {
                 var config = {
                     importFactory: assetsMap.get(r.importFactory),
                     exportFactory: assetsMap.get(r.exportFactory),
-                    importAmount: parseFloat(r.importAmount)
+                    importAmount: parseFloat(r.importAmount),
+                    fixed: r.fixed
                 };
 
                 if (!config.importFactory || !config.exportFactory || !config.importFactory.contractList || !config.exportFactory.contractList)
@@ -3272,7 +3274,8 @@ class ContractManager {
                     json.push({
                         importFactory: r.importFactory.guid,
                         exportFactory: r.exportFactory.guid,
-                        importAmount: r.importAmount()
+                        importAmount: r.importAmount(),
+                        fixed: r.fixed() ? 1 : 0
                     });
                 }
 
@@ -3406,33 +3409,58 @@ class ContractManager {
 
         var transferTime = this.traderTransferTime();
 
-        var totalAmount = 0;
-        var productToAmount = new Map();
-        for (var c of this.contracts()) {
-            totalAmount += c.importAmount() + c.exportAmount();
+        var getAmounts = (fixed) => {
+            var totalAmount = 0;
+            var productToAmount = new Map();
+            for (var c of this.contracts()) {
+                if (fixed != c.fixed())
+                    continue;
 
-            // import
-            var guid = c.importProduct.guid;
-            if (productToAmount.has(guid))
-                productToAmount.set(guid, c.importAmount() + productToAmount.get(guid));
-            else
-                productToAmount.set(guid, c.importAmount());
+                var importAmount = c.importAmount() || ACCURACY;
+                var exportAmount = c.exportAmount() || ACCURACY;
+                totalAmount += importAmount + exportAmount;
 
-            // export
-            guid = c.exportProduct.guid;
-            if (productToAmount.has(guid))
-                productToAmount.set(guid, c.exportAmount() + productToAmount.get(guid));
-            else
-                productToAmount.set(guid, c.exportAmount());
-        }
+                // import
+                var guid = c.importProduct.guid;
+                if (productToAmount.has(guid))
+                    productToAmount.set(guid, importAmount + productToAmount.get(guid));
+                else
+                    productToAmount.set(guid, importAmount);
 
-        var maxAmount = 0;
-        for (var val of productToAmount.values())
-            if (val > maxAmount)
-                maxAmount = val;
+                // export
+                guid = c.exportProduct.guid;
+                if (productToAmount.has(guid))
+                    productToAmount.set(guid, exportAmount + productToAmount.get(guid));
+                else
+                    productToAmount.set(guid, exportAmount);
+            }
 
+            var maxAmount = 0;
+            var maximizer = 0;
+            for (var key of productToAmount.keys()) {
+                var val = productToAmount.get(key);
+                if (val > maxAmount) {
+                    maxAmount = val;
+                    maximizer = key;
+                }
+            }
+
+            return {
+                "max": maxAmount,
+                "maximizer": maximizer,
+                "total": totalAmount,
+                "perProduct": productToAmount
+            };
+        };
+
+        var fixedAmounts = getAmounts(true);
+        var volatileAmounts = getAmounts(false);
+
+        if (volatileAmounts.total == 0)
+            return;
 
         var s = 60 * this.traderLoadingSpeed() * params.tradeContracts.loadingSpeedFactor;
+        var c = this.existingStorageCapacity();
 
         //x = newTotalAmount / s
         //existingStorageCapactiy = newMaxAmount * (loadingDuration + transferTime) 
@@ -3440,11 +3468,48 @@ class ContractManager {
         //    = newMaxAmount * (- transferTime * (newTotalAmount / s) / ((newTotalAmount / s) - 1) + transferTime)
         //    = f * maxAmount * (- transferTime * (f * totalAmount / s) / ((f * totalAmount / s) - 1) + transferTime)
 
-        var c = this.existingStorageCapacity();
-        var f = c * s / (maxAmount * s * transferTime + c * totalAmount);
+        if (fixedAmounts.total == 0) {
+            var f = c * s / (volatileAmounts.max * s * transferTime + c * volatileAmounts.total);
 
-        for (var c of this.contracts()) {
-            c.importAmount(f * c.importAmount());
+            for (var c of this.contracts()) {
+                c.importAmount(f * (c.importAmount() || ACCURACY));
+            }
+            // fixed contracts exceed capacity
+        } else if (s * c <= fixedAmounts.max *s * transferTime + c * fixedAmounts.total + ACCURACY) {
+            for (var c of this.contracts()) {
+                if (!c.fixed())
+                    c.importAmount(0 * c.importAmount());
+            }
+        } else {
+            var prevGuid = 0;
+            var prevF = 0;
+            var guid = fixedAmounts.maximizer;
+            var f = 1;
+
+            while (prevGuid != guid && Math.abs(f - prevF) > ACCURACY) {
+                var maxFixed = fixedAmounts.perProduct.get(guid) || 0;
+                var maxVolatile = volatileAmounts.perProduct.get(guid) || 0;
+                prevF = f;
+
+                f = (-maxFixed * s * transferTime + s * c - c * fixedAmounts.total) / (maxVolatile * s * transferTime + c * volatileAmounts.total);
+
+                var maxAmount = maxFixed + f * maxVolatile;
+                prevGuid = guid;
+
+                for (var g of volatileAmounts.perProduct.keys()) {
+                    var amount = f * volatileAmounts.perProduct.get(g) + (fixedAmounts.perProduct.get(g) || 0);
+
+                    if (amount > maxAmount + ACCURACY) {
+                        maxAmount = amount;
+                        guid = g;
+                    }
+                }
+            }
+
+            for (var c of this.contracts()) {
+                if (!c.fixed())
+                    c.importAmount(f * (c.importAmount() || ACCURACY));
+            }
         }
     }
 }
