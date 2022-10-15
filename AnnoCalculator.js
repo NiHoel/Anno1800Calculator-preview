@@ -1518,7 +1518,7 @@ class Demand extends NamedElement {
                 } else {
                     if (items.length)
                         d = new ItemDemandSwitch(this, input, items, input.Amount || 1, assetsMap);
-                    else
+                    else if (!(assetsMap.get(input.Product) instanceof MetaProduct))
                         d = new Demand({ guid: input.Product, consumer: this, "factor": input.Amount || 1 }, assetsMap);
                 }
 
@@ -2056,6 +2056,9 @@ class PopulationLevel extends NamedElement {
         config.needs.forEach(n => {
             var need;
             var product = assetsMap.get(n.guid);
+			
+			if (product instanceof MetaProduct)
+				return;
 
             if (n.tpmin > 0 && product) {
                 need = product instanceof NoFactoryProduct ? new NoFactoryNeed(n, this, assetsMap) : new PopulationNeed(n, this, assetsMap);
