@@ -353,6 +353,7 @@ class Island {
         this.populationLevels = [];
         this.residenceBuildings = [];
         this.powerPlants = [];
+        this.publicServices = [];
         this.publicRecipeBuildings = [];
         this.consumers = [];
         this.factories = [];
@@ -385,6 +386,16 @@ class Island {
             assetsMap.set(f.guid, f);
             this.consumers.push(f);
             this.powerPlants.push(f);
+
+            // values for existingBuildings are read from localstorage later, after products are referenced
+        }
+
+        for (let consumer of (params.publicServices || [])) {
+
+            let f = new PublicConsumerBuilding(consumer, assetsMap, this);
+            assetsMap.set(f.guid, f);
+            this.consumers.push(f);
+            this.publicServices.push(f);
 
             // values for existingBuildings are read from localstorage later, after products are referenced
         }
@@ -714,6 +725,10 @@ class Island {
 
         this.publicBuildingsSectionVisible = ko.pureComputed(() => {
             for (var b of this.powerPlants)
+                if (b.visible())
+                    return true;
+
+            for (var b of this.publicServices)
                 if (b.visible())
                     return true;
 
@@ -4742,6 +4757,7 @@ function init(isFirstRun) {
         categories: arrayToTemplate("categories"),
         consumers: arrayToTemplate("consumers"),
         powerPlants: arrayToTemplate("powerPlants"),
+        publicServices: arrayToTemplate("publicServices"),
         publicRecipeBuildings: arrayToTemplate("publicRecipeBuildings"),
         buildingMaterialsNeeds: arrayToTemplate("buildingMaterialsNeeds")
     }

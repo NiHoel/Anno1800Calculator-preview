@@ -2228,6 +2228,59 @@
 
                     </div>
                     <!-- /power plants -->
+                    <!-- public services-->
+                    <div data-bind="foreach: $root.template.publicServices">
+
+
+                        <div class="ui-service-building-item" data-bind="visible: $data.instance().visible()">
+                            <div class="ui-fchain-item-tr-button">
+                                <div>
+                                    <button class="btn btn-light btn-sm" data-bind="click: () => {$root.selectedFactory($data.instance())}" data-toggle="modal" data-target="#factory-config-dialog">
+                                        <span class="fa fa-sliders"></span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="ui-fchain-item-name" data-bind="text: $data.getRegionExtendedName(), visible: !$root.settings.hideNames.checked()"></div>
+                            <div class="ui-fchain-item-icon mb-2"><img class="icon-tile" src="" data-bind="attr: { src: $data.icon, alt: $data.name }"></div>
+
+
+                            <!-- buildings input  -->
+                            <div class="ui-fchain-item-count">
+                                <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
+
+                                    <div class="input-group input-group-sm mb-3 spinner">
+                                        <input class="form-control" type="number" value="0" step="1" min="0" data-bind="value:  $data.instance().existingBuildings, attr: { id: $data.guid + '-existingBuildings-input'}" />
+                                        <div class="input-group-append">
+                                            <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.instance().existingBuildings, id: $data.guid + '-existingBuildings-input' }}"></div>
+                                            <span class="input-group-text">x</span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <!-- buildings counter -->
+                            <div class="ui-fchain-item-count" data-bind="visible:  $data.instance().buildings() >  $data.instance().existingBuildings()">
+                                <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildingsDescription.name}">
+                                    <span data-bind="text: $root.texts.requiredNumberOfBuildings.name"></span>
+                                    <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? formatNumber( $data.instance().buildings()) : Math.ceil( $data.instance().buildings())"></span>
+                                    <span>x</span>
+                                    <div class="btn-group" role="group">
+                                        <button type="button" class="btn btn-secondary" data-bind="click: () =>  $data.instance().incrementBuildings(), enable:  $data.instance().buildings() > 0" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">+</button>
+                                        <button type="button" class="btn btn-secondary" data-bind="click: () =>  $data.instance().decrementBuildings(), enable:  $data.instance().buildings() > 1.00001" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">-</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
+                                <div class="ui-fchain-item-load"><span data-bind="text: formatNumber($data.instance().amount())"></span><span> t/min</span></div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- /public services -->
                     <!-- products without factories: mail and research papers -->
                     <div data-bind="foreach: $root.island().noFactoryProducts">
                         <div class="ui-service-building-item" data-bind="visible: $data.visible">
