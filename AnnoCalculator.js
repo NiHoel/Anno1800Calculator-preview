@@ -897,7 +897,7 @@ class Consumer extends NamedElement {
     }
 
     getRegionExtendedName() {
-        if (!this.region || !this.product || this.product.factories.length <= 1)
+        if (!this.forceRegionExtendedName && (!this.region || !this.product || this.product.factories.length <= 1))
             return this.name();
 
         return `${this.name()} (${this.region.name()})`;
@@ -1401,12 +1401,17 @@ class PublicBuildingNeed extends Option {
         if (this.requiredBuildings) {
             this.residences = this.requiredBuildings.map(r => assetsMap.get(r));
             this.hidden = ko.computed(() => {
+                if (!this.available())
+                    return true;
+
                 for (var r of this.residences)
                     if (r.existingBuildings() > 0)
                         return false;
 
                 return true;
             });
+        } else {
+            this.hidden = ko.computed(() => !this.available());
         }
     }
 }
@@ -2071,11 +2076,8 @@ class PopulationLevel extends NamedElement {
         config.needs.forEach(n => {
             var need;
             var product = assetsMap.get(n.guid);
-			
-			if (product instanceof MetaProduct)
-				return;
 
-            if (n.tpmin > 0 && product) {
+            if (n.tpmin > 0 && product && !(product instanceof MetaProduct)) {
                 need = product instanceof NoFactoryProduct ? new NoFactoryNeed(n, this, assetsMap) : new PopulationNeed(n, this, assetsMap);
                 this.needs.push(need);
             } else {
