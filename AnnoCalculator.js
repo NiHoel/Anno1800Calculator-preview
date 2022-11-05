@@ -1923,7 +1923,7 @@ class ResidenceBuilding extends NamedElement {
         this.lockDLCIfSet(this.existingBuildings);
         this.limit = createIntInput(0, 0);
         this.limitLowerBound = config.residentMax;
-        this.limitPerHouse = createFloatInput(this.limitLowerBound, this.limitLowerBound);
+        this.limitPerHouse = createFloatInput(this.limitLowerBound, this.limitLowerBound, Infinity, (newLimit) => Math.max(newLimit, this.limitLowerBound));
         this.residentsPerNeed = new Map();
         for (var guid in config.residentsPerNeed)
             this.residentsPerNeed.set(parseInt(guid), config.residentsPerNeed[guid]);
@@ -4964,13 +4964,15 @@ ko.extenders.numeric = function (target, bounds) {
             }
 
             //only write if it changed
-            if (valueToWrite !== current) {
+            if (valueToWrite !== current || newValue !== valueToWrite) {
                 if (result._state && result._state.isBeingEvaluated) {
                     console.log("cycle detected, propagation stops");
                     return;
                 }
 
                 target(valueToWrite);
+                if (newValue !== valueToWrite)
+                    target.valueHasMutated()
             }
         }
     }).extend({ notify: 'always' });
