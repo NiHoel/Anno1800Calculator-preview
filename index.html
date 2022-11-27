@@ -44,7 +44,7 @@
                     </div>
                     <div data-bind="if: !!$data.residents">
                         <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.residents.name}">
-                            <img class="icon-sm icon-light" src="icon_resource_population.png" />
+                            <img class="icon-sm icon-light" src="icons/icon_resource_population.png" />
                             <span data-bind="text: formatNumber($data.residents())"></span>
                         </span>
                     </div>
@@ -606,8 +606,8 @@
                                 <td>
                                     <div class="inline-list">
                                         <span class="mr-3">
-                                            <img class="icon-sm" src="icon_residence.png" data-bind="visible: $root.settings.populationInput() != '0'">
-                                            <img class="icon-sm" src="icon_house.png" data-bind="visible: $root.settings.populationInput() == '0'">
+                                            <img class="icon-sm" src="icons/icon_residence.png" data-bind="visible: $root.settings.populationInput() != '0'">
+                                            <img class="icon-sm" src="icons/icon_house.png" data-bind="visible: $root.settings.populationInput() == '0'">
                                         </span>
                                         <span data-bind="if: !$data.top2Population().length">0</span>
                                         <!-- ko foreach: $data.top2Population -->
@@ -624,7 +624,7 @@
                                 <td>
                                     <div class="inline-list">
                                         <span class="mr-3">
-                                            <img class="icon-sm" src="icon_resource_storage_amount.png">
+                                            <img class="icon-sm" src="icons/icon_resource_storage_amount.png">
                                         </span>
                                         <span data-bind="if: !$data.top5Factories().length">0</span>
                                         <!-- ko foreach: $data.top5Factories -->
@@ -781,16 +781,16 @@
         <nav class="navbar navbar-expand-sm bg-dark inline-list-stretched">
             <div class="btn-group">
                 <button type="button" class="btn" data-bind="enable: $root.settings.consumptionModifier.checked()">
-                    <img data-toggle="modal" data-target="#good-consumption-island-upgrade-dialog" class="icon-navbar" src="icon_newspaper.png" />
+                    <img data-toggle="modal" data-target="#good-consumption-island-upgrade-dialog" class="icon-navbar" src="icons/icon_newspaper.png" />
                 </button>
                 <button data-toggle="modal" data-target="#factory-choose-dialog" class="btn text-light">
                     <span class="fa fa-cogs"> </span>
                 </button>
                 <button type="button" class="btn" data-bind="visible: !$root.settings.simpleView.checked(), enable: $root.settings.additionalProduction.checked()">
-                    <img data-toggle="modal" data-target="#item-equipment-dialog" class="icon-navbar" src="icon_add_goods_socket_white.png" />
+                    <img data-toggle="modal" data-target="#item-equipment-dialog" class="icon-navbar" src="icons/icon_add_goods_socket_white.png" />
                 </button>
                 <button type="button" class="btn" data-bind="enable: $root.dlcsMap.get('dlc7').checked(), visible: $root.island().contractManager">
-                    <img data-toggle="modal" data-target="#contract-management-dialog" class="icon-navbar" src="icon_docklands_2d_white.png" />
+                    <img data-toggle="modal" data-target="#contract-management-dialog" class="icon-navbar" src="icons/icon_docklands_2d_white.png" />
                 </button>
             </div>
             <div class="input-group input-group-sm" data-bind="visible: $root.islands().length > 1" style="width: unset;">
@@ -799,10 +799,10 @@
                 <select name="islands" class="custom-select" id="islands" data-bind="value: $root.island, options: $root.islands, optionsText: i => i.sessionExtendedName()" style="max-width: 20rem"></select>
                 <div class="input-group-append">
                     <button type="button" class="btn">
-                        <img data-toggle="modal" data-target="#island-management-dialog" class="icon-navbar" src="icon_map.png" />
+                        <img data-toggle="modal" data-target="#island-management-dialog" class="icon-navbar" src="icons/icon_map.png" />
                     </button>
                     <button type="button" class="btn" data-bind="enable: $root.settings.tradeRoutes.checked()">
-                        <img data-toggle="modal" data-target="#trade-routes-management-dialog" class="icon-navbar" src="icon_shiptrade.png" />
+                        <img data-toggle="modal" data-target="#trade-routes-management-dialog" class="icon-navbar" src="icons/icon_shiptrade.png" />
                     </button>
                 </div>
             </div>
@@ -870,14 +870,14 @@
                                                     <div class="input-group-text">
                                                         <div class="mr-2">
 
-                                                            <img class="icon-sm icon-light" src="icon_unlock.png" />
+                                                            <img class="icon-sm icon-light" src="icons/icon_unlock.png" />
                                                         </div>
 
                                                         <div class="custom-control custom-switch">
                                                             <input type="checkbox" class="custom-control-input" id="fix-amount-per-house" data-bind="checked: $data.fixAmountPerHouse">
                                                             <label class="custom-control-label" for="fix-amount-per-house">
 
-                                                                <img class="icon-sm icon-light" src="icon_lock.png" />
+                                                                <img class="icon-sm icon-light" src="icons/icon_lock.png" />
                                                             </label>
                                                         </div>
                                                     </div>
@@ -913,14 +913,14 @@
                                                     <div class="input-group-text">
                                                         <div class="mr-2">
 
-                                                            <img class="icon-sm icon-light" src="icon_unlock.png" />
+                                                            <img class="icon-sm icon-light" src="icons/icon_unlock.png" />
                                                         </div>
 
                                                         <div class="custom-control custom-switch">
                                                             <input type="checkbox" class="custom-control-input" id="fix-limit-per-house" data-bind="checked: $data.fixLimitPerHouse">
                                                             <label class="custom-control-label" for="fix-limit-per-house">
 
-                                                                <img class="icon-sm icon-light" src="icon_lock.png" />
+                                                                <img class="icon-sm icon-light" src="icons/icon_lock.png" />
                                                             </label>
                                                         </div>
                                                     </div>
@@ -975,7 +975,7 @@
                                                 <div class="input-group input-group-short spinner float-left" style="max-width: 8rem;">
                                                     <div class="input-group-prepend">
                                                         <div class="input-group-text">
-                                                            <img class="icon-sm icon-light" src="icon_house_white.png" />
+                                                            <img class="icon-sm icon-light" src="icons/icon_house_white.png" />
                                                         </div>
                                                     </div>
                                                     <input class="form-control" type="number" value="0" step="1" min="0" data-bind="value: existingBuildings, attr: {id: $data.guid + '-existing-buildings-dialog-input'}" />
@@ -1008,7 +1008,7 @@
                                                 <div class="input-group input-group-medium spinner">
                                                     <div class="input-group-prepend">
                                                         <div class="input-group-text">
-                                                            <img class="icon-sm icon-light" src="icon_resource_population.png" />
+                                                            <img class="icon-sm icon-light" src="icons/icon_resource_population.png" />
                                                         </div>
                                                     </div>
                                                     <input class="form-control" type="number" value="0" step="100" min="0" data-bind="value: limit, attr:{id: $data.guid + '-limit-dialog-input'}" />
@@ -1238,7 +1238,7 @@
                                             <!--<td data-bind="with: $data.getOpposite($parent)">
                                                 <div style="display: flex; flex-flow: wrap; justify-content: center">
                                                     <span class="mr-3">
-                                                        <img src="icon_resource_storage_amount.png" width="25" height="25">
+                                                        <img src="icons/icon_resource_storage_amount.png" width="25" height="25">
                                                     </span>
                                                     <span data-bind="if: !$data.top5Factories().length">0</span>
                                                     <span data-bind="foreach: $data.top5Factories" style="display: flex; flex-flow: wrap; justify-content: center">
@@ -1276,11 +1276,11 @@
                                                         <div class="input-group-text">
                                                             <span data-bind="if: $data.isExport($parent)">
 
-                                                                <img class="icon-sm icon-light" src="icon_transporter_unloading_light.png" />
+                                                                <img class="icon-sm icon-light" src="icons/icon_transporter_unloading_light.png" />
                                                             </span>
                                                             <span data-bind="if: !$data.isExport($parent)">
 
-                                                                <img class="icon-sm icon-light" src="icon_transporter_loading_light.png" />
+                                                                <img class="icon-sm icon-light" src="icons/icon_transporter_loading_light.png" />
                                                             </span>
                                                         </div>
                                                         <span data-bind="if: !$data.isExport($parent) && $root.settings.missingBuildingsHighlight.checked() && $data.fromFactory.overProduction() < -ACCURACY">
@@ -1311,13 +1311,13 @@
                                     <div style="display: flex">
                                         <div class="mr-2">
 
-                                            <img class="icon-sm icon-light" src="icon_transporter_loading_light.png" />
+                                            <img class="icon-sm icon-light" src="icons/icon_transporter_loading_light.png" />
                                         </div>
                                         <div class="custom-control custom-switch">
                                             <input type="checkbox" class="custom-control-input" id="create-trade-route-export-checkbox" data-bind="checked: $data.export">
                                             <label class="custom-control-label" for="create-trade-route-export-checkbox">
 
-                                                <img class="icon-sm icon-light" src="icon_transporter_unloading_light.png" />
+                                                <img class="icon-sm icon-light" src="icons/icon_transporter_unloading_light.png" />
                                             </label>
                                         </div>
                                     </div>
@@ -1352,7 +1352,7 @@
                                                     <div class="input-group spinner input-transfer-amount">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text">
-                                                                <img class="icon-sm icon-light" src="icon_transporter_loading_light.png" />
+                                                                <img class="icon-sm icon-light" src="icons/icon_transporter_loading_light.png" />
 
                                                                 <a href="#" data-bind="click: () => {$root.selectedFactory($data.importFactory)}, attr: {title: $data.importFactory.name()}" style="margin: 0 0.25rem;">
                                                                     <img class="icon-sm" src="" data-bind="attr: { src: $data.importFactory.icon ? $data.importFactory.icon : null, alt: $data.importFactory.name}">
@@ -1382,7 +1382,7 @@
                                                     <div class="input-group spinner float-right input-transfer-amount">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text">
-                                                                <img class="icon-sm icon-light" src="icon_transporter_unloading_light.png" />
+                                                                <img class="icon-sm icon-light" src="icons/icon_transporter_unloading_light.png" />
                                                                 <img class="icon-sm" src="" data-bind="attr: { src: $data.exportFactory.icon ? $data.exportFactory.icon : null, alt: $data.exportFactory.name}" style="margin: 0 0.25rem;">
 
                                                             </span>
@@ -1414,7 +1414,7 @@
                                                     <div class="input-group spinner input-transfer-amount">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text">
-                                                                <img class="icon-sm icon-light" src="icon_transporter_unloading_light.png" />
+                                                                <img class="icon-sm icon-light" src="icons/icon_transporter_unloading_light.png" />
                                                                 <a href="#" data-bind="click: () => {$root.selectedFactory($data.exportFactory)}, attr: {title: $data.exportFactory.name()}" style="margin: 0 0.25rem;">
                                                                     <img class="icon-sm" src="" data-bind="attr: { src: $data.exportFactory.icon ? $data.exportFactory.icon : null, alt: $data.exportFactory.name}">
                                                                 </a>
@@ -1446,7 +1446,7 @@
                                                     <div class="input-group spinner float-right input-transfer-amount">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text">
-                                                                <img class="icon-sm icon-light" src="icon_transporter_loading_light.png" />
+                                                                <img class="icon-sm icon-light" src="icons/icon_transporter_loading_light.png" />
                                                                 <img class="icon-sm" src="" data-bind="attr: { src: $data.importFactory.icon ? $data.importFactory.icon : null, alt: $data.importFactory.name}" style="margin: 0 0.25rem;">
                                                             </span>
                                                         </div>
@@ -1477,8 +1477,8 @@
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">
-                                                <img class="icon-sm icon-light" src="icon_transporter_unloading_light.png" data-bind="visible: !$data.export()" />
-                                                <img class="icon-sm icon-light" src="icon_transporter_loading_light.png" data-bind="visible: $data.export()" />
+                                                <img class="icon-sm icon-light" src="icons/icon_transporter_unloading_light.png" data-bind="visible: !$data.export()" />
+                                                <img class="icon-sm icon-light" src="icons/icon_transporter_loading_light.png" data-bind="visible: $data.export()" />
                                             </span>
                                         </div>
                                         <select name="products" class="custom-select" id="contract-product" data-bind="value: $data.exchangeProduct, options: $data.exchangeProducts, optionsText: i => i.name()"></select>
@@ -1494,20 +1494,20 @@
 
                                         <div class="mr-2" data-bind="visible: $data.canImport()">
 
-                                            <img class="icon-sm icon-light" src="icon_transporter_loading_light.png" />
+                                            <img class="icon-sm icon-light" src="icons/icon_transporter_loading_light.png" />
                                         </div>
 
                                         <div class="custom-control custom-switch" data-bind="visible: $data.canImport() && $data.canExport()">
                                             <input type="checkbox" class="custom-control-input" id="create-contract-export-checkbox" data-bind="checked: $data.export">
                                             <label class="custom-control-label" for="create-contract-export-checkbox" data-bind="visible: $data.canExport()">
 
-                                                <img class="icon-sm icon-light" src="icon_transporter_unloading_light.png" />
+                                                <img class="icon-sm icon-light" src="icons/icon_transporter_unloading_light.png" />
                                             </label>
                                         </div>
 
                                         <div class="mr-2" data-bind="visible: !$data.canImport() && $data.canExport()">
 
-                                            <img class="icon-sm icon-light" src="icon_transporter_unloading_light.png" />
+                                            <img class="icon-sm icon-light" src="icons/icon_transporter_unloading_light.png" />
                                         </div>
                                     </div>
                                     <div class="input-group input-group-short spinner input-transfer-amount">
@@ -2005,7 +2005,7 @@
                                                 <div class="input-group spinner input-transfer-amount">
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text">
-                                                            <img class="icon-sm icon-light" src="icon_transporter_unloading_light.png" />
+                                                            <img class="icon-sm icon-light" src="icons/icon_transporter_unloading_light.png" />
                                                             <a href="#" data-dismiss="modal" data-bind="click: () => {$root.selectedFactory($data.exportFactory); setTimeout(() => {$('#factory-config-dialog').modal('show')}, 500);}, attr: {title: $data.exportFactory.name()}" style="margin: 0 0.25rem;">
                                                                 <img class="icon-sm" src="" data-bind="attr: { src: $data.exportFactory.icon ? $data.exportFactory.icon : null, alt: $data.exportFactory.name}">
                                                             </a>
@@ -2031,7 +2031,7 @@
                                                 <div class="input-group spinner input-transfer-amount">
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text">
-                                                            <img class="icon-sm icon-light" src="icon_transporter_loading_light.png" />
+                                                            <img class="icon-sm icon-light" src="icons/icon_transporter_loading_light.png" />
                                                             <a href="#" data-dismiss="modal" data-bind="click: () => {$root.selectedFactory($data.importFactory); setTimeout(() => {$('#factory-config-dialog').modal('show')}, 500);}, attr: {title: $data.importFactory.name()}" style="margin: 0 0.25rem;">
                                                                 <img class="icon-sm" src="" data-bind="attr: { src: $data.importFactory.icon ? $data.importFactory.icon : null, alt: $data.importFactory.name}">
                                                             </a>
@@ -2091,8 +2091,8 @@
                                 </div>
                                 <div class="ui-tier-unit-icon mb-1">
                                     <img class="icon-tile" src="" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
-                                    <img src="icon_residence.png" class="subscript-icon" data-bind="visible: $root.settings.populationInput() != '0'">
-                                    <img src="icon_house.png" class="subscript-icon" data-bind="visible: $root.settings.populationInput() == '0'" style="margin-bottom: -5px;">
+                                    <img src="icons/icon_residence.png" class="subscript-icon" data-bind="visible: $root.settings.populationInput() != '0'">
+                                    <img src="icons/icon_house.png" class="subscript-icon" data-bind="visible: $root.settings.populationInput() == '0'" style="margin-bottom: -5px;">
                                 </div>
                                 <div class="ui-tier-unit-name" data-bind="visible: !$root.settings.hideNames.checked(), attr: {'tier-unit-guid' : guid}">
                                     <span data-bind="visible: hotkey, text: hotkey() ? '[' + hotkey().toUpperCase() + '] ' : ''"></span>
@@ -2293,7 +2293,7 @@
                                 <div class="ui-fchain-item-count">
 
                                     <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.residents.name}">
-                                        <img class="icon-sm icon-light" src="icon_resource_population.png" />
+                                        <img class="icon-sm icon-light" src="icons/icon_resource_population.png" />
                                         <span data-bind="text: formatNumber(Math.round($data.residentsInput()))"></span>
                                     </span>
 
@@ -2599,7 +2599,7 @@
                                                     <div style="display: flex; justify-content: space-between; vertical-align: bottom;">
                                                         <div>
 
-                                                            <img class="icon-sm icon-light" src="icon_marketplace_2d_light.png" />
+                                                            <img class="icon-sm icon-light" src="icons/icon_marketplace_2d_light.png" />
                                                         </div>
                                                         <div>
                                                             <button class="btn btn-light btn-sm" data-bind="click: () => {$root.selectedGoodConsumptionUpgradeList($data.instance().goodConsumptionUpgradeList)}" data-toggle="modal" data-target="#good-consumption-upgrade-dialog">
@@ -2622,7 +2622,7 @@
                                                 <div class="ui-fchain-item-count">
                                                     <div data-bind="if: $data.instance() instanceof NoFactoryNeed">
                                                         <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.residents.name}">
-                                                            <img class="icon-sm icon-light" src="icon_resource_population.png" />
+                                                            <img class="icon-sm icon-light" src="icons/icon_resource_population.png" />
                                                             <span data-bind="text: formatNumber(Math.round($data.instance().product.residentsInput()))"></span>
                                                         </span>
                                                     </div>
@@ -2643,6 +2643,7 @@
                                         </div>
                                     </div>
                                     <div class="d-flex flex-wrap align-content-start" data-bind="foreach: $data.allDemands">
+                                        <span data-bind="text: $data.instance()"></span>
                                         <div class="ui-fchain-spacer" data-bind="visible: $data.instance().amount()">
                                             ←
                                         </div>
