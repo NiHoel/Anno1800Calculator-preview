@@ -23,9 +23,8 @@
     <script type="text/javascript" src="bootstrap-notify.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
 
-    <script type="text/javascript" src="i18n.js"></script>
-    <script type="text/javascript" src="AnnoCalculator.js"></script>
-    <script type="text/javascript" src="params_2022-10-16-11.js"></script>
+    <script type="module" src="./js/main.js"></script>
+    <script type="text/javascript" src="params_2022-11-06-10.js"></script>
 
     <script id="treeElement" type="text/html">
         <li>
@@ -64,28 +63,6 @@
 <body>
     <noscript>This site requires JavaScript!</noscript>
     <div id="loader" data-bind="visible: false"></div>
-    <!-- #params-dialog -->
-    <div id="params-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4>Enter parameters</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <textarea class="form-control" rows="5" id="input-params"></textarea>
-                    </div>
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- /#params-dialog -->
     <!-- #view-mode-dialog -->
     <div id="view-mode-dialog" class="modal" role="dialog" tabindex="-1" aria-hidden="false">
         <div class="modal-dialog modal-lg">
@@ -1186,7 +1163,7 @@
                                                 </div>
                                             </div>
                                             <!-- workforce replacement -->
-                                            <div data-bind="if: $data.replacingWorkforce && ($parent.workforceDemand instanceof WorkforceDemandSwitch)">
+                                            <div data-bind="if: $data.replacingWorkforce && $parent.workforceDemand.isSwitch">
                                                 <div class="ui-fchain-item-icon-replacement">
                                                     <span class="strike-through">
                                                         <img src="" data-bind="attr: { src: $parent.workforceDemand.defaultWorkforce.icon ? $parent.workforceDemand.defaultWorkforce.icon : null, alt: $parent.workforceDemand.defaultWorkforce.name }" width="30" height="30">
@@ -1205,7 +1182,7 @@
                             <hr />
                         </div>
 
-                        <div data-bind="if: $root.settings.tradeRoutes.checked() && $data instanceof Factory">
+                        <div data-bind="if: $root.settings.tradeRoutes.checked() && $data.isFactory">
                             <div data-bind="with: $data.tradeList">
 
                                 <h6><span data-bind="text: $root.settings.tradeRoutes.name">Trade Routes</span></h6>
@@ -1336,7 +1313,7 @@
                             <hr />
                         </div>
 
-                        <div data-bind="if:  $root.dlcsMap.get('dlc7').checked() && $data instanceof Factory && $data.getProduct().exchangeWeight">
+                        <div data-bind="if:  $root.dlcsMap.get('dlc7').checked() && $data.isFactory && $data.getProduct().exchangeWeight">
                             <div data-bind="with: $data.contractList">
 
                                 <h6><span data-bind="text: $root.texts.docklands.name">Trade Contracts</span></h6>
@@ -1532,7 +1509,7 @@
                             </div>
                         </div>
 
-                        <div data-bind="if: !$root.settings.simpleView.checked() && $data instanceof Factory && ($root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked() || $data.contractList && $root.dlcsMap.get('dlc7').checked())">
+                        <div data-bind="if: !$root.settings.simpleView.checked() && $data.isFactory && ($root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked() || $data.contractList && $root.dlcsMap.get('dlc7').checked())">
                             <div class="inline-list-stretched" style="padding: .75rem;">
                                 <div data-bind="if: $root.settings.tradeRoutes.checked()">
                                     <span class="mr-3" data-bind="text: $root.settings.tradeRoutes.name"></span>
@@ -1563,7 +1540,7 @@
                         </div>
                         <table class="table table-striped">
                             <tbody>
-                                <tr data-bind="if: !$root.settings.simpleView.checked() && $data instanceof Factory && ($root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked() || $data.contractList && $root.dlcsMap.get('dlc7').checked())">
+                                <tr data-bind="if: !$root.settings.simpleView.checked() && $data.isFactory && ($root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked() || $data.contractList && $root.dlcsMap.get('dlc7').checked())">
                                     <!-- extra goods -->
                                     <td>
                                         <span data-bind="text: $root.texts.extraNeed.name"></span>
@@ -1778,7 +1755,7 @@
                             <div style="flex: 100 1 auto;"></div>
                         </div>
 
-                        <div data-bind="if: $data instanceof Factory && ($data.extraGoodProductionList.nonZero().length && $root.settings.additionalProduction.checked())">
+                        <div data-bind="if: $data.isFactory && ($data.extraGoodProductionList.nonZero().length && $root.settings.additionalProduction.checked())">
                             <hr />
 
                             <h6><span data-bind="text: $root.texts.extraGoods.name">Extra Goods</span><span> </span><img src="" width="35" height="35" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name}" /></h6>
@@ -2620,13 +2597,13 @@
 
                                             <div style="margin: auto">
                                                 <div class="ui-fchain-item-count">
-                                                    <div data-bind="if: $data.instance() instanceof NoFactoryNeed">
+                                                    <div data-bind="if: $data.instance().isNoFactoryNeed">
                                                         <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.residents.name}">
                                                             <img class="icon-sm icon-light" src="icons/icon_resource_population.png" />
                                                             <span data-bind="text: formatNumber(Math.round($data.instance().product.residentsInput()))"></span>
                                                         </span>
                                                     </div>
-                                                    <div data-bind="if: !($data.instance() instanceof NoFactoryNeed)">
+                                                    <div data-bind="if: !($data.instance().isNoFactoryNeed)">
                                                         <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
                                                             <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? formatNumber($data.instance().buildings()) : formatNumber(Math.ceil($data.instance().buildings()))"></span>
                                                             <span>x</span>
@@ -2656,7 +2633,7 @@
                                                 </div>
 
                                                 <div style="margin: auto">
-                                                    <div data-bind="visible: $root.settings.consumptionModifier.checked() && !($data instanceof Need)">
+                                                    <div data-bind="visible: $root.settings.consumptionModifier.checked() && !($data.isNeed)">
                                                         <div style="height: calc(2.25rem + 2px);"></div>
                                                     </div>
                                                     <div class="ui-fchain-item-count">
