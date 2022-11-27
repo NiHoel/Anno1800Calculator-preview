@@ -1,4 +1,6 @@
-﻿var languageCodes = {
+﻿// @ts-check
+
+export let languageCodes = {
     'en': 'english',
     'de': 'german',
     'fr': 'french',
@@ -12,7 +14,7 @@
 }
 
 
-texts = {
+export let texts = {
     allIslands: {
         "french": "Toutes les îles",
         "english": "All Islands",
@@ -960,7 +962,7 @@ Siehe folgenden Link für weitere Informationen: `,
     }
 }
 
-options = {
+export let options = {
     "simpleView": {
         "name": "Simple View",
         "locaText": {
@@ -1118,7 +1120,7 @@ options = {
     }
 }
 
-serverOptions = {
+export let serverOptions = {
     "populationLevelAmount": {
         "name": "PopulationLevel Amount",
         "locaText": {
