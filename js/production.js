@@ -1,6 +1,8 @@
 // @ts-check
 import { EPSILON, NamedElement, Option } from './util.js'
 
+var ko = require( "knockout" );
+
 export class Product extends NamedElement {
     constructor(config, assetsMap) {
         super(config);

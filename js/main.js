@@ -1,5 +1,5 @@
 import { ACCURACY, formatNumber, formatPercentage, versionCalculator, NamedElement, Option, DLC } from './util.js'
-import { languageCodes, texts, options, serverOptions } from './i18n.js'
+import { languageCodes, texts as locaTexts, options, serverOptions } from './i18n.js'
 
 
 import { PopulationLevel, ResidenceBuilding } from './population.js'
@@ -11,8 +11,26 @@ import { DarkMode, ViewMode, Template, ProductionChainView } from './views.js'
 
 
 import './components.js'
+import './params.js'
+
+var ko = require( "knockout" );
+require( "knockout-amd-helpers" );
 
 // @ts-check
+
+var moduleContext = require.context( ".", true );
+var templateContext = require.context( "../templates", true );
+
+ko.bindingHandlers.module.loader = function( moduleName, done ) {
+	var mod = moduleContext( "./" + moduleName );
+	done( mod );
+}
+
+ko.amdTemplateEngine.defaultSuffix = ".html";
+ko.amdTemplateEngine.loader = function( templateName, done ) {
+	var template = templateContext( "./" + templateName + ko.amdTemplateEngine.defaultSuffix );
+	done( template.default );
+}
 
 window.ACCURACY = ACCURACY;
 window.formatNumber = formatNumber;
@@ -24,7 +42,7 @@ window.view = {
     settings: {
         language: ko.observable("english")
     },
-    texts: new Map(),
+    texts: {},
     dlcs: [],
     dlcsMap: new Map()
 };
@@ -666,8 +684,8 @@ $(document).ready(function () {
     var isFirstRun = !localStorage || localStorage.getItem("versionCalculator") == null;
 
     // parse the parameters
-    for (let attr in texts) {
-        view.texts[attr] = new NamedElement({ name: attr, locaText: texts[attr] });
+    for (let attr in locaTexts) {
+        view.texts[attr] =  new NamedElement({ name: attr, locaText: locaTexts[attr] });
     }
 
     // check version of calculator - display update and new feature notification

@@ -1,6 +1,8 @@
 // @ts-check
 import { NumberInputHandler } from './util.js'
 
+var ko = require( "knockout" );
+
 ko.components.register('number-input-increment', {
     viewModel: {
         // - 'params' is an object whose key/value pairs are the parameters

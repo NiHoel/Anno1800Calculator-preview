@@ -2,6 +2,8 @@
 import { EPSILON, createFloatInput, NamedElement, Option } from './util.js'
 import { Demand } from './production.js'
 
+var ko = require( "knockout" );
+
 export class Need extends Demand {
     constructor(config, assetsMap) {
         super(config, assetsMap);

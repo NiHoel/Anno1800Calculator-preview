@@ -4,6 +4,8 @@ import { PopulationLevel, Workforce } from './population.js'
 import { ProductCategory, Product, Demand, ItemDemandSwitch, FactoryDemandSwitch, ItemExtraDemand } from './production.js'
 import { Factory } from './factories.js'
 
+var ko = require( "knockout" );
+
 export class DarkMode {
     constructor() {
         this.checked = ko.observable(false);

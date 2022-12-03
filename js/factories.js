@@ -4,6 +4,8 @@ import { Workforce, WorkforceDemand, WorkforceDemandSwitch } from './population.
 import { ExtraGoodProductionList, Demand, ItemDemandSwitch, ItemExtraDemand, FactoryDemand } from './production.js'
 import { TradeList, ContractList } from './trade.js'
 
+var ko = require( "knockout" );
+
 export class Consumer extends NamedElement {
     constructor(config, assetsMap, island) {
         super(config);

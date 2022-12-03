@@ -8,6 +8,8 @@ import { NoFactoryProduct, Product, MetaProduct, Item, Demand, ProductCategory }
 import { PublicConsumerBuilding, Module, Factory, Consumer, PalaceBuff } from './factories.js'
 import { ContractManager } from './trade.js'
 
+var ko = require( "knockout" );
+
 class Storage {
     /**
      * 
@@ -106,7 +108,7 @@ class Island {
             this.name.subscribe(name => this.storage.updateKey(name));
             this.isAllIslands = function () { return false; };
         } else {
-            this.name = ko.computed(() => view.texts.allIslands.name());
+            this.name = ko.computed(() => window.view.texts.allIslands.name());
             this.isAllIslands = function () { return true; };
         }
         this.storage = localStorage;

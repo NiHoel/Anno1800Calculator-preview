@@ -3,6 +3,7 @@ import { ACCURACY, ALL_ISLANDS, createIntInput, createFloatInput, NamedElement }
 import { Product } from './production.js'
 import { Factory } from './factories.js'
 
+var ko = require( "knockout" );
 
 class TradeRoute {
     constructor(config) {

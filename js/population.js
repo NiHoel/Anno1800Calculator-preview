@@ -3,7 +3,7 @@ import { ACCURACY, EPSILON, delayUpdate, createIntInput, createFloatInput, Named
 import { MetaProduct, NoFactoryProduct } from './production.js'
 import { NoFactoryNeed, PopulationNeed, PublicBuildingNeed } from './consumption.js'
 
-
+var ko = require( "knockout" );
 
 export class ResidenceBuilding extends NamedElement {
     constructor(config, assetsMap, island) {
