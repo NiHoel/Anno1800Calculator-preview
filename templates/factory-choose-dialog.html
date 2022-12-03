@@ -1,0 +1,65 @@
+﻿<div id="factory-choose-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 data-bind="text: $root.texts.chooseFactories.name">Choose Factory for each Product</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div data-bind="foreach: $root.selectedMultiFactoryProducts">
+
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    <img class="icon-sm" src="../icons/icon_marketplace_2d_light.png" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
+                                </span>
+                                <span class="input-group-text" data-bind="text: name"></span>
+                            </div>
+
+                            <select class="custom-select" data-bind="value: $data.fixedFactory, options: $data.availableFactories, optionsText: f => f.getRegionExtendedName(), optionsCaption: $root.texts.noFixedFactory.name()"></select>
+                        </div>
+                    </div>
+                    <hr />
+
+                    <div data-bind="foreach: $root.island().replaceInputItems">
+                        <div data-bind="visible: $data.visible, css:{'ui-fchain-item-xl': $data.equipments.length > 2}" class="ui-fchain-item ui-fchain-item-small">
+
+                            <div class="ui-fchain-item-tr-checkbox">
+                                <div data-bind="foreach: $data.availableEquipments" style="display:flex">
+                                    <span class="custom-control custom-checkbox ml-1">
+                                        <input class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $parent.guid + '-' + $data.factory.guid + '-checked' }" type="checkbox">
+                                        <label class="custom-control-label" src-only="" data-bind="attr: { for: $parent.guid + '-' + $data.factory.guid + '-checked' }">&#8203;</label>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="ui-fchain-item-name" style="height: unset">
+
+                                <span data-bind="text: name"></span>
+                            </div>
+
+                            <div class="ui-fchain-item-icon" data-bind="foreach: $data.factories"><img class="icon-tile" src="../icons/icon_marketplace_2d_light.png" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }"></div>
+
+
+                            <div data-bind="foreach: $data.replacementArray">
+                                <div class="ui-fchain-item-icon-replacement">
+                                    <span class="strike-through">
+                                        <img src="../icons/icon_marketplace_2d_light.png" data-bind="attr: { src: $data.old.icon ? $data.old.icon : null, alt: $data.old.name }" width="30" height="30">
+                                    </span>
+                                    <div class="ui-replacement-spacer">
+                                        →
+                                    </div>
+                                    <img src="../icons/icon_marketplace_2d_light.png" data-bind="attr: { src: $data.new.icon ? $data.new.icon : null, alt: $data.new.name }" width="30" height="30">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

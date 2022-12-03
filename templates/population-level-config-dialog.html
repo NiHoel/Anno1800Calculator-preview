@@ -1,0 +1,302 @@
+<div id="population-level-config-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" data-bind="with: $root.selectedPopulationLevel()">
+            <div class="modal-header">
+                <h4 data-bind="text: $data.name">Population Level</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped">
+                    <tbody>
+                        <tr>
+                            <!-- existing buildings -->
+                            <td data-bind="if: !$root.settings.simpleView.checked()">
+                                <input type="radio" name="populationInputSelection" value="0" data-bind="checked: $root.settings.populationInput, attr: {title: $root.texts.useInput.name()}">
+                            </td>
+                            <td>
+                                <span data-bind="text: $root.texts.buildings.name"></span>
+                            </td>
+                            <td>
+                                <div>
+                                    <div class="input-group input-group-short spinner">
+                                        <input class="form-control" type="number" value="0" step="1" min="0" data-bind="value: existingBuildings, attr: {id: $data.guid + '-existing-buildings-dialog-input'}" />
+                                        <div class="input-group-append">
+                                            <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.existingBuildings, id: $data.guid + '-existing-buildings-dialog-input' }}"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr data-bind="if: !$root.settings.simpleView.checked()">
+                            <!-- amount -->
+                            <td> <input type="radio" name="populationInputSelection" value="1" data-bind="checked: $root.settings.populationInput, attr: {title: $root.texts.useInput.name()}"></td>
+                            <td>
+                                <span data-bind="text: $root.texts.residents.name"></span>
+                            </td>
+                            <td>
+                                <div class="inline-list-stretched">
+                                    <div class="input-group spinner" style="max-width: 18rem;">
+                                        <div class="input-group-prepend" style="display: flex">
+                                            <div class="input-group-text">
+                                                <div class="mr-2">
+
+                                                    <img class="icon-sm icon-light" src="../icons/icon_unlock.png" />
+                                                </div>
+
+                                                <div class="custom-control custom-switch">
+                                                    <input type="checkbox" class="custom-control-input" id="fix-amount-per-house" data-bind="checked: $data.fixAmountPerHouse">
+                                                    <label class="custom-control-label" for="fix-amount-per-house">
+
+                                                        <img class="icon-sm icon-light" src="../icons/icon_lock.png" />
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <input class="form-control" type="number" value="10" step="1" min="10" data-bind="value: amountPerHouse, disable: $data.fixAmountPerHouse(), attr: {id: $data.guid + '-amountPerHouse-input'}" />
+                                        <div class="input-group-append">
+                                            <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.amountPerHouse, id: $data.guid + '-amountPerHouse-input' }}"></div>
+                                            <span class="input-group-text" data-bind="text: $root.texts.perHouse.name">Per House</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="input-group input-group-short spinner">
+                                            <input class="form-control" type="number" value="0" step="100" min="0" data-bind="value: amount, attr:{id: $data.guid + '-amount-dialog-input'}" />
+                                            <div class="input-group-append">
+                                                <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.amount, id: $data.guid + '-amount-dialog-input' }}"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </td>
+                        </tr>
+                        <tr data-bind="if: !$root.settings.simpleView.checked()">
+                            <!-- limit -->
+                            <td> <input type="radio" name="populationInputSelection" value="2" data-bind="checked: $root.settings.populationInput, attr: {title: $root.texts.useInput.name()}"></td>
+                            <td>
+                                <span data-bind="text: $root.texts.maxResidents.name"></span>
+                            </td>
+                            <td>
+                                <div class="inline-list-stretched">
+                                    <div class="input-group spinner" style="max-width: 18rem;">
+                                        <div class="input-group-prepend" style="display: flex" data-bind="visible: $data.canEditPerHouse">
+                                            <div class="input-group-text">
+                                                <div class="mr-2">
+
+                                                    <img class="icon-sm icon-light" src="../icons/icon_unlock.png" />
+                                                </div>
+
+                                                <div class="custom-control custom-switch">
+                                                    <input type="checkbox" class="custom-control-input" id="fix-limit-per-house" data-bind="checked: $data.fixLimitPerHouse">
+                                                    <label class="custom-control-label" for="fix-limit-per-house">
+
+                                                        <img class="icon-sm icon-light" src="../icons/icon_lock.png" />
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <input class="form-control" type="number" value="10" step="1" min="10" data-bind="value: limitPerHouse, disable: $data.fixLimitPerHouse() || !$data.canEditPerHouse(), attr: {id: $data.guid + '-limitPerHouse-input'}" />
+                                        <div class="input-group-append">
+                                            <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.limitPerHouse, id: $data.guid + '-limitPerHouse-input' }}"></div>
+                                            <span class="input-group-text" data-bind="text: $root.texts.perHouse.name">Per House</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="input-group input-group-short spinner">
+                                            <input class="form-control" type="number" value="0" step="100" min="0" data-bind="value: limit, attr:{id: $data.guid + '-limit-dialog-input'}" />
+                                            <div class="input-group-append">
+                                                <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.limit, id: $data.guid + '-limit-dialog-input' }}"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+                <!-- Separate configuration for skyscrapers and houses -->
+                <fieldset class="collapsable-section" data-bind="if: $data.availableResidences().length > 1">
+                    <legend class="collapser collapsed" data-toggle="collapse" data-target="#population-level-building-configuration">
+                        <span class="fa fa-chevron-right"></span>
+                        <span class="fa fa-chevron-down"></span>
+                        <span data-bind="text:$data.skyscraperLevels ? $root.texts.skyscrapers.name : $root.texts.residences.name">Skyscrapers</span>
+                    </legend>
+
+                    <div id="population-level-building-configuration" class="collapse" data-bind="class: $root.skyscraperDropdownStatus">
+
+
+                        <div data-bind="visible: $data.skyscraperLevels && $root.settings.simpleView.checked()">
+                            <span class="mb-1" data-bind="text: $root.texts.panoramaEffectNotConsidered.name()">The panorama effect is not considered.</span>
+                            <button type="button" class="help" data-dismiss="modal" data-bind="click: () => {setTimeout(() => { $('#help-dialog').modal('show')}, 500);}">?</button>
+                        </div>
+
+                        <table class="table table-striped">
+                            <tbody data-bind="foreach: $data.availableResidences">
+                                <tr>
+                                    <td>
+                                        <span data-bind="text: $data.name().split(':').slice(-1)[0].trim()"></span>
+                                    </td>
+                                    <!-- existing buildings -->
+                                    <td>
+
+                                        <div class="input-group input-group-short spinner float-left" style="max-width: 8rem;">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text">
+                                                    <img class="icon-sm icon-light" src="../icons/icon_house_white.png" />
+                                                </div>
+                                            </div>
+                                            <input class="form-control" type="number" value="0" step="1" min="0" data-bind="value: existingBuildings, attr: {id: $data.guid + '-existing-buildings-dialog-input'}" />
+                                            <div class="input-group-append">
+                                                <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.existingBuildings, id: $data.guid + '-existing-buildings-dialog-input' }}"></div>
+                                            </div>
+                                        </div>
+
+
+                                        <!--<div data-bind="if: $data.unique && !$data.island.isAllIslands()">
+                                            <div class="custom-control custom-checkbox" data-bind="if: $data.unique && !$data.island.isAllIslands()">
+                                                <input id="checkbox-unique-residence" type="checkbox" class="custom-control-input" data-bind="checked: $data.existingBuildings">
+                                                <label class="custom-control-label" for="checkbox-unique-residence"></label>
+                                            </div>
+                                        </div>-->
+                                    </td>
+
+                                    <td data-bind="if: !$root.settings.simpleView.checked()">
+
+                                        <div class="input-group spinner" style="max-width: 12rem;">
+                                            <input class="form-control" type="number" value="10" step="1" min="10" data-bind="value: limitPerHouse, attr: {id: $data.guid + '-limitPerHouse-input'}" />
+                                            <div class="input-group-append">
+                                                <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.limitPerHouse, id: $parent.guid + '-limitPerHouse-input' }}"></div>
+                                                <span class="input-group-text" data-bind="text: $root.texts.perHouse.name">Per House</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td data-bind="if: !$root.settings.simpleView.checked()">
+
+                                        <div class="input-group input-group-medium spinner">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text">
+                                                    <img class="icon-sm icon-light" src="../icons/icon_resource_population.png" />
+                                                </div>
+                                            </div>
+                                            <input class="form-control" type="number" value="0" step="100" min="0" data-bind="value: limit, attr:{id: $data.guid + '-limit-dialog-input'}" />
+                                            <div class="input-group-append">
+                                                <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.limit, id: $data.guid + '-limit-dialog-input' }}"></div>
+                                            </div>
+                                        </div>
+
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+
+
+                        <div class="clear"></div>
+                    </div>
+                </fieldset>
+
+
+                <div>
+                    <table class="table center">
+                        <thead>
+                            <tr>
+                                <th data-bind="text: $root.texts.basicNeed.name">Basic Needs</th>
+                                <th data-bind="text: $root.texts.luxuryNeed.name">Luxury Needs</th>
+                                <!-- ko if: $data.hasBonusNeeds() -->
+                                <th data-bind="text: $root.texts.lifestyleNeeds.name">Lifestyle Needs</th>
+                                <!-- /ko -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+
+                                <td>
+
+                                    <span data-bind="foreach: $data.basicNeeds" class="inline-list-centered">
+
+                                        <span style="flex-basis: fit-content;" data-bind="hidden: $data.hidden && $data.hidden()">
+                                            <span class="custom-control custom-checkbox" data-bind="css:{inactive: $data.isInactive}">
+                                                <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, disable: $data.isInactive, attr: { id: $parent.guid + '-' + $data.product.guid + '-checked' }">
+                                                <label class="custom-control-label" data-bind="attr: { for: $parent.guid + '-' + $data.product.guid + '-checked', title: $data.product.name() }" src-only style="vertical-align: top;">
+                                                    <span class="mr-2" style="flex-basis: fit-content;">
+                                                        <img src="../icons/icon_marketplace_2d_light.png" class="icon-sm" data-bind="attr: { src: $data.product.icon ? $data.product.icon  : null, alt: $data.product.name, for: $parent.guid + '-' + $data.product.guid + '-checked', title: $data.product.name() }" style="margin-right: 0.75em; margin-left: -0.25em;" />
+                                                    </span>
+                                                </label>
+                                            </span>
+                                        </span>
+
+
+                                    </span>
+
+                                </td>
+                                <td>
+                                    <span data-bind="foreach: $data.luxuryNeeds" class="inline-list-centered">
+
+                                        <span style="flex-basis: fit-content;">
+                                            <span class="custom-control custom-checkbox" data-bind="css:{inactive: $data.isInactive || $root.settings.noOptionalNeeds.checked() }">
+                                                <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, disable: isInactive, attr: { id: $parent.guid + '-' + $data.product.guid + '-checked' }">
+                                                <label class="custom-control-label" data-bind="attr: { for: $parent.guid + '-' + $data.product.guid + '-checked', title: $data.product.name() }" src-only style="vertical-align: top;">
+                                                    <span class="mr-2" style="flex-basis: fit-content;">
+                                                        <img src="../icons/icon_marketplace_2d_light.png" class="icon-sm" data-bind="attr: { src: $data.product.icon ? $data.product.icon  : null, alt: $data.product.name, for: $parent.guid + '-' + $data.product.guid + '-checked', title: $data.product.name() }" style="margin-right: 0.75em; margin-left: -0.25em;" />
+                                                    </span>
+                                                </label>
+                                            </span>
+                                        </span>
+                                    </span>
+                                </td>
+
+                                <!-- ko if: $data.hasBonusNeeds() -->
+                                <td>
+                                    <span data-bind="foreach: $data.bonusNeeds" class="inline-list-centered">
+
+                                        <span style="flex-basis: fit-content;" data-bind="hidden: $data.hidden()">
+                                            <span class="custom-control custom-checkbox" data-bind="css:{inactive: $data.isInactive}">
+                                                <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, disable: isInactive, attr: { id: $parent.guid + '-' + $data.product.guid + '-checked' }">
+                                                <label class="custom-control-label" data-bind="attr: { for: $parent.guid + '-' + $data.product.guid + '-checked', title: $data.product.name() }" src-only style="vertical-align: top;">
+                                                    <span class="mr-2" style="flex-basis: fit-content;">
+                                                        <img src="../icons/icon_marketplace_2d_light.png" class="icon-sm" data-bind="attr: { src: $data.product.icon ? $data.product.icon  : null, alt: $data.product.name, for: $parent.guid + '-' + $data.product.guid + '-checked', title: $data.product.name() }" style="margin-right: 0.75em; margin-left: -0.25em;" />
+                                                    </span>
+                                                </label>
+                                            </span>
+                                        </span>
+                                    </span>
+                                </td>
+                                <!-- /ko -->
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="custom-control custom-checkbox" data-bind="visible: !$root.settings.simpleView.checked(), with: $root.settings.deriveResidentsPerHouse">
+                                        <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $data.id }">
+                                        <label class="custom-control-label" data-bind="text: $data.name, attr: { for: $data.id }"></label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="custom-control custom-checkbox" data-bind="with: $root.settings.noOptionalNeeds">
+                                        <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $data.id }">
+                                        <label class="custom-control-label" data-bind="text: $data.name, attr: { for: $data.id }"></label>
+                                    </div>
+                                </td>
+                                <!-- ko if: $data.hasBonusNeeds() -->
+                                <td></td>
+                                <!-- /ko -->
+                            </tr>
+                        </tbody>
+                    </table>
+
+
+                </div>
+
+                <div data-bind="component: { name: 'notes-section', params:{ $data: $data}}"></div>
+            </div>
+            <div class="modal-footer">
+                <btn class="btn btn-light" data-bind="click: $data.applyConfigGlobally, visible: $root.islands().length > 1">
+                    <span data-bind="text: $root.texts.applyGlobally.name()">Apply Globally</span>
+                </btn>
+            </div>
+        </div>
+    </div>
+</div>
