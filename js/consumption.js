@@ -434,6 +434,44 @@ export class NewspaperNeedConsumptionEntry extends Option {
     }
 }
 
+class ResidenceEffectEntry {
+    constructor(config, assetsMap) {
+        this.guid = parseInt(config.guid);
+        this.product = assetsMap.get(this.guid);
+        this.consumptionModifier = config.consumptionModifier;
+        this.residents = config.residents;
+        this.suppliedBy = config.suppliedBy.map(e => assetsMap.get(e));
+    }
+}
+
+export class ResidenceEffect extends NamedElement {
+    constructor(config, assetsMap) {
+        super(config);
+        this.entries = config.effects.map(e => new ResidenceEffectEntry(e, assetsMap));
+        this.effectsPerNeed = new Map();
+
+        for (var effect of this.entries) {
+            this.effectsPerNeed.set(effect.guid, effect);
+        }
+
+        this.residences = [];
+        for (var residence of config.residences) {
+            let r = assetsMap.get(residence);
+            this.residences.push(r);
+            r.addEffect(this);
+        }
+    }
+}
+
+export class ResidenceEffectCoverage {
+    constructor(residence, residenceEffect, coverage = 1) {
+        this.residence = residence;
+        this.residenceEffect = residenceEffect;
+        this.coverage = ko.observable(coverage);
+    }
+}
+
+
 class GoodConsumptionUpgradeEntry {
     constructor(config, assetsMap) {
         this.upgrade = config.upgrade;

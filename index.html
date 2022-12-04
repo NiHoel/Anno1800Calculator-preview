@@ -67,14 +67,14 @@
     <div data-bind="template: 'trade-routes-management-dialog'"></div>
     <div data-bind="template: 'population-level-config-dialog'"></div>
     <div data-bind="template: 'factory-config-dialog'"></div>
-    <div data-bind="template: 'resident-effect-dialog'"></div>
+    <div data-bind="template: 'residence-effect-dialog'"></div>
     <div data-bind="template: 'contract-management-dialog'"></div>
     <!-- navbar -->
     <div id="content" data-bind="visible: true" style="display:none">
         <nav class="navbar navbar-expand-sm bg-dark inline-list-stretched">
             <div class="btn-group">
                 <button type="button" class="btn" data-bind="enable: $root.settings.consumptionModifier.checked()">
-                    <img data-toggle="modal" data-target="#good-consumption-island-upgrade-dialog" class="icon-navbar" src="icons/icon_newspaper.png" />
+                    <img data-toggle="modal" data-target="#residence-effect-dialog" class="icon-navbar" src="icons/icon_newspaper.png" data-bind="click: () => $root.island().prepareResidenceEffectView()"/>
                 </button>
                 <button data-toggle="modal" data-target="#factory-choose-dialog" class="btn text-light">
                     <span class="fa fa-cogs"> </span>
@@ -367,11 +367,6 @@
                                     </div>
 
                                 </div>
-                            </div>
-
-                            <div class="custom-control custom-checkbox" data-bind="with: $data.instance().goodConsumptionUpgrade" style="word-break: break-word;height:2.5rem;">
-                                <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $data.guid + '-building-input' }">
-                                <label class="custom-control-label" data-bind="text: $root.texts.supplyEffects.name, attr: { for: $data.guid + '-building-input'}"></label>
                             </div>
 
                             <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">

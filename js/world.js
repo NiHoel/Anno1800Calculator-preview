@@ -3,10 +3,11 @@ import { ALL_ISLANDS, setDefaultFixedFactories, NamedElement, Option } from './u
 import { texts } from './i18n.js'
 
 import { CommuterWorkforce, Workforce, ResidenceBuilding, PopulationLevel } from './population.js'
-import { GoodConsumptionUpgrade, GoodConsumptionUpgradeIslandList, RecipeList, BuildingMaterialsNeed } from './consumption.js'
+import { ResidenceEffect, GoodConsumptionUpgrade, GoodConsumptionUpgradeIslandList, RecipeList, BuildingMaterialsNeed } from './consumption.js'
 import { NoFactoryProduct, Product, MetaProduct, Item, Demand, ProductCategory } from './production.js'
 import { PublicConsumerBuilding, Module, Factory, Consumer, PalaceBuff } from './factories.js'
 import { ContractManager } from './trade.js'
+import {ResidenceEffectView} from './views.js'
 
 var ko = require( "knockout" );
 
@@ -412,7 +413,36 @@ class Island {
         for (let l of this.populationLevels)
             l.initBans(assetsMap);  // must be executed before loading the values for residence buildings - otherwise banned needs are activated which activate dlcs
 
+        for (let effect of (params.residenceEffects || [])) {
+            let e = new ResidenceEffect(effect, assetsMap);
+
+            assetsMap.set(e.guid, e);
+            if (localStorage)
+                localStorage.removeItem(`${e.guid}.checked`);
+        }
+
+
+        for (let upgrade of (params.goodConsumptionUpgrades || [])) {
+            let u = new GoodConsumptionUpgrade(upgrade, assetsMap, this.populationLevels);
+            if (!u.populationLevels.length)
+                continue;
+
+            assetsMap.set(u.guid, u);
+            this.allGoodConsumptionUpgrades.upgrades.push(u);
+
+            persistBool(u, "checked");
+        }
+
         for (let b of this.residenceBuildings) {
+            {
+                let id = `${b.guid}.effectCoverage`;
+                if (localStorage.getItem(id) != null)
+                    b.applyEffects(JSON.parse(localStorage.getItem(id)));
+
+                b.effectCoverage.subscribe(() => {
+                    localStorage.setItem(id, JSON.stringify(b.serializeEffects()));
+                });
+            }
             persistInt(b, "existingBuildings");
             persistFloat(b, "limitPerHouse");
             persistInt(b, "limit");
@@ -470,16 +500,7 @@ class Island {
                 }
         }
 
-        for (let upgrade of (params.goodConsumptionUpgrades || [])) {
-            let u = new GoodConsumptionUpgrade(upgrade, assetsMap, this.populationLevels);
-            if (!u.populationLevels.length)
-                continue;
 
-            assetsMap.set(u.guid, u);
-            this.allGoodConsumptionUpgrades.upgrades.push(u);
-
-            persistBool(u, "checked");
-        }
 
         for (let level of this.populationLevels)
             for (let need of level.needs) {
@@ -489,18 +510,6 @@ class Island {
         for (let b of this.publicRecipeBuildings) {
             if (b.goodConsumptionUpgrade)
                 b.goodConsumptionUpgrade = assetsMap.get(b.goodConsumptionUpgrade);
-
-            if (b.goodConsumptionUpgrade) {
-                b.goodConsumptionUpgrade.checked.subscribe(checked => {
-                    if (checked)
-                        b.existingBuildings(Math.max(1, b.existingBuildings()));
-                });
-
-                b.existingBuildings.subscribe(val => {
-                    if (!val)
-                        b.goodConsumptionUpgrade.checked(false);
-                });
-            }
 
             b.recipeName = ko.computed(() => {
                 return b.name().split(':').slice(-1)[0].trim();
@@ -687,6 +696,10 @@ class Island {
                 else
                     n.checked(true);
         }));
+    }
+
+    prepareResidenceEffectView() {
+        view.selectedResidenceEffectView(new ResidenceEffectView(this.residenceBuildings));
     }
 }
 

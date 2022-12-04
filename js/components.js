@@ -23,7 +23,7 @@ ko.components.register('number-input-increment', {
 
 ko.components.register('notes-section', {
     template:
-        `<div class="form-group notes-section" data-bind="if: $data.notes != null">
+        `<div class="form-group notes-section" data-bind="if: $data != null && $data.notes != null">
               <textarea class="form-control" data-bind="textInput: $data.notes, attr: {placeholder: $root.texts.notes.name()}"></textarea>
         </div>`
 });
@@ -34,4 +34,64 @@ ko.components.register('lock-toggle', {
              <img class="icon-sm icon-light" src="icons/icon_unlock.png" data-bind="style: {display : checked()? 'none' : 'inherit'}">
              <img class="icon-sm icon-light" src="icons/icon_lock.png" style="display: none;"  data-bind="style: {display : checked()? 'inherit' : 'none'}">
         </div>`
+});
+
+ko.components.register('asset-icon', {
+    viewModel: function (asset) {
+        this.asset = asset;
+    },
+    template: `<img class="icon-sm" src="" data-bind="attr: { src: asset.icon ? asset.icon : null, alt: asset.name, title: asset.name}">`
+});
+
+ko.components.register('residence-label', {
+    viewModel: function (residence) {
+        this.residence = residence;
+    },
+    template:
+        `<div class="inline-list mr-3" data-bind="attr: {title: residence.name}">
+            <div data-bind="component: {name: 'asset-icon', params: residence.populationLevel}"></div>
+            <div data-bind="component: {name: 'asset-icon', params: residence}"></div>
+            <div data-bind="text: residence.floorCount"></div>
+        </div>`
+})
+
+ko.components.register('residence-effect-entry', {
+    viewModel: function (entries) {
+        this.entries = entries;
+        this.texts = window.view.texts;
+    },
+    template:
+        `<div class="inline-list-centered" data-bind="foreach: entries">
+             <div class="inline-list mr-3">
+                <div data-bind="component: { name: 'asset-icon', params: product}" ></div>
+                <div data-bind="if: consumptionModifier !== 0">
+                    <img class="icon-sm icon-light ml-1" src="icons/icon_marketplace_2d_light.png" data-bind="attr: {title: $parent.texts.reduceConsumption.name}">
+                    <span data-bind="text: formatPercentage(consumptionModifier)"></span>
+                </div>
+                <div data-bind="if: residents !== 0">
+                    <img class="icon-sm icon-light ml-1" src="icons/icon_resource_population.png" data-bind="attr: {title: $parent.texts.bonusResidents.name}">
+                    <span data-bind="text: '+' + residents"></span>
+                </div>
+                <div class="inline-list" data-bind="if: suppliedBy.length !== 0">
+                    <img class="icon-sm icon-light ml-1" src="icons/icon_transfer_goods_light.png" data-bind="attr: {title: $parent.texts.bonusSupply.name}">
+                    <div class="inline-list" data-bind="foreach: {data: suppliedBy, as: 'product'}">
+                        <span data-bind="component: {name: 'asset-icon', params: product}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        `
+});
+
+ko.components.register('residence-effect', {
+    template:
+        `<table>
+            <tbody data-bind="foreach: $data.entries">
+                <tr>
+                    <td data-bind="component: { name: 'asset-icon', params: $data.product}" ></td>
+                    <td data-bind="text: formatPercentage($data.consumptionModifier)"></td>
+                </tr>
+            </tbody>
+        </table>
+        `
 });

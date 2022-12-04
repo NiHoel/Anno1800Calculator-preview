@@ -7,7 +7,7 @@ import { NewspaperNeedConsumption, NewspaperNeedConsumptionEntry } from './consu
 import { Consumer } from './factories.js'
 import { NPCTrader, ContractUpgradeManager, TradeManager, ContractCreatorFactory } from './trade.js'
 import { Region, Session, IslandManager } from './world.js'
-import { DarkMode, ViewMode, Template, ProductionChainView } from './views.js'
+import { DarkMode, ViewMode, Template, ProductionChainView, ResidenceEffectView } from './views.js'
 
 
 import './components.js'
@@ -551,6 +551,7 @@ function init(isFirstRun) {
     view.selectedReplaceInputItems = ko.observable(view.island().replaceInputItems);
     view.selectedExtraGoodItems = ko.observable(view.island().extraGoodItems);
     view.selectedContractManager = ko.observable(view.island().contractManager);
+    view.selectedResidenceEffectView = ko.observable(new ResidenceEffectView([view.island().residenceBuildings[0]]));
 
     $('#good-consumption-island-upgrade-dialog').on('show.bs.modal',
         () => {

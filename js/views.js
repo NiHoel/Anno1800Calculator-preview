@@ -1,6 +1,7 @@
 // @ts-check
 import { ACCURACY } from './util.js'
 import { PopulationLevel, Workforce } from './population.js'
+import { ResidenceEffectCoverage } from './consumption.js'
 import { ProductCategory, Product, Demand, ItemDemandSwitch, FactoryDemandSwitch, ItemExtraDemand } from './production.js'
 import { Factory } from './factories.js'
 
@@ -276,3 +277,121 @@ export class ProductionChainView {
     }
 }
 
+class ResidenceEffectAggregate {
+    /**
+     * 
+     * @param {ko.observable} totalResidences
+     * @param {ResidenceBuilding} residence
+     * @param {ResidenceEffectCoverage} residenceEffectCoverage
+     */
+    constructor(totalResidences, residenceEffectCoverage) {
+        this.totalResidences = totalResidences;
+        this.residenceEffect = residenceEffectCoverage.residenceEffect;
+
+        this.coverage = [residenceEffectCoverage];
+    }
+
+    add(residenceEffectCoverage) {
+        this.coverage.push(residenceEffectCoverage);
+    }
+
+    finishInitialization() {
+        this.averageCoverage = ko.pureComputed(() => {
+            var sum = 0;
+            this.coverage.forEach(coverage => { sum += coverage.residence.existingBuildings() * coverage.coverage(); });
+
+            return sum / this.totalResidences();
+        });
+    }
+}
+
+export class ResidenceEffectView {
+    constructor(residences, need = null) {
+        this.residences = residences;
+        this.percentCoverage = ko.observable(100);
+
+        this.totalResidences = ko.pureComputed(() => {
+            var sum = 0;
+            this.residences.forEach(r => { sum += r.existingBuildings(); });
+            return sum;
+        });
+
+        var effects = new Set();
+        var aggregatesMap = new Map();
+        this.residences.forEach(r => {
+            r.allEffects.forEach(e => {
+                effects.add(e);
+            });
+
+            r.effectCoverage().forEach(c => {
+                var e = c.residenceEffect;
+                if (aggregatesMap.has(e)) {
+                    aggregatesMap.get(e).add(c);
+                } else {
+                    aggregatesMap.set(e, new ResidenceEffectAggregate(this.totalResidences, c));
+                }
+            })
+        });
+
+        this.allEffects = [...effects];        
+        
+        this.aggregates = ko.observableArray([]);
+        aggregatesMap.forEach((a, e) => {
+            a.finishInitialization();
+            effects.delete(e);
+            this.aggregates.push(a);
+        });
+        this.unusedEffects = ko.observableArray([...effects]);
+
+        this.need = need;
+        if (need) {
+            this.productionChainView = new ProductionChainView(need);
+        }
+
+        this.sort();
+        this.selectedEffect = ko.observable(this.unusedEffects()[0]);
+        view.settings.language.subscribe(() => {
+            this.sort();
+        })
+    }
+
+    create() {
+        var e = this.selectedEffect();
+        var a = null;
+        e.residences.forEach(r => {
+            if (this.residences.indexOf(r) == -1)
+                return;
+
+            var c = new ResidenceEffectCoverage(r, e, this.percentCoverage() / 100);
+            r.addEffectCoverage(c);
+
+            if (a == null) {
+
+                a = new ResidenceEffectAggregate(this.totalResidences, c);
+            } else {
+                a.add(c);
+            }
+        });
+
+        if (a != null) {
+            this.unusedEffects.remove(e);
+            this.aggregates.push(a);
+            this.sort();
+        }
+    }
+
+    delete(aggregate) {
+        aggregate.coverage.forEach(coverage => {
+            coverage.residence.removeEffectCoverage(coverage);
+        });
+
+        this.unusedEffects.push(aggregate.residenceEffect);
+        this.aggregates.remove(aggregate);
+        this.sort();
+    }
+
+    sort() {
+        this.aggregates.sort((a, b) => a.residenceEffect.name().localeCompare(b.residenceEffect.name()));
+        this.unusedEffects.sort((a, b) => a.name().localeCompare(b.name()));
+    }
+}

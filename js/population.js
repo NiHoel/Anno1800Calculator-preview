@@ -1,7 +1,7 @@
 // @ts-check
 import { ACCURACY, EPSILON, delayUpdate, createIntInput, createFloatInput, NamedElement } from './util.js'
 import { MetaProduct, NoFactoryProduct } from './production.js'
-import { NoFactoryNeed, PopulationNeed, PublicBuildingNeed } from './consumption.js'
+import { NoFactoryNeed, PopulationNeed, PublicBuildingNeed, ResidenceEffectCoverage } from './consumption.js'
 
 var ko = require( "knockout" );
 
@@ -14,6 +14,10 @@ export class ResidenceBuilding extends NamedElement {
 
         this.existingBuildings = createIntInput(0, 0);
         this.lockDLCIfSet(this.existingBuildings);
+
+        this.allEffects = new Map();
+        this.effectCoverage = ko.observableArray([]);
+
         this.limit = createIntInput(0, 0);
         this.limitLowerBound = config.residentMax;
         this.limitPerHouse = createFloatInput(this.limitLowerBound, this.limitLowerBound, Infinity, (newLimit) => Math.max(newLimit, this.limitLowerBound));
@@ -57,6 +61,18 @@ export class ResidenceBuilding extends NamedElement {
 
     }
 
+    addEffect(effect) {
+        this.allEffects.set(effect.guid, effect);
+    }
+
+    addEffectCoverage(effectCoverage) {
+        this.effectCoverage.push(effectCoverage);
+    }
+
+    removeEffectCoverage(effectCoverage) {
+        this.effectCoverage.remove(effectCoverage);
+    }
+
     handleBonusNeed(need) {
         if (!this.residentsPerNeed.has(need.guid))
             return;
@@ -97,6 +113,28 @@ export class ResidenceBuilding extends NamedElement {
         }
 
         return residents * this.existingBuildings();
+    }
+
+    serializeEffects() {
+        var coverageMap = {};
+        for (var coverage of this.effectCoverage())
+            coverageMap[coverage.residenceEffect.guid] = coverage.coverage();
+
+        return coverageMap;
+    }
+
+    applyEffects(json) {
+        var coverage = [];
+        for (var guid in json) {
+            var e = this.allEffects.get(parseInt(guid));
+
+            if (e == null)
+                continue;
+
+            coverage.push(new ResidenceEffectCoverage(this, e, parseFloat(json[guid])));
+        }
+        this.effectCoverage.removeAll();
+        this.effectCoverage(coverage);
     }
 }
 

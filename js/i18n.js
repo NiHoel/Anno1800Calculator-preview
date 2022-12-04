@@ -210,6 +210,48 @@ export let texts = {
         "japanese": "効果",
         "russian": "Эффект"
     },
+    "bonusResidents": {
+        "chinese": "额外居民",
+        "english": "Bonus Residents",
+        "french": "Habitants supplémentaires",
+        "german": "Zusätzliche Einwohner",
+        //"guid": 22286,
+        "italian": "Residenti bonus",
+        "japanese": "ボーナス住民",
+        "korean": "보너스 주민",
+        "polish": "Dodatkowi mieszkańcy",
+        "russian": "Дополнительное количество жителей",
+        "spanish": "Bonificación de residentes",
+        "taiwanese": "額外居民"
+    },
+    "bonusSupply": {
+        "chinese": "额外供给",
+        "english": "Bonus Supply",
+        "french": "Bonus de ravitaillement",
+        "german": "Zusatzversorgung",
+        //"guid": 12315,
+        "italian": "Bonus offerta",
+        "japanese": "ボーナス供給",
+        "korean": "보너스 제공",
+        "polish": "Dodatkowe zaopatrzenie",
+        "russian": "Дополнительное снабжение",
+        "spanish": "Bonificación de suministros",
+        "taiwanese": "額外供給"
+    },
+    "reduceConsumption": {
+        "chinese": "降低消耗量",
+        "english": "Reduce Consumption",
+        "french": "Réduire la consommation",
+        "german": "Verbrauch reduzieren",
+        //"guid": 134956,
+        "italian": "Riduci consumo",
+        "japanese": "消費量を減らす",
+        "korean": "소비 감소",
+        "polish": "Zredukuj konsumpcję",
+        "russian": "Снижение уровня потребления",
+        "spanish": "Reducir consumo",
+        "taiwanese": "降低消耗量"
+    },
     "needConsumption": {
         "english": "Need Consumption",
         "chinese": "需求消耗程度",
