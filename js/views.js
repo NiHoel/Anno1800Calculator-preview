@@ -1,7 +1,7 @@
 // @ts-check
 import { ACCURACY } from './util.js'
 import { PopulationLevel, Workforce } from './population.js'
-import { ResidenceEffectCoverage } from './consumption.js'
+import { ResidenceEffect, ResidenceEffectCoverage } from './consumption.js'
 import { ProductCategory, Product, Demand, ItemDemandSwitch, FactoryDemandSwitch, ItemExtraDemand } from './production.js'
 import { Factory } from './factories.js'
 
@@ -307,7 +307,7 @@ class ResidenceEffectAggregate {
 
 export class ResidenceEffectView {
     constructor(residences, need = null) {
-        this.residences = residences;
+        this.residences = residences.filter(r => r.available());
         this.percentCoverage = ko.observable(100);
 
         this.totalResidences = ko.pureComputed(() => {
@@ -318,12 +318,18 @@ export class ResidenceEffectView {
 
         var effects = new Set();
         var aggregatesMap = new Map();
+        this.consumedProducts = new Set();
         this.residences.forEach(r => {
-            r.allEffects.forEach(e => {
-                effects.add(e);
+            r.populationLevel.needsMap.forEach(n => {
+                this.consumedProducts.add(n.product);
             });
 
-            r.effectCoverage().forEach(c => {
+            r.allEffects.forEach((/** @type ResidenceEffect */ e) => {
+                if(e.available())
+                    effects.add(e);
+            });
+
+            r.effectCoverage().forEach((/** @type ResidenceEffectCoverage */ c) => {
                 var e = c.residenceEffect;
                 if (aggregatesMap.has(e)) {
                     aggregatesMap.get(e).add(c);

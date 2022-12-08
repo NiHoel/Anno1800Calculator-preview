@@ -1,7 +1,7 @@
 // @ts-check
 import { ACCURACY, EPSILON, delayUpdate, createIntInput, createFloatInput, NamedElement } from './util.js'
 import { MetaProduct, NoFactoryProduct } from './production.js'
-import { NoFactoryNeed, PopulationNeed, PublicBuildingNeed, ResidenceEffectCoverage } from './consumption.js'
+import { NoFactoryNeed, PopulationNeed, PublicBuildingNeed, ResidenceEffectCoverage, ResidenceEffectEntryCoverage, ResidenceNeed } from './consumption.js'
 
 var ko = require( "knockout" );
 
@@ -59,6 +59,52 @@ export class ResidenceBuilding extends NamedElement {
             this.limit(val * this.existingBuildings());
         });
 
+        this.entryCoveragePerProduct = ko.pureComputed(() => {
+            var result = new Map();
+            for (var coverage of this.effectCoverage())
+                for (/** @type {ResidenceEffectCoverage} */var entry of coverage.residenceEffect.entries){
+                    if(result.has(entry.product))
+                        result.get(entry.product).push(new ResidenceEffectEntryCoverage(coverage, entry))
+                    else
+                        result.set(entry.product, [new ResidenceEffectEntryCoverage(coverage, entry)])
+                }
+
+            return result;
+        });
+        
+        this.consumingLimit = null;
+        this.needsMap = null;
+        this.residenceNeedsMap = null;
+    }
+
+    initializeNeeds(needsMap){
+        this.needsMap = needsMap;
+        this.consumingLimit = ko.pureComputed(() => {
+            var sum = 0;
+            for (var n of this.needsMap.values()){
+                if(!n.available() || n.excludePopulationFromMoneyAndConsumptionCalculation)
+                    continue;
+
+                sum += this.existingBuildings() * (this.residentsPerNeed.get(n.guid) || 0);
+                
+                /** @type [ResidenceEffectEntryCoverage] */
+                var arr = this.entryCoveragePerProduct().get(n.product);
+                for(const entry of (arr || []))
+                    sum += this.existingBuildings() * entry.getResidents();
+
+            }
+
+            return sum;
+        });
+
+        this.residenceNeedsMap = new Map();
+        this.residentsPerNeed.forEach((_, guid) => {
+            var n = this.needsMap.get(guid); // some residence needs come from buff but have no need in population level
+            if(n)
+                this.residenceNeedsMap.set(guid, new ResidenceNeed(this, n));
+        });
+
+        this.residenceNeedsMap.forEach(n => n.initDependencies(this.residenceNeedsMap));
     }
 
     addEffect(effect) {
@@ -172,16 +218,34 @@ export class PopulationLevel extends NamedElement {
             this.specialResidence.populationLevel = this;
             this.allResidences.push(this.specialResidence);
         }
-        this.availableResidences = ko.pureComputed(() => this.allResidences.filter(r => r.available()))
+        this.availableResidences = ko.pureComputed(() => this.allResidences.filter(r => r.available()));
+
+        this.canEdit = ko.pureComputed(() => {
+            for (var i = 1; i < this.allResidences.length; i++)
+                if (this.allResidences[i].existingBuildings() > 0)
+                    return false;
+
+            return true;
+        });
 
 
         this.amount = createIntInput(0, 0);
-        this.existingBuildings = createIntInput(0, 0, Infinity, (val) => {
-            if (this.getFloorsSummedExistingBuildings && val < this.getFloorsSummedExistingBuildings())
-                return this.getFloorsSummedExistingBuildings();
+        this.existingBuildings = ko.pureComputed({
+            read: () => {
+                var sum = 0;
+                for (var r of this.allResidences)
+                    sum += r.existingBuildings();
 
-            return val;
+                return sum;
+            },
+
+            write: val => {
+                if(this.canEdit())
+                   this.residence.existingBuildings(val);
+            }
         });
+
+        
         this.limit = createIntInput(0, 0, Infinity, (val) => {
             if (this.getFloorsSummedLimit && val < this.getFloorsSummedLimit())
                 return this.getFloorsSummedLimit();
@@ -212,7 +276,7 @@ export class PopulationLevel extends NamedElement {
                 need = product instanceof NoFactoryProduct ? new NoFactoryNeed(n, this, assetsMap) : new PopulationNeed(n, this, assetsMap);
                 this.needs.push(need);
             } else {
-                need = new PublicBuildingNeed(n, assetsMap);
+                need = new PublicBuildingNeed(n, this, assetsMap);
                 this.buildingNeeds.push(need);
             }
 
@@ -237,8 +301,6 @@ export class PopulationLevel extends NamedElement {
             this.needsMap.set(need.guid, need);
         });
 
-
-
         this.hasBonusNeeds = ko.pureComputed(() => {
             for (var n of this.bonusNeeds || [])
                 if (!n.hidden())
@@ -246,6 +308,9 @@ export class PopulationLevel extends NamedElement {
 
             return false;
         });
+
+        this.allResidences.forEach(r => r.initializeNeeds(this.needsMap));
+
 
         this.amount.subscribe(val => {
 
@@ -506,9 +571,6 @@ export class PopulationLevel extends NamedElement {
 
     applyConfigGlobally() {
         var affectingItems = new Set();
-        for (var u of this.island.allGoodConsumptionUpgrades.upgrades)
-            if (u.populationLevels.indexOf(this) != -1)
-                affectingItems.add(u);
 
         for (var isl of view.islands()) {
             if (this.region && isl.region && this.region != isl.region)

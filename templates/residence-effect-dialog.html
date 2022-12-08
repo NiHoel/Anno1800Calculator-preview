@@ -55,7 +55,7 @@
                                     </div>
                                 </div>
                             </td>
-                            <td style="min-width: 10em;" data-bind="component: {name: 'residence-effect-entry', params: $data.residenceEffect.entries}"></td>
+                            <td style="min-width: 10em;" data-bind="component: {name: 'residence-effect-entry', params: {entries: $data.residenceEffect.entries, filter: $parent.consumedProducts}}"></td>
                             <td>
                                 <div class="float-right">
                                     <button class="btn btn-secondary btn-sm" data-bind="click: () => $parent.delete($data)">
@@ -84,7 +84,7 @@
 
                     <br />
                     <div class="inline-list-stretched mt-2">
-                        <div style="min-width: 10em" data-bind="component: {name: 'residence-effect-entry', params: $data.selectedEffect().entries}"></div>
+                        <div style="min-width: 10em" data-bind="component: {name: 'residence-effect-entry', params: {entries: $data.selectedEffect().entries, filter: $data.consumedProducts}}"></div>
 
                         <div style="min-width: 10em" data-bind="if: $data.residences.length >= 2">
                             <div style="display: flex" data-bind="foreach: $data.residences" class="inline-list-centered">

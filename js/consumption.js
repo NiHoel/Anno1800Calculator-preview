@@ -1,8 +1,11 @@
 // @ts-check
 import { EPSILON, createFloatInput, NamedElement, Option } from './util.js'
 import { Demand } from './production.js'
+import { ResidenceBuilding } from './population.js';
 
 var ko = require( "knockout" );
+
+
 
 export class Need extends Demand {
     constructor(config, assetsMap) {
@@ -20,157 +23,161 @@ export class Need extends Demand {
 
 }
 
+export class ResidenceNeed {
+    /**
+     * 
+     * @param {ResidenceBuilding} residence 
+     * @param {PopulationNeed} need 
+     */
+    constructor(residence, need) {
+        this.residence = residence;
+        this.need = need;
+        
+        this.substitution = ko.observable(0);
+        this.fulfillment = ko.observable(this.need.checked() ? 1 : 0);
+
+        if(this.need.amount){
+            this.amount = ko.pureComputed(() => {
+                var newspaper = (100 + window.view.newspaperConsumption.amount()) / 100;
+                var total = this.residence.consumingLimit() * this.need.tpmin * newspaper;
+                return  total * (this.fulfillment() - this.substitution())
+            });
+
+            this.need.addResidenceNeed(this);
+        }
+    }
+
+    initDependencies(residenceNeedsMap){
+        this.residenceNeedsMap = residenceNeedsMap;
+        this.substituionSubscription = ko.computed(() => {
+            /** @type [ResidenceEffectEntryCoverage] */
+            var arr = this.residence.entryCoveragePerProduct().get(this.need.product);
+            if(arr == null)
+                return; // no effect for this product
+            
+            var suppliedByFulfillment = 0;
+            var modifier = 0;
+            for (var c of arr){
+                var coverage = c.residenceEffectCoverage.coverage();
+                modifier += c.residenceEffectEntry.consumptionModifier * coverage;
+                for (/** @type Product */var p of c.residenceEffectEntry.suppliedBy){
+                    var n = this.residenceNeedsMap.get(p.guid);
+
+                    if(n != null)
+                        suppliedByFulfillment = Math.max(suppliedByFulfillment, coverage * n.fulfillment())
+                }
+            }
+
+            this.substitution(Math.min(1, suppliedByFulfillment - modifier / 100));
+        });
+
+        this.fulfillmentSubscription = ko.computed(() => {
+            if(this.need.isInactive()) {
+                this.fulfillment(0);
+                return;
+            }
+            
+            if(!this.need.banned()){
+                this.fulfillment(1);
+                return;
+            }
+
+            this.fulfillment(this.substitution());
+        });
+
+    }
+}
+
 export class PublicBuildingNeed extends Option {
-    constructor(config, assetsMap) {
+    constructor(config, level, assetsMap) {
         super(config);
+
+        this.level = level;
 
         this.checked(true);
 
         this.product = assetsMap.get(this.guid);
         if (!this.product)
             throw `No Product ${this.guid}`;
+
+        PopulationNeed.prototype.initHidden.bind(this)(assetsMap);
         this.initBans = PopulationNeed.prototype.initBans;
-
-        if (this.requiredBuildings) {
-            this.residences = this.requiredBuildings.map(r => assetsMap.get(r));
-            this.hidden = ko.computed(() => {
-                if (!this.available())
-                    return true;
-
-                for (var r of this.residences)
-                    if (r.existingBuildings() > 0)
-                        return false;
-
-                return true;
-            });
-        } else {
-            this.hidden = ko.computed(() => !this.available());
-        }
     }
 }
 
 export class NoFactoryNeed extends PublicBuildingNeed {
     constructor(config, level, assetsMap) {
-        super(config, assetsMap);
-
+        super(config, level, assetsMap);
+        this.level = level;
         this.isNoFactoryNeed = true;
-        this.updateAmount = PopulationNeed.prototype.updateAmount;
 
         this.amount = ko.observable(0);
         if (this.factor == null)
             this.factor = 1;
 
-
         this.allDemands = []; // compatibility with Need
 
-        this.region = level.region;
-        this.level = level;
-        this.population = 0;
-
-        this.goodConsumptionUpgradeList = new GoodConsumptionUpgradeList(this);
-
-        this.percentBoost = createFloatInput(100, 0);
-        this.boost = ko.computed(() => parseInt(this.percentBoost()) / 100);
-
-        this.boost.subscribe(() => this.updateAmount(this.population));
-        this.optionalAmount = ko.observable(0);
-        this.notes = ko.observable("");
+        PopulationNeed.prototype.initAggregation.bind(this)(assetsMap);
 
         this.residentsInput = ko.pureComputed(() => {
             return this.amount() * this.residentsInputFactor;
         });
 
-        if (this.requiredBuildings) {
-            this.residences = this.requiredBuildings.map(r => assetsMap.get(r));
-
-            this.residencesSubscription = ko.computed(() => {
-                var amount = 0;
-                this.residences.forEach(r => {
-                    amount += r.limit();
-                });
-
-                this.updateAmount(amount);
-            });
-
-            this.hidden = ko.computed(() => {
-                if (!this.available())
-                    return true;
-
-                for (var r of this.residences)
-                    if (r.existingBuildings() > 0)
-                        return false;
-
-                return true;
-            });
-        } else {
-            this.hidden = ko.computed(() => !this.available());
-            this.residences = level.allResidences;
-            level.limit.subscribe(limit => this.updateAmount(limit));
-        }
-
         this.product.addNeed(this);
-    }
-
-    incrementPercentBoost() {
-        this.percentBoost(parseInt(this.percentBoost()) + 1);
-    }
-
-    decrementPercentBoost() {
-        this.percentBoost(parseInt(this.percentBoost()) - 1);
     }
 }
 
 export class PopulationNeed extends Need {
     constructor(config, level, assetsMap) {
         super(config, assetsMap);
-
-        this.region = level.region;
         this.level = level;
-        this.population = 0;
 
+        this.initHidden(assetsMap);
+        this.initAggregation(assetsMap);
+    }
 
-        this.goodConsumptionUpgradeList = new GoodConsumptionUpgradeList(this);
-
-        this.percentBoost = createFloatInput(100, 0);
-        this.boost = ko.computed(() => parseInt(this.percentBoost()) / 100);
-
-        this.boost.subscribe(() => this.updateAmount(this.population));
-
-        this.checked = ko.observable(true);
-        this.optionalAmount = ko.observable(0);
-
-        this.notes = ko.observable("");
+    initHidden(assetsMap){
+        this.banned = ko.observable(false);
+        this.isInactive = ko.observable(false);
 
         if (this.requiredBuildings) {
             this.residences = this.requiredBuildings.map(r => assetsMap.get(r));
-
-            this.residencesSubscription = ko.computed(() => {
-                var amount = 0;
-                this.residences.forEach(r => {
-                    amount += r.limit();
-                });
-
-                this.updateAmount(amount);
-            });
 
             this.hidden = ko.computed(() => {
                 if (!this.available())
                     return true;
 
                 for (var r of this.residences)
-                    if (r.existingBuildings() > 0 || level.residence == r)
+                    if (r.existingBuildings() > 0 || this.level.residence == r)
                         return false;
 
                 return true;
             });
         } else {
             this.hidden = ko.computed(() => !this.available());
-            this.residences = level.allResidences;
-            level.limit.subscribe(limit => this.updateAmount(limit));
+            this.residences = this.level.allResidences;
+        }
+    }
+
+    initAggregation(assetsMap) {
+        this.region = this.level.region;        
+
+        this.checked = ko.observable(true);
+
+        this.notes = ko.observable("");
+
+        this.residenceNeeds = ko.observableArray([]);
+        this.addResidenceNeed = function(need){
+            this.residenceNeeds.push(need);
         }
 
-        // dependency chain: updateAmount -> getNoConsumptionResidents -> existingBuildings
-        this.residences.forEach(r => r.existingBuildings.subscribe(() => this.updateAmount(this.population)));
+        this.residenceNeedsSubscription = ko.computed(() => {
+            var sum = 0;
+            for (var n of this.residenceNeeds())
+                sum += n.amount();
+
+            this.amount(sum);
+        });
     }
 
     initBans(level, assetsMap) {
@@ -203,57 +210,21 @@ export class PopulationNeed extends Need {
 
                 return true;
             });
+
+            this.locked.subscribe(locked => this.isInactive(locked));
         }
 
-        this.banned = ko.computed(() => {
+        this.bannedSubscription = ko.computed(() => {
             var checked = this.checked();
             var noOptionalNeeds = view.settings.noOptionalNeeds.checked();
-            return !checked ||
+            this.banned(!checked ||
                 this.happiness && noOptionalNeeds ||
-                this.locked && this.locked();
+                this.locked && this.locked());
         });
 
-        if (this.amount) {
-            this.banned.subscribe(banned => {
-                if (banned)
-                    this.amount(0);
-                else
-                    this.amount(this.optionalAmount());
-            });
-            if (this.banned())
-                this.amount(0); //bonus needs disabled by default, but amount already set before initializing this.banned
-
-            this.isInactive = ko.computed(() => {
-                return this.locked && this.locked() || this.happiness && view.settings.noOptionalNeeds.checked();
-            });
-        } else {
-            // for PublicBuildingNeed
-            this.isInactive = ko.computed(() => {
-                return this.locked && this.locked();
-            });
-        }
     }
 
-    updateAmount(population) {
-        this.population = population;
-
-        var noConsumption = 0;
-        this.residences.forEach(r => {
-            noConsumption += r.getNoConsumptionResidents();
-        })
-
-        this.optionalAmount(this.tpmin * (population - noConsumption) * this.boost());
-        if (!this.banned || !this.banned())
-            this.amount(this.optionalAmount());
-    }
-
-    incrementPercentBoost() {
-        this.percentBoost(parseInt(this.percentBoost()) + 1);
-    }
-
-    decrementPercentBoost() {
-        this.percentBoost(parseInt(this.percentBoost()) - 1);
-    }
+    updateAmount(population) { }
 }
 
 export class BuildingMaterialsNeed extends Need {
@@ -416,9 +387,7 @@ export class NewspaperNeedConsumption {
     }
 
     apply() {
-        for (var island of view.islands()) {
-            island.allGoodConsumptionUpgrades.apply();
-        }
+        
     }
 }
 
@@ -464,6 +433,10 @@ export class ResidenceEffect extends NamedElement {
 }
 
 export class ResidenceEffectCoverage {
+    /**
+     * @param {ResidenceBuilding} residence
+     * @param {ResidenceEffect} residenceEffect
+     */
     constructor(residence, residenceEffect, coverage = 1) {
         this.residence = residence;
         this.residenceEffect = residenceEffect;
@@ -471,6 +444,20 @@ export class ResidenceEffectCoverage {
     }
 }
 
+export class ResidenceEffectEntryCoverage{
+    /**
+     * @param {ResidenceEffectCoverage} residenceEffectCoverage
+     * @param {ResidenceEffectEntry} residenceEffectEntry
+     */
+        constructor(residenceEffectCoverage, residenceEffectEntry) {
+        this.residenceEffectCoverage = residenceEffectCoverage;
+        this.residenceEffectEntry = residenceEffectEntry;
+    }
+
+    getResidents() {
+        return this.residenceEffectCoverage.coverage() * this.residenceEffectEntry.residents;
+    }
+}
 
 class GoodConsumptionUpgradeEntry {
     constructor(config, assetsMap) {

@@ -216,7 +216,6 @@ class Island {
         this.items = [];
         this.replaceInputItems = [];
         this.extraGoodItems = [];
-        this.allGoodConsumptionUpgrades = new GoodConsumptionUpgradeIslandList();
         this.recipeLists = [];
         this.workforce = [];
 
@@ -422,17 +421,6 @@ class Island {
         }
 
 
-        for (let upgrade of (params.goodConsumptionUpgrades || [])) {
-            let u = new GoodConsumptionUpgrade(upgrade, assetsMap, this.populationLevels);
-            if (!u.populationLevels.length)
-                continue;
-
-            assetsMap.set(u.guid, u);
-            this.allGoodConsumptionUpgrades.upgrades.push(u);
-
-            persistBool(u, "checked");
-        }
-
         for (let b of this.residenceBuildings) {
             {
                 let id = `${b.guid}.effectCoverage`;
@@ -502,11 +490,6 @@ class Island {
 
 
 
-        for (let level of this.populationLevels)
-            for (let need of level.needs) {
-                this.allGoodConsumptionUpgrades.lists.push(need.goodConsumptionUpgradeList);
-            }
-
         for (let b of this.publicRecipeBuildings) {
             if (b.goodConsumptionUpgrade)
                 b.goodConsumptionUpgrade = assetsMap.get(b.goodConsumptionUpgrade);
@@ -559,9 +542,6 @@ class Island {
 
         if (params.tradeContracts && (!this.region || this.region.guid == 5000000))
             this.contractManager = new ContractManager(this);
-
-        if (isNew)
-            this.allGoodConsumptionUpgrades.apply();
 
         if (view.settings.autoApplyConsumptionUpgrades.checked()) {
             for (let l of this.populationLevels)

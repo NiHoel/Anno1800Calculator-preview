@@ -56,13 +56,14 @@ ko.components.register('residence-label', {
 })
 
 ko.components.register('residence-effect-entry', {
-    viewModel: function (entries) {
-        this.entries = entries;
+    viewModel: function (params) {
+        this.entries = params.entries;
+        this.filter = params.filter;
         this.texts = window.view.texts;
     },
     template:
         `<div class="inline-list-centered" data-bind="foreach: entries">
-             <div class="inline-list mr-3">
+             <div class="inline-list mr-3" data-bind="if: product.available() && ($parent.filter == null || $parent.filter.has(product))">
                 <div data-bind="component: { name: 'asset-icon', params: product}" ></div>
                 <div data-bind="if: consumptionModifier !== 0">
                     <img class="icon-sm icon-light ml-1" src="icons/icon_marketplace_2d_light.png" data-bind="attr: {title: $parent.texts.reduceConsumption.name}">
@@ -83,15 +84,3 @@ ko.components.register('residence-effect-entry', {
         `
 });
 
-ko.components.register('residence-effect', {
-    template:
-        `<table>
-            <tbody data-bind="foreach: $data.entries">
-                <tr>
-                    <td data-bind="component: { name: 'asset-icon', params: $data.product}" ></td>
-                    <td data-bind="text: formatPercentage($data.consumptionModifier)"></td>
-                </tr>
-            </tbody>
-        </table>
-        `
-});
