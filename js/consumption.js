@@ -430,6 +430,24 @@ export class ResidenceEffect extends NamedElement {
             r.addEffect(this);
         }
     }
+
+    /**
+     * 
+     * Expected usage: array.sort((a,b) => a.compare(b))
+     * @param {ResidenceEffect} other
+     */
+    compare(other) {
+        if (this.panoramaLevel != null && other.panoramaLevel != null)
+            return 10 * (other.residences[0].populationLevel.guid - this.residences[0].populationLevel.guid) + other.panoramaLevel - this.panoramaLevel;
+
+        if (this.panoramaLevel != null)
+            return -1000;
+
+        if (other.panoramaLevel != null)
+            return 1000;
+
+        return this.name().localeCompare(other.name());
+    }
 }
 
 export class ResidenceEffectCoverage {

@@ -291,7 +291,7 @@ export let texts = {
         "japanese": "新聞の効力",
         "russian": "Эффективность газеты"
     },
-    "basicNeed": {
+    "basicNeeds": {
         "english": "Basic Need",
         //"guid": 11708,
         "polish": "Potrzeba podstawowa",
@@ -305,7 +305,7 @@ export let texts = {
         "japanese": "基本的な需要",
         "russian": "Базовая потребность"
     },
-    "luxuryNeed": {
+    "luxuryNeeds": {
         "english": "Luxury Need",
         //"guid": 11706,
         "polish": "Potrzeba luksusowa",
@@ -647,6 +647,20 @@ export let texts = {
         "french": "Par maison",
         "japanese": "1件当たり",
         "russian": "За дом"
+    },
+    "panoramaEffect": {
+        "chinese": "全景效果",
+        "english": "Panorama Effect",
+        "french": "Effet panoramique",
+        "german": "Panoramaeffekt",
+        //"guid": 137260,
+        "italian": "Effetto Panorama",
+        "japanese": "パノラマ効果",
+        "korean": "전경 효과",
+        "polish": "Efekt panoramy",
+        "russian": "Степень живописности",
+        "spanish": "Efecto panorama",
+        "taiwanese": "全景效果"
     },
     language: {
         "english": "Text Language",

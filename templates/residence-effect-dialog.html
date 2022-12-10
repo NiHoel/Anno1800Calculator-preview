@@ -43,7 +43,7 @@
                             </td>
                             <td style="min-width: 10em;">
                                 <div data-bind="if: $parent.residences.length <= 1">
-                                    <span data-bind="text: formatPercentage($data.averageCoverage)"></span>
+                                    <span data-bind="text: formatPercentage(100 * $data.coverage[0].coverage()).substr(1)"></span>
                                 </div>
                                 <div data-bind="if: $parent.residences.length >= 2">
                                     <div data-bind="foreach: {data: $data.coverage, as: '$data'}" class="inline-list-centered">
@@ -69,7 +69,7 @@
 
                 <form class="form form-inline" data-bind="if: $data.unusedEffects().length" style="justify-content: space-between">
                     <div class="inline-list-stretched">
-                        <select style="max-width: 70%" name="effect" class="custom-select" id="residence-effect-selector" data-bind="value: $data.selectedEffect, options: $data.unusedEffects, optionsText: e => e.name()"></select>
+                        <select style="max-width: 70%" name="effect" class="custom-select" id="residence-effect-selector" data-bind="value: $data.selectedEffect, options: $data.unusedEffects, optionsText: e => e.panoramaLevel != null ? e.residences[0].populationLevel.name() + ': ' + e.name() : e.name()"></select>
                         <div class="input-group input-group-short spinner">
 
                             <input step="0.1" class="form-control" type="number" value="100" data-bind="value: $data.percentCoverage" />
@@ -83,7 +83,7 @@
                     </div>
 
                     <br />
-                    <div class="inline-list-stretched mt-2">
+                    <div class="inline-list-stretched mt-3">
                         <div style="min-width: 10em" data-bind="component: {name: 'residence-effect-entry', params: {entries: $data.selectedEffect().entries, filter: $data.consumedProducts}}"></div>
 
                         <div style="min-width: 10em" data-bind="if: $data.residences.length >= 2">
@@ -96,10 +96,16 @@
                     </div>
                 </form>
 
+                <div data-bind="if: $data.productionChain && $data.productionChain.tree() && $root.productionChain.tree().buildings > ACCURACY">
+                    <hr />
+                    <div class="tree" data-bind="with: $root.productionChain.tree()" style="justify-content: center">
+                        <ul data-bind="template: 'treeElement'"></ul>
+                    </div>
+                </div>
 
-                <div data-bind="component: { name: 'notes-section', params:{ $data: $data.need}}"></div>
+                <div class="mt-4" data-bind="component: { name: 'notes-section', params:{ $data: $data.need}}"></div>
             </div>
-            <div class="modal-footer" data-bind="with: $data.productionChainView">
+            <div class="modal-footer">
             </div>
         </div>
     </div>

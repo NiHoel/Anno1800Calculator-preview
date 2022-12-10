@@ -1,7 +1,7 @@
 // @ts-check
 import { ACCURACY } from './util.js'
 import { PopulationLevel, Workforce } from './population.js'
-import { ResidenceEffect, ResidenceEffectCoverage } from './consumption.js'
+import { PopulationNeed, ResidenceEffect, ResidenceEffectCoverage } from './consumption.js'
 import { ProductCategory, Product, Demand, ItemDemandSwitch, FactoryDemandSwitch, ItemExtraDemand } from './production.js'
 import { Factory } from './factories.js'
 
@@ -176,7 +176,11 @@ export class Template {
 }
 
 export class ProductionChainView {
-    constructor() {
+    /**
+     * 
+     * @param {Factory | Need} f
+     */
+    constructor(f) {
         //this.factoryToDemands = new Map();
         this.tree = ko.computed(() => {
             let traverse = (d, node) => {
@@ -219,10 +223,13 @@ export class ProductionChainView {
                 return node;
             }
 
-            var f = view.selectedFactory();
             var root = null;
             var demands = f.demands;
-            if (!demands.size && f.needs && f.needs.length) {
+
+            if (f instanceof PopulationNeed) {
+                root = traverse(f);
+            }
+            else if (!demands.size && f.needs && f.needs.length) {
                 root = {
                     amount: f.amount(),
                     factory: f,
@@ -325,7 +332,7 @@ export class ResidenceEffectView {
             });
 
             r.allEffects.forEach((/** @type ResidenceEffect */ e) => {
-                if(e.available())
+                if (e.available() && (need == null || e.effectsPerNeed.has(need.guid)))
                     effects.add(e);
             });
 
@@ -350,7 +357,7 @@ export class ResidenceEffectView {
         this.unusedEffects = ko.observableArray([...effects]);
 
         this.need = need;
-        if (need) {
+        if (need instanceof PopulationNeed) {
             this.productionChainView = new ProductionChainView(need);
         }
 
@@ -394,10 +401,12 @@ export class ResidenceEffectView {
         this.unusedEffects.push(aggregate.residenceEffect);
         this.aggregates.remove(aggregate);
         this.sort();
+        this.selectedEffect(aggregate.residenceEffect);
+        this.percentCoverage(aggregate.coverage[0].coverage() * 100);
     }
 
     sort() {
-        this.aggregates.sort((a, b) => a.residenceEffect.name().localeCompare(b.residenceEffect.name()));
-        this.unusedEffects.sort((a, b) => a.name().localeCompare(b.name()));
+        this.aggregates.sort((a, b) => a.residenceEffect.compare(b.residenceEffect));
+        this.unusedEffects.sort((a, b) => a.compare(b));
     }
 }

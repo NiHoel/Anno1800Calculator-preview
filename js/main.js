@@ -80,7 +80,7 @@ function configUpgrade() {
                             continue; // initialized with new value and not overwritten by config
 
                         var residents = 0
-                        for (var n of l.bonusNeeds)
+                        for (var n of l.lifestyleNeeds)
                             if (n.available())
                                 residents += r.residentsPerNeed.get(n.guid) || 0
 
@@ -545,17 +545,16 @@ function init(isFirstRun) {
     view.selectedPopulationLevel = ko.observable(view.island().populationLevels[0]);
     view.selectedGoodConsumptionUpgradeList =
         ko.observable(view.island().populationLevels[0].needs[0].goodConsumptionUpgradeList);
-    view.productionChain = new ProductionChainView();
-    view.selectedGoodConsumptionUpgradeIslandList = ko.observable(view.island().allGoodConsumptionUpgrades);
+    view.productionChain = ko.observable(new ProductionChainView(view.selectedFactory()));
     view.selectedMultiFactoryProducts = ko.observable(view.island().multiFactoryProducts);
     view.selectedReplaceInputItems = ko.observable(view.island().replaceInputItems);
     view.selectedExtraGoodItems = ko.observable(view.island().extraGoodItems);
     view.selectedContractManager = ko.observable(view.island().contractManager);
     view.selectedResidenceEffectView = ko.observable(new ResidenceEffectView([view.island().residenceBuildings[0]]));
 
-    $('#good-consumption-island-upgrade-dialog').on('show.bs.modal',
+    $('#factory-config-dialog').on('show.bs.modal',
         () => {
-            view.selectedGoodConsumptionUpgradeIslandList(view.island().allGoodConsumptionUpgrades);
+            view.productionChain(new ProductionChainView(view.selectedFactory()));
         });
 
     $('#factory-choose-dialog').on('show.bs.modal',
@@ -575,6 +574,15 @@ function init(isFirstRun) {
         () => {
             view.selectedContractManager(view.island().contractManager);
         });
+
+    $('*').on('hidden.bs.modal', () => {
+        for (var dialog of ['contract-management', 'download', 'factory-choose', 'factory-config', 'island-management', 'island-rename', 'item-equipment', 'population-level-config', 'residence-effect', 'settings', 'trade-routes-management', 'view-mode', 'help'])
+            if ($('#' + dialog + '-dialog').attr('class').indexOf("show") != -1) {
+                $('body').addClass('modal-open');
+                break;
+            }
+    });
+    
 
     // store collapsable state of skyline configuration closing and reopening would otherwise restore the default
     view.selectedPopulationLevel.subscribe(() => {

@@ -2,6 +2,7 @@
 import { ACCURACY, EPSILON, delayUpdate, createIntInput, createFloatInput, NamedElement } from './util.js'
 import { MetaProduct, NoFactoryProduct } from './production.js'
 import { NoFactoryNeed, PopulationNeed, PublicBuildingNeed, ResidenceEffectCoverage, ResidenceEffectEntryCoverage, ResidenceNeed } from './consumption.js'
+import { ResidenceEffectView} from './views.js'
 
 var ko = require( "knockout" );
 
@@ -17,47 +18,17 @@ export class ResidenceBuilding extends NamedElement {
 
         this.allEffects = new Map();
         this.effectCoverage = ko.observableArray([]);
+        this.panoramaCoverage = ko.pureComputed(() => {
+            var sum = 0;
+            for (/** @type ResidenceEffectCoverage */var effect of this.effectCoverage())
+                if (effect.residenceEffect.panoramaLevel != null)
+                    sum += effect.coverage();
+            return sum;
+        });
 
-        this.limit = createIntInput(0, 0);
-        this.limitLowerBound = config.residentMax;
-        this.limitPerHouse = createFloatInput(this.limitLowerBound, this.limitLowerBound, Infinity, (newLimit) => Math.max(newLimit, this.limitLowerBound));
         this.residentsPerNeed = new Map();
         for (var guid in config.residentsPerNeed)
             this.residentsPerNeed.set(parseInt(guid), config.residentsPerNeed[guid]);
-
-        this.fixLimitPerHouse = ko.observable(true);
-
-        var inRange = function (buildings, perHouse, val) {
-            return val <= buildings * perHouse && val > (buildings - 1) * perHouse;
-        }
-
-        this.existingBuildings.subscribe(val => {
-            if (this.fixLimitPerHouse()) {
-                this.limit(Math.floor(val * this.limitPerHouse()));
-            } else {
-                var perHouse = this.limit() / val;
-                if (Math.abs(this.limitPerHouse() - perHouse) > ACCURACY)
-                    this.limitPerHouse(perHouse);
-            }
-        });
-
-        this.limit.subscribe(val => {
-            if (this.fixLimitPerHouse() && !inRange(this.existingBuildings(), this.limitPerHouse(), this.limit()))
-                this.existingBuildings(Math.ceil(val / this.limitPerHouse()));
-            else {
-                var perHouse = val / (this.existingBuildings() || 1);
-
-                if (Math.abs(this.limitPerHouse() - perHouse) > ACCURACY)
-                    if (perHouse < this.limitLowerBound)
-                        this.existingBuildings(Math.floor(val / this.limitLowerBound));
-                    else if (this.existingBuildings() >= 1)
-                        this.limitPerHouse(perHouse);
-            }
-        });
-
-        this.limitPerHouse.subscribe(val => {
-            this.limit(val * this.existingBuildings());
-        });
 
         this.entryCoveragePerProduct = ko.pureComputed(() => {
             var result = new Map();
@@ -113,39 +84,17 @@ export class ResidenceBuilding extends NamedElement {
 
     addEffectCoverage(effectCoverage) {
         this.effectCoverage.push(effectCoverage);
+        this.sortEffectCoverage();
     }
 
     removeEffectCoverage(effectCoverage) {
         this.effectCoverage.remove(effectCoverage);
     }
 
-    handleBonusNeed(need) {
-        if (!this.residentsPerNeed.has(need.guid))
-            return;
-
-        need.available.subscribe(checked => {
-            var inc = (checked ? 1 : -1) * this.residentsPerNeed.get(need.guid);
-            this.limitLowerBound += inc;
-            var lpH = this.limitPerHouse() + inc;
-            this.limitPerHouse(lpH);
-
-            if (this.populationLevel.allResidences.length == 0 ||
-                this.populationLevel.existingBuildings() == 0 && this.populationLevel.residence == this)
-
-                this.populationLevel.limitPerHouse(lpH);
-        });
-
-        if (need.available()) {
-            var inc = this.residentsPerNeed.get(need.guid);
-            this.limitLowerBound += inc;
-            this.limitPerHouse(this.limitPerHouse() + inc);
-
-            if (this.populationLevel.allResidences.length == 0 ||
-                this.populationLevel.existingBuildings() == 0 && this.populationLevel.residence == this)
-
-                this.populationLevel.limitPerHouse(this.limitPerHouse());
-        }
+    sortEffectCoverage() {
+        this.effectCoverage.sort((a, b) => a.residenceEffect.compare(b.residenceEffect));
     }
+
 
     getNoConsumptionResidents() {
         var residents = 0;
@@ -181,6 +130,11 @@ export class ResidenceBuilding extends NamedElement {
         }
         this.effectCoverage.removeAll();
         this.effectCoverage(coverage);
+        this.sortEffectCoverage();
+    }
+
+    prepareResidenceEffectView() {
+        view.selectedResidenceEffectView(new ResidenceEffectView([this]));
     }
 }
 
@@ -195,7 +149,7 @@ export class PopulationLevel extends NamedElement {
         this.buildingNeeds = [];
         this.basicNeeds = [];
         this.luxuryNeeds = [];
-        this.bonusNeeds = [];
+        this.lifestyleNeeds = [];
         this.needsMap = new Map();
         this.region = assetsMap.get(config.region);
 
@@ -246,28 +200,6 @@ export class PopulationLevel extends NamedElement {
         });
 
         
-        this.limit = createIntInput(0, 0, Infinity, (val) => {
-            if (this.getFloorsSummedLimit && val < this.getFloorsSummedLimit())
-                return this.getFloorsSummedLimit();
-
-            return val;
-        });
-        this.amountPerHouse = createFloatInput(config.fullHouse, 1, Infinity, (newVal, current) => {
-            if (this.limitPerHouse && this.fixLimitPerHouse && newVal > this.limitPerHouse() + ACCURACY &&
-                (this.fixLimitPerHouse() || this.canEditPerHouse && !this.canEditPerHouse()))
-                return this.limitPerHouse();
-
-            return newVal;
-        });
-        this.limitPerHouse = createFloatInput(this.residence.limitPerHouse(), config.fullHouse);
-
-        this.fixAmountPerHouse = ko.observable(true);
-        this.fixLimitPerHouse = ko.observable(true);
-
-        var inRange = function (buildings, perHouse, val) {
-            return val <= buildings * perHouse && val > (buildings - 1) * perHouse;
-        }
-
         config.needs.forEach(n => {
             var need;
             var product = assetsMap.get(n.guid);
@@ -288,9 +220,8 @@ export class PopulationLevel extends NamedElement {
                             need.checked(false);
                     });
 
-                this.bonusNeeds.push(need);
+                this.lifestyleNeeds.push(need);
                 this.needsMap.set(need.guid, need);
-                this.allResidences.forEach(r => r.handleBonusNeed(need));
                 return;
             }
 
@@ -302,7 +233,7 @@ export class PopulationLevel extends NamedElement {
         });
 
         this.hasBonusNeeds = ko.pureComputed(() => {
-            for (var n of this.bonusNeeds || [])
+            for (var n of this.lifestyleNeeds || [])
                 if (!n.hidden())
                     return true;
 
@@ -311,40 +242,6 @@ export class PopulationLevel extends NamedElement {
 
         this.allResidences.forEach(r => r.initializeNeeds(this.needsMap));
 
-
-        this.amount.subscribe(val => {
-
-            if (this.limit() < val && (!this.hasSkyscrapers || !this.hasSkyscrapers()))
-                this.limit(val);
-
-            if (this.fixAmountPerHouse())
-                this.existingBuildings(Math.ceil(val / this.amountPerHouse() - EPSILON));
-            else {
-                var perHouse = val / (this.existingBuildings() || 1);
-
-                if (Math.abs(this.amountPerHouse() - perHouse) > ACCURACY)
-                    if (this.fixLimitPerHouse() && perHouse > ACCURACY + this.limitPerHouse()) {
-                        this.existingBuildings(Math.ceil(val / this.limitPerHouse() - EPSILON));
-                        delayUpdate(this.amount, val);
-                        return;
-                    } else if (this.existingBuildings() >= 1)
-                        this.amountPerHouse(perHouse);
-            }
-        });
-
-        this.amountPerHouse.subscribe(val => {
-            if (val > this.limitPerHouse() + ACCURACY) {
-                if (this.fixLimitPerHouse() || (this.canEditPerHouse && !this.canEditPerHouse())) {
-                    this.amountPerHouse(this.limitPerHouse());
-                    return;
-                } else {
-                    this.limitPerHouse(val);
-                }
-            }
-
-            if (view.settings.deriveResidentsPerHouse.checked() || !inRange(this.existingBuildings(), val, this.amount()))
-                this.amount(val * this.existingBuildings());
-        });
 
         if (this.skyscraperLevels || this.specialResidence) {
             // ensure that the value for the population level and those summed over the buildings match
@@ -356,158 +253,14 @@ export class PopulationLevel extends NamedElement {
             };
             this.floorsSummedExistingBuildings = ko.computed(() => this.getFloorsSummedExistingBuildings());
 
-            this.getFloorsSummedLimit = () => {
-                var specialResidence = this.specialResidence ? this.specialResidence.limit() : 0;
-                var levelSum = this.skyscraperLevels ? this.skyscraperLevels.map(s => s.limit()).reduce((a, b) => a + b) : 0;
-                return specialResidence + levelSum;
-            };
-            this.floorsSummedLimit = ko.computed(() => this.getFloorsSummedLimit());
+            this.hasSkyscrapers = () => this.getFloorsSummedExistingBuildings() ;
 
-            this.floorsSummedExistingBuildings.subscribe(val => {
-                if (val > 0) {
-                    view.settings.deriveResidentsPerHouse.checked(false);
-                    this.fixLimitPerHouse(false);
-                }
-            });
-
-            this.hasSkyscrapers = () => this.getFloorsSummedExistingBuildings() || this.getFloorsSummedLimit();
-
-            this.fixLimitPerHouse.subscribe(fixed => {
-                this.residence.fixLimitPerHouse(fixed || this.hasSkyscrapers())
-            })
-
-            this.floorsSummedExistingBuildings.subscribe(val => {
-                this.existingBuildings(val + this.residence.existingBuildings());
-            });
-            this.existingBuildings.subscribe(val => {
-                if (val < this.getFloorsSummedExistingBuildings()) {
-                    return;
-                }
-                else
-                    this.residence.existingBuildings(Math.max(0, val - this.getFloorsSummedExistingBuildings()));
-
-                if (this.hasSkyscrapers() && !this.fixLimitPerHouse()) {
-                    var perHouse = this.limit() / val;
-                    if (Math.abs(this.limitPerHouse() - perHouse) > ACCURACY)
-                        this.limitPerHouse(perHouse);
-
-                }
-
-                if (this.fixAmountPerHouse()) {
-                    if (!inRange(val, this.amountPerHouse(), this.amount()))
-                        this.amount(Math.floor(val * this.amountPerHouse()));
-                } else {
-                    var perHouse = this.amount() / val;
-                    if (perHouse < 1) {
-                        this.amount(val);
-                        perHouse = 1;
-                    }
-                    if (Math.abs(this.amountPerHouse() - perHouse) > ACCURACY)
-                        this.amountPerHouse(perHouse);
-                }
-            });
-            this.residence.existingBuildings.subscribe(val => {
-                this.existingBuildings(val + this.getFloorsSummedExistingBuildings());
-            });
-
-            this.floorsSummedLimit.subscribe(val => {
-                this.limit(val + this.residence.limit());
-            });
-            this.limit.subscribe(val => {
-                if (val < this.getFloorsSummedLimit()) {
-                    return;
-                }
-                else
-                    this.residence.limit(Math.max(0, val - this.getFloorsSummedLimit()));
-
-                if (this.amount() > val)
-                    this.amount(val);
-
-                if (this.existingBuildings() >= 1) {
-                    var perHouse = val / this.existingBuildings();
-                    var perHouseCapped = Math.max(this.residence.limitLowerBound, perHouse);
-
-                    if (Math.abs(this.limitPerHouse() - perHouse) > ACCURACY)
-                        this.limitPerHouse(perHouseCapped);
-                }
-            });
-            this.residence.limit.subscribe(val => {
-                this.limit(val + this.getFloorsSummedLimit());
-            });
-            this.limitPerHouse.subscribe(val => {
-                if (val + ACCURACY < this.amountPerHouse()) {
-                    this.amountPerHouse(val);
-                }
-            });
-
+ 
             this.canEditPerHouse = ko.pureComputed(() => {
                 return !this.hasSkyscrapers() && !(this.specialResidence && this.specialResidence.existingBuildings());
             });
         } else {
             this.hasSkyscrapers = () => false;
-
-            this.existingBuildings.subscribe(val => {
-
-                if (this.fixLimitPerHouse()) {
-                    if (!inRange(val, this.limitPerHouse(), this.limit()))
-                        this.limit(Math.floor(val * this.limitPerHouse()));
-                } else {
-                    var perHouse = this.limit() / val;
-                    if (Math.abs(this.limitPerHouse() - perHouse) > ACCURACY)
-                        this.limitPerHouse(perHouse);
-                }
-
-                if (this.fixAmountPerHouse()) {
-                    if (!inRange(val, this.amountPerHouse(), this.amount()))
-                        this.amount(Math.floor(val * this.amountPerHouse()));
-                } else {
-                    var perHouse = this.amount() / val;
-                    if (Math.abs(this.amountPerHouse() - perHouse) > ACCURACY)
-                        this.amountPerHouse(perHouse);
-                }
-            });
-
-            this.limit.subscribe(val => {
-                if (this.amount() > val)
-                    this.amount(val);
-
-                if (this.fixLimitPerHouse() && !inRange(this.existingBuildings(), this.limitPerHouse(), this.limit()))
-                    this.existingBuildings(Math.ceil(val / this.limitPerHouse()));
-                else {
-                    var perHouse = val / (this.existingBuildings() || 1);
-                    var perHouseCapped = Math.max(this.fullHouse, perHouse);
-
-                    if (Math.abs(this.limitPerHouse() - perHouse) > ACCURACY)
-                        if (this.fixAmountPerHouse() && perHouseCapped + ACCURACY < this.amountPerHouse()) {
-                            this.existingBuildings(Math.ceil(val / this.amountPerHouse()));
-                            delayUpdate(this.limit, val);
-                            return;
-                        } else if (perHouse < this.residence.limitLowerBound)
-                            this.existingBuildings(Math.floor(val / this.residence.limitLowerBound));
-                        else if (this.existingBuildings() >= 1)
-                            this.limitPerHouse(perHouse);
-                }
-            });
-
-
-
-            this.limitPerHouse.subscribe(val => {
-                if (val + ACCURACY < this.amountPerHouse()) {
-                    this.amountPerHouse(val);
-                }
-
-                if (!inRange(this.existingBuildings(), val, this.limit()))
-                    this.limit(val * this.existingBuildings());
-            });
-
-            this.existingBuildings.subscribe(val => this.residence.existingBuildings(val));
-            this.limit.subscribe(val => this.residence.limit(val));
-            this.limitPerHouse.subscribe(val => this.residence.limitPerHouse(val));
-            this.fixLimitPerHouse.subscribe(val => this.residence.fixLimitPerHouse(val));
-
-            // Does not work because lambda uses the last value of local variable:
-            //for (var attr of ["existingBuildings", "limit", "limitPerHouse", "fixLimitPerHouse"])
-            //    this[attr].subscribe(val => this.residence[attr](val));
 
             this.canEditPerHouse = ko.pureComputed(() => {
                 return true;
@@ -532,25 +285,6 @@ export class PopulationLevel extends NamedElement {
     initBans(assetsMap) {
         for (var n of this.needs.concat(this.buildingNeeds))
             n.initBans(this, assetsMap);
-        this.deriveResidentsPerHouse = ko.computed(() => {
-            if (!view.settings.deriveResidentsPerHouse.checked() || this.getFloorsSummedExistingBuildings && this.hasSkyscrapers())
-                return;
-
-            if (!this.fixAmountPerHouse())
-                this.fixAmountPerHouse(true);
-
-            var perHouse = 0;
-            for (var need of this.basicNeeds.concat(this.bonusNeeds))
-                if (!need.requiredFloorLevel &&
-                    (need.requiredBuildings == null || need.requiredBuildings.indexOf(this.residence.guid) !== -1) &&
-                    (!need.banned || !need.banned()) &&
-                    (!need.visible || need.visible()))
-
-                    perHouse += need.residents;
-
-            this.amountPerHouse(perHouse);
-        });
-
     }
 
     getNoConsumptionResidents() {
@@ -590,25 +324,11 @@ export class PopulationLevel extends NamedElement {
             for (var i = 0; i < this.buildingNeeds.length; i++)
                 other.buildingNeeds[i].checked(this.buildingNeeds[i].checked());
 
-            other.amountPerHouse(this.amountPerHouse());
-            other.limitPerHouse(this.limitPerHouse());
-            other.fixAmountPerHouse(true);
-            other.fixLimitPerHouse(true);
-
-            if (this.residence && other.residence) {
-                other.residence.limitPerHouse(this.residence.limitPerHouse());
-                other.residence.fixLimitPerHouse(true);
-            }
-
-            if (this.skyscraperLevels && other.skyscraperLevels) {
-                other.skyscraperLevels.limitPerHouse(this.skyscraperLevels.limitPerHouse());
-                other.skyscraperLevels.fixLimitPerHouse(true);
-            }
-
-            if (this.specialResidence && other.specialResidence) {
-                other.specialResidence.limitPerHouse(this.specialResidence.limitPerHouse());
-            }
         }
+    }
+
+    prepareResidenceEffectView(need = null) {
+        view.selectedResidenceEffectView(new ResidenceEffectView(this.allResidences, need));
     }
 }
 
