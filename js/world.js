@@ -3,8 +3,8 @@ import { ALL_ISLANDS, setDefaultFixedFactories, NamedElement, Option } from './u
 import { texts } from './i18n.js'
 
 import { CommuterWorkforce, Workforce, ResidenceBuilding, PopulationLevel } from './population.js'
-import { ResidenceEffect, GoodConsumptionUpgrade, GoodConsumptionUpgradeIslandList, RecipeList, BuildingMaterialsNeed } from './consumption.js'
-import { NoFactoryProduct, Product, MetaProduct, Item, Demand, ProductCategory } from './production.js'
+import { ResidenceEffect, RecipeList } from './consumption.js'
+import { NoFactoryProduct, Product, MetaProduct, Item, ProductCategory } from './production.js'
 import { PublicConsumerBuilding, Module, Factory, Consumer, PalaceBuff } from './factories.js'
 import { ContractManager } from './trade.js'
 import {ResidenceEffectView} from './views.js'
@@ -211,7 +211,6 @@ class Island {
         this.consumers = [];
         this.factories = [];
         this.categories = [];
-        this.buildingMaterialsNeeds = [];
         this.multiFactoryProducts = [];
         this.items = [];
         this.replaceInputItems = [];
@@ -507,16 +506,6 @@ class Island {
         if (params.tradeContracts && (!this.region || this.region.guid == 5000000))
             this.contractManager = new ContractManager(this);
 
-        if (view.settings.autoApplyConsumptionUpgrades.checked()) {
-            for (let l of this.populationLevels)
-                for (let n of l.needs) {
-                    let id = `${l.guid}[${n.guid}].percentBoost`;
-
-                    if (localStorage.getItem(id) == null)
-                        n.goodConsumptionUpgradeList.apply();
-                }
-        }
-
         if (this.session)
             this.session.addIsland(this);
 
@@ -626,11 +615,6 @@ class Island {
                     n.checked(false);
                 else
                     n.checked(true);
-            if (n.percentBoost)
-                if (view.settings.autoApplyConsumptionUpgrades.checked())
-                    n.goodConsumptionUpgradeList.apply();
-                else
-                    n.percentBoost(100);
         }));
 
         this.populationLevels.forEach(l => l.buildingNeeds.forEach(n => {

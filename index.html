@@ -62,7 +62,6 @@
     <div data-bind="template: 'island-rename-dialog'"></div>
     <div data-bind="template: 'item-equipment-dialog'"></div>
     <div data-bind="template: 'factory-choose-dialog'"></div>
-    <div data-bind="template: 'good-consumption-upgrade-island-dialog'"></div>
     <div data-bind="template: 'island-management-dialog'"></div>
     <div data-bind="template: 'trade-routes-management-dialog'"></div>
     <div data-bind="template: 'population-level-config-dialog'"></div>
@@ -225,7 +224,7 @@
                             </div>
 
                             <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
-                                <div class="ui-fchain-item-load"><span data-bind="text: formatNumber($data.instance().amount())"></span><span> t/min</span></div>
+                                <div class="ui-fchain-item-load"><span data-bind="text: formatNumber($data.instance().inputAmount())"></span><span> t/min</span></div>
 
                             </div>
                         </div>
@@ -278,7 +277,7 @@
                             </div>
 
                             <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
-                                <div class="ui-fchain-item-load"><span data-bind="text: formatNumber($data.instance().amount())"></span><span> t/min</span></div>
+                                <div class="ui-fchain-item-load"><span data-bind="text: formatNumber($data.instance().inputAmount())"></span><span> t/min</span></div>
 
                             </div>
                         </div>
@@ -370,7 +369,7 @@
                             </div>
 
                             <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
-                                <div class="ui-fchain-item-load"><span data-bind="text: formatNumber($data.instance().amount())"></span><span> t/min</span></div>
+                                <div class="ui-fchain-item-load"><span data-bind="text: formatNumber($data.instance().inputAmount())"></span><span> t/min</span></div>
 
                             </div>
                         </div>

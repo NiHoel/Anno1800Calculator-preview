@@ -216,108 +216,12 @@ export class PopulationNeed extends Need {
 
         this.bannedSubscription = ko.computed(() => {
             var checked = this.checked();
-            var noOptionalNeeds = view.settings.noOptionalNeeds.checked();
-            this.banned(!checked ||
-                this.happiness && noOptionalNeeds ||
-                this.locked && this.locked());
+            this.banned(!checked || this.locked && this.locked());
         });
 
     }
 
     updateAmount(population) { }
-}
-
-export class BuildingMaterialsNeed extends Need {
-    constructor(config, assetsMap) {
-        super(config, assetsMap);
-
-        this.product = config.product;
-        this.factory(config.factory);
-
-        this.factory().add(this);
-        this.factory().buildingMaterialsNeed = this;
-    }
-
-    updateAmount() {
-        var otherDemand = 0;
-        this.factory().demands.forEach(d => otherDemand += d == this ? 0 : d.amount());
-
-        if (this.factory().tradeList)
-            otherDemand += this.factory().tradeList.amount();
-
-        if (this.factory().contractList)
-            otherDemand += this.factory().contractList.amount();
-
-        if (this.factory().extraGoodProductionList && this.factory().extraGoodProductionList.checked())
-            otherDemand -= this.factory().extraGoodProductionList.amount();
-
-        var existingBuildingsOutput =
-            this.factory().existingBuildings() * this.factory().tpmin * this.factory().boost() * this.factory().extraGoodFactor();
-
-        if (this.factory().existingBuildings() === 0)
-            otherDemand = Math.max(0, otherDemand);
-
-        var amount = Math.max(0, existingBuildingsOutput - otherDemand - EPSILON);
-
-        if (Math.abs(amount - this.amount()) >= EPSILON)
-            this.amount(amount);
-    }
-
-    updateFixedProductFactory() { }
-}
-
-
-export class GoodConsumptionUpgrade extends Option {
-    constructor(config, assetsMap, levels) {
-        super(config, assetsMap);
-
-        this.lockDLCIfSet(this.checked);
-
-        this.entries = [];
-        this.entriesMap = new Map();
-        this.populationLevels = config.populationLevels.map(l => assetsMap.get(l)).filter(l => !!l);
-        if (!this.populationLevels.length)
-            return;
-
-        this.populationLevelsSet = new Set(this.populationLevels);
-
-        for (var entry of config.goodConsumptionUpgrade) {
-            //if (entry.AmountInPercent <= -100)
-            //    continue;
-
-            this.entries.push(new GoodConsumptionUpgradeEntry($.extend({ upgrade: this }, entry), assetsMap));
-            this.entriesMap.set(entry.ProvidedNeed, this.entries[this.entries.length - 1]);
-        }
-
-        for (var level of levels) {
-            if (!this.populationLevelsSet.has(level))
-                continue;
-
-            for (var need of level.needs) {
-                var entry = this.entriesMap.get(need.product.guid);
-                if (entry)
-                    need.goodConsumptionUpgradeList.add(entry);
-            }
-        }
-
-        this.visible = ko.computed(() => {
-            if (!this.available())
-                return false;
-
-            if (!view.island || !view.island())
-                return true;
-
-            var region = view.island().region;
-            if (!region)
-                return true;
-
-            for (var l of this.populationLevels)
-                if (l.region === region)
-                    return true;
-
-            return false;
-        });
-    }
 }
 
 export class NewspaperNeedConsumption {
@@ -474,64 +378,6 @@ export class ResidenceEffectEntryCoverage{
 
     getResidents() {
         return this.residenceEffectCoverage.coverage() * this.residenceEffectEntry.residents;
-    }
-}
-
-class GoodConsumptionUpgradeEntry {
-    constructor(config, assetsMap) {
-        this.upgrade = config.upgrade;
-        this.product = assetsMap.get(config.ProvidedNeed);
-        this.amount = config.AmountInPercent;
-    }
-}
-
-class GoodConsumptionUpgradeList {
-    constructor(need) {
-        this.upgrades = [];
-        this.amount = ko.observable(100);
-        this.need = need;
-
-        this.updateAmount();
-        view.newspaperConsumption.amount.subscribe(() => this.updateAmount());
-
-        this.amount.subscribe(() => {
-            if (view.settings.autoApplyConsumptionUpgrades.checked())
-                setTimeout(() => this.apply(), 0);
-        });
-    }
-
-    add(upgrade) {
-        this.upgrades.push(upgrade);
-        upgrade.upgrade.checked.subscribe(() => this.updateAmount());
-    }
-
-    updateAmount() {
-        var factor = (100 + view.newspaperConsumption.amount()) / 100;
-
-        var remainingSupply = 100;
-        for (var entry of this.upgrades) {
-            if (entry.upgrade.checked())
-                remainingSupply += entry.amount;
-        }
-
-        this.amount(Math.max(0, remainingSupply * (100 + view.newspaperConsumption.amount()) / 100));
-    }
-
-    apply() {
-        this.need.percentBoost(this.amount());
-    }
-}
-
-export class GoodConsumptionUpgradeIslandList {
-    constructor() {
-        this.lists = [];
-        this.upgrades = [];
-    }
-
-    apply() {
-        for (var list of this.lists) {
-            list.apply();
-        }
     }
 }
 

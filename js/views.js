@@ -51,10 +51,8 @@ export class ViewMode {
     constructor(firstRun) {
         this.hiddenOptions = [
             "additionalProduction",
-            "autoApplyExtraNeed",
             "consumptionModifier",
-            "autoApplyConsumptionUpgrades",
-            "deriveResidentsPerHouse"
+
         ];
 
         this.simpleViewSubscription = ko.computed(() => {
@@ -63,24 +61,15 @@ export class ViewMode {
             if (checked) {
                 view.settings.populationInput("0");
                 view.settings.additionalProduction.checked(false);
-                view.settings.autoApplyExtraNeed.checked(true);
                 view.settings.consumptionModifier.checked(true);
-                view.settings.autoApplyConsumptionUpgrades.checked(true);
                 view.settings.needUnlockConditions.checked(true);
-                view.settings.deriveResidentsPerHouse.checked(true);
+
             }
 
             for (var option of this.hiddenOptions)
                 if (view.settings[option])
                     view.settings[option].visible(!checked);
         });
-        view.settings.deriveResidentsPerHouse.checked.subscribe(checked => {
-            if (!checked) { // gets disabled when using skyscrapers or special residences
-                view.settings.simpleView.checked(false);
-            }
-
-            view.settings.simpleView.visible(checked);
-        })
 
 
         this.hideSimple = false;

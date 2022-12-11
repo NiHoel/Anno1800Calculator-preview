@@ -13,23 +13,23 @@ import { DarkMode, ViewMode, Template, ProductionChainView, ResidenceEffectView 
 import './components.js'
 import './params.js'
 
-var ko = require( "knockout" );
-require( "knockout-amd-helpers" );
+var ko = require("knockout");
+require("knockout-amd-helpers");
 
 // @ts-check
 
-var moduleContext = require.context( ".", true );
-var templateContext = require.context( "../templates", true );
+var moduleContext = require.context(".", true);
+var templateContext = require.context("../templates", true);
 
-ko.bindingHandlers.module.loader = function( moduleName, done ) {
-	var mod = moduleContext( "./" + moduleName );
-	done( mod );
+ko.bindingHandlers.module.loader = function (moduleName, done) {
+    var mod = moduleContext("./" + moduleName);
+    done(mod);
 }
 
 ko.amdTemplateEngine.defaultSuffix = ".html";
-ko.amdTemplateEngine.loader = function( templateName, done ) {
-	var template = templateContext( "./" + templateName + ko.amdTemplateEngine.defaultSuffix );
-	done( template.default );
+ko.amdTemplateEngine.loader = function (templateName, done) {
+    var template = templateContext("./" + templateName + ko.amdTemplateEngine.defaultSuffix);
+    done(template.default);
 }
 
 window.ACCURACY = ACCURACY;
@@ -53,45 +53,35 @@ for (var code in languageCodes)
 
 // called after initialization
 // checks if loaded config is old and applies upgrade
-function configUpgrade() {
-    {
-        let id = "settings.contracts";
-        if (localStorage.getItem(id) != null && parseInt(localStorage.getItem(id))) {
-            var dlc = view.dlcsMap.get("dlc7");
-            if (dlc)
-                dlc.checked(true);
+function configUpgrade(configVersion) {
+    if (configVersion == null)
+        configVersion = "v1.0";
+
+    try {
+        configVersion = configVersion.replace(/[^.\d]/g, "").split(".").map(d => parseInt(d));
+
+
+        {
+            let id = "settings.contracts";
+            if (localStorage.getItem(id) != null && parseInt(localStorage.getItem(id))) {
+                var dlc = view.dlcsMap.get("dlc7");
+                if (dlc)
+                    dlc.checked(true);
+            }
+            localStorage.removeItem(id);
         }
-        localStorage.removeItem(id);
-    }
 
-    {
-        let id = "upgrade.bonusResidentsApplied";
-        if (!localStorage.getItem(id)) {
-
-
+        if (configVersion[0] < 10) {
             for (var isl of view.islands())
                 for (var l of isl.populationLevels) {
-                    for (var r of l.allResidences) {
-                        if (r.guid === 406) //Skyline Tower
-                            continue;
 
-                        let id = r.guid + ".limitPerHouse";
-                        if ((isl.storage || localStorage).getItem(id) == null)
-                            continue; // initialized with new value and not overwritten by config
+                    for (let n of l.needs)
+                        isl.storage.removeItem(`${l.guid}[${n.guid}].percentBoost`);
 
-                        var residents = 0
-                        for (var n of l.lifestyleNeeds)
-                            if (n.available())
-                                residents += r.residentsPerNeed.get(n.guid) || 0
-
-                        if (l.allResidences.length == 1)
-                            l.limitPerHouse(l.limitPerHouse() + residents);
-                        r.limitPerHouse(r.limitPerHouse() + residents)
-                    }
                 }
+
         }
-        localStorage.setItem(id, 1);
-    }
+    } catch (e) { console.warn(e); }
 }
 
 function factoryReset() {
@@ -390,7 +380,7 @@ class PopulationReader {
 
 
 
-function init(isFirstRun) {
+function init(isFirstRun, configVersion) {
     view.darkMode = new DarkMode();
 
     view.dlcs = [];
@@ -534,7 +524,7 @@ function init(isFirstRun) {
     }
 
     if (!isFirstRun)
-        configUpgrade();
+        configUpgrade(configVersion);
     else
         localStorage.setItem("upgrade.bonusResidentsApplied", 1);
 
@@ -543,11 +533,8 @@ function init(isFirstRun) {
     view.skyscraperDropdownStatus = ko.observable("hide");
     view.selectedFactory = ko.observable(view.island().factories[0]);
     view.selectedPopulationLevel = ko.observable(view.island().populationLevels[0]);
-    view.selectedGoodConsumptionUpgradeList =
-        ko.observable(view.island().populationLevels[0].needs[0].goodConsumptionUpgradeList);
     view.productionChain = ko.observable(new ProductionChainView(view.selectedFactory()));
     view.selectedMultiFactoryProducts = ko.observable(view.island().multiFactoryProducts);
-    view.selectedReplaceInputItems = ko.observable(view.island().replaceInputItems);
     view.selectedExtraGoodItems = ko.observable(view.island().extraGoodItems);
     view.selectedContractManager = ko.observable(view.island().contractManager);
     view.selectedResidenceEffectView = ko.observable(new ResidenceEffectView([view.island().residenceBuildings[0]]));
@@ -582,7 +569,7 @@ function init(isFirstRun) {
                 break;
             }
     });
-    
+
 
     // store collapsable state of skyline configuration closing and reopening would otherwise restore the default
     view.selectedPopulationLevel.subscribe(() => {
@@ -622,8 +609,7 @@ function init(isFirstRun) {
         consumers: arrayToTemplate("consumers"),
         powerPlants: arrayToTemplate("powerPlants"),
         publicServices: arrayToTemplate("publicServices"),
-        publicRecipeBuildings: arrayToTemplate("publicRecipeBuildings"),
-        buildingMaterialsNeeds: arrayToTemplate("buildingMaterialsNeeds")
+        publicRecipeBuildings: arrayToTemplate("publicRecipeBuildings")
     }
 
     view.viewMode = new ViewMode(isFirstRun);
@@ -690,11 +676,12 @@ function init(isFirstRun) {
 
 
 $(document).ready(function () {
+    var configVersion = localStorage && localStorage.getItem("versionCalculator");
     var isFirstRun = !localStorage || localStorage.getItem("versionCalculator") == null;
 
     // parse the parameters
     for (let attr in locaTexts) {
-        view.texts[attr] =  new NamedElement({ name: attr, locaText: locaTexts[attr] });
+        view.texts[attr] = new NamedElement({ name: attr, locaText: locaTexts[attr] });
     }
 
     // check version of calculator - display update and new feature notification
@@ -703,9 +690,9 @@ $(document).ready(function () {
     //update links of download buttons
     $.getJSON("https://api.github.com/repos/NiHoel/Anno1800UXEnhancer/releases/latest").done((release) => {
         $('#download-calculator-server-button').attr("href", release.assets[0].browser_download_url);
-    });    
+    });
 
-    init(isFirstRun);
+    init(isFirstRun, configVersion);
 
     $('[data-toggle="popover"]').popover();
     installImportConfigListener(); // must occur after template binding
