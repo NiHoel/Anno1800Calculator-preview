@@ -8,7 +8,7 @@ export class Product extends NamedElement {
         super(config);
 
 
-        this.amount = ko.observable(0);
+        //this.amount = ko.observable(0);
 
         this.factories = this.producers.map(p => assetsMap.get(p)).filter(p => !!p);
         this.availableFactories = ko.pureComputed(() => this.factories.filter(f => f.available()));
@@ -18,8 +18,8 @@ export class Product extends NamedElement {
             this.mainFactory = assetsMap.get(this.mainFactory);
 
         if (this.producers && this.factories.length) {
-            this.amount = ko.computed(() => this.factories.map(f => f.amount()).reduce((a, b) => a + b));
-            this.lockDLCIfSet(this.amount); // if routes sum up to exactly zero, usage might still end up at 0.
+            //this.amount = ko.computed(() => this.factories.map(f => f.outputAmount()).reduce((a, b) => a + b));
+            //this.lockDLCIfSet(this.amount); // if routes sum up to exactly zero, usage might still end up at 0.
         }
 
         this.visible = ko.pureComputed(() => this.available());
@@ -75,72 +75,12 @@ export class Demand extends NamedElement {
             this.product.fixedFactory.subscribe(f => this.updateFixedProductFactory(f));
         }
 
-        this.inputAmount = ko.computed(() => {
-            var amount = parseFloat(this.amount());
-
-            var factor = 1;
-
-            if (this.factory() && this.factory().extraGoodFactor)
-                factor = this.factory().extraGoodFactor();
-
-            return amount / factor;
-
-        });
-
-        if (this.consumer)
-            this.consumer.factory.subscribe(() => this.updateFixedProductFactory(this.product.fixedFactory()));
-
-        if (this.product && this.product.differentFactoryInputs) {
-            this.demands = [new FactoryDemandSwitch(this, assetsMap)];
-            this.inputAmount.subscribe(val => this.demands[0].updateAmount(val * this.factor));
-        }
-        else {
-            this.demands = [];
-
-            for (var input of this.factory().getInputs()) {
-                var p = assetsMap.get(input.Product);
-                if (p == null)
-                    continue;
-
-                var d;
-                let items = this.factory().items.filter(item => item.replacements && item.replacements.has(input.Product));
-                if (p.isAbstract) {
-                    if (items.length)
-                        d = new ItemExtraDemand(this, input, items, input.Amount || 1, assetsMap);
-                } else {
-                    if (items.length)
-                        d = new ItemDemandSwitch(this, input, items, input.Amount || 1, assetsMap);
-                    else if (!(assetsMap.get(input.Product) instanceof MetaProduct))
-                        d = new Demand({ guid: input.Product, consumer: this, "factor": input.Amount || 1 }, assetsMap);
-                }
-
-                if (d != null)
-                    this.demands.push(d);
-            }
-
-            this.inputAmount.subscribe(val => {
-                for (var d of this.demands)
-                    d.updateAmount(val);
-            })
-        }
-
-        this.amount.subscribe(val => {
-            this.factory().updateAmount();
-        });
-
-        this.buildings = ko.computed(() => {
-            var factory = this.factory();
-            var factor = factory.extraGoodFactor ? factory.extraGoodFactor() : 1;
-            var buildings = Math.max(0, this.inputAmount()) / factor / factory.tpmin / factory.boost();
-
-            return buildings;
-        }).extend({ deferred: true });
 
     }
 
     updateFixedProductFactory(f) {
         if (f == null && (this.consumer || this.region)) { // find factory in the same region as consumer
-            let region = this.region || this.consumer.factory().region;
+            let region = this.region || this.consumer.region;
             if (region && !(this.product.mainFactory && this.product.mainFactory.region === region)) {
                 for (let fac of this.product.factories) {
                     if (fac.region === region) {
@@ -167,130 +107,6 @@ export class Demand extends NamedElement {
         amount *= this.factor;
         if (Math.abs(this.amount() - amount) >= EPSILON)
             this.amount(amount);
-    }
-}
-
-export class ItemDemandSwitch {
-    constructor(consumer, input, items, factor, assetsMap) {
-        this.items = items;
-        this.factor = factor;
-
-        this.demands = [ // use array index to toggle
-            new Demand({ guid: input.Product, "consumer": consumer }, assetsMap),
-            new Demand({ guid: items[0].replacements.get(input.Product), "consumer": consumer }, assetsMap)
-        ];
-        this.amount = 0;
-
-        this.items.forEach(item => item.checked.subscribe(() => this.updateAmount(this.amount)));
-    }
-
-    updateAmount(amount) {
-        this.amount = amount;
-        amount *= this.factor;
-        this.demands.forEach((d, idx) => {
-            let checked = this.items.map(item => item.checked()).reduce((a, b) => a || b);
-            d.updateAmount(checked == idx ? amount : 0)
-        });
-    }
-
-}
-
-export class ItemExtraDemand {
-    constructor(consumer, input, items, factor, assetsMap) {
-        this.items = items;
-        this.factor = factor;
-
-        this.demand = new Demand({ guid: items[0].replacements.get(input.Product), "consumer": consumer }, assetsMap);
-        this.amount = 0;
-
-        this.items.forEach(item => item.checked.subscribe(() => this.updateAmount(this.amount)));
-    }
-
-    updateAmount(amount) {
-        this.amount = amount;
-        amount *= this.factor
-        let checked = this.items.map(item => item.checked()).reduce((a, b) => a || b);
-        this.demand.updateAmount(checked ? amount : 0)
-    }
-}
-
-export class FactoryDemandSwitch {
-    constructor(consumer, assetsMap) {
-        this.consumer = consumer;
-        this.factory = this.consumer.factory();
-
-        this.demands = [];
-        this.demandsMap = new Map();
-
-        for (var factory of consumer.product.factories) {
-            var factoryDemands = [];
-            for (var input of factory.getInputs()) {
-                var p = assetsMap.get(input.Product);
-                if (p == null)
-                    continue;
-
-                var d;
-                let items = factory.items.filter(item => item.replacements && item.replacements.has(input.Product));
-                if (p.isAbstract) {
-                    if (items.length)
-                        d = new ItemExtraDemand(consumer, input, items, input.Amount || 1, assetsMap);
-                } else {
-                    if (items.length)
-                        d = new ItemDemandSwitch(consumer, input, items, input.Amount || 1, assetsMap);
-                    else
-                        d = new Demand({ guid: input.Product, "consumer": consumer, "factor": input.Amount || 1 }, assetsMap);
-                }
-
-                if (d != null) {
-                    factoryDemands.push(d);
-                    this.demands.push(d);
-                }
-            }
-
-            this.demandsMap.set(factory, factoryDemands);
-
-        }
-
-        this.amount = 0;
-
-        this.consumer.factory.subscribe(factory => this.updateAmount(this.amount));
-    }
-
-    updateAmount(amount) {
-        this.amount = amount;
-        var factory = this.consumer.factory();
-
-        for (var m of ["module", "fertilizerModule"]) {
-            var module = factory[m];
-            var checked = factory[m + "Checked"];
-            if (module && checked() && module.additionalOutputCycle)
-                amount *= module.additionalOutputCycle / (module.additionalOutputCycle + 1);
-        }
-
-        if (factory != this.factory) {
-            for (var d of this.demandsMap.get(this.factory)) {
-                d.updateAmount(0);
-            }
-        }
-
-        this.factory = factory;
-
-
-        for (var d of this.demandsMap.get(factory)) {
-            d.updateAmount(amount);
-        }
-
-    }
-
-}
-
-export class FactoryDemand extends Demand {
-    constructor(config, assetsMap) {
-        super(config, assetsMap);
-        this.factory(config.factory);
-    }
-
-    updateFixedProductFactory() {
     }
 }
 
@@ -343,7 +159,7 @@ export class Item extends NamedElement {
 
 
         this.equipments =
-            this.factories.map(f => new EquippedItem({ item: this, factory: f, locaText: this.locaText, dlcs: config.dlcs }, assetsMap));
+            this.factories.map(f => new EquippedItem({ item: this, factory: f, icon: this.icon, locaText: this.locaText, dlcs: config.dlcs }, assetsMap));
         this.availableEquipments = ko.pureComputed(() => this.equipments.filter(e => e.factory.available()));
 
         this.checked = ko.pureComputed({
@@ -434,7 +250,7 @@ class ExtraGoodProduction {
         this.additionalOutputCycle = config.AdditionalOutputCycle;
         this.Amount = config.Amount;
 
-        this.amount = ko.computed(() => !!this.item.checked() * config.Amount * (this.factory.clipped && this.factory.clipped() ? 2 : 1) * this.factory.outputAmount() / this.additionalOutputCycle);
+        this.amount = ko.computed(() => !!this.item.checked() * config.Amount * (this.factory.clipped && this.factory.clipped() ? 2 : 1) * this.factory.inputAmount() / this.additionalOutputCycle);
 
         for (var f of this.product.factories) {
             f.extraGoodProductionList.entries.push(this);

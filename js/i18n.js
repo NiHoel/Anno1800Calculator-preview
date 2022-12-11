@@ -1065,6 +1065,13 @@ export let options = {
             "korean": "부족한 건물 강조"
         }
     },
+    "utilizeExistingFactories": {
+        "name": "Fully utilize existing factories",
+        "locaText": {
+            "english": "Fully utilize existing factories even when output is not needed",
+            "german": "Vorhandene Fabriken voll auslasten selbst wenn die produzierte Menge nicht benötigt wird"
+        }
+    },
     "consumptionModifier": {
         "name": "Need Consumption",
         "dialog": "good-consumption-island-upgrade-dialog",
@@ -1100,27 +1107,7 @@ export let options = {
             "russian": "Дополнительные товары"
         }
     },
-    /*
-    "contracts": {
-        "name": "Contracts",
-        //guid: 132271
-        "dialog": "contract-management-dialog",
-        "locaText": {
-            "english": "Docklands",
-            //"guid": 410083,
-            "polish": "Okno na świat",
-            "spanish": "Zona portuaria",
-            "taiwanese": "港灣",
-            "german": "Speicherstadt",
-            "chinese": "港湾",
-            "italian": "Area portuale",
-            "korean": "부둣가",
-            "french": "Zone portuaire",
-            "japanese": "港湾地区",
-            "russian": "Доки"
-        }
-    },
-    */
+
     "tradeRoutes": {
         "name": "Trade Routes",
         "dialog": "trade-routes-management-dialog",

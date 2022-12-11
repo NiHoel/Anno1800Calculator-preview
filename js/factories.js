@@ -1,10 +1,10 @@
 // @ts-check
 import { ACCURACY, EPSILON, createIntInput, createFloatInput, NamedElement } from './util.js'
 import { Workforce, WorkforceDemand, WorkforceDemandSwitch } from './population.js'
-import { ExtraGoodProductionList, Demand, ItemDemandSwitch, ItemExtraDemand, FactoryDemand } from './production.js'
+import { ExtraGoodProductionList, Demand} from './production.js'
 import { TradeList, ContractList } from './trade.js'
 
-var ko = require( "knockout" );
+var ko = require("knockout");
 
 export class Consumer extends NamedElement {
     constructor(config, assetsMap, island) {
@@ -15,23 +15,36 @@ export class Consumer extends NamedElement {
         if (config.region)
             this.region = assetsMap.get(config.region);
 
-        this.amount = ko.observable(0);
+        this.items = [];
+        this.inputDemands = new Map();
+
         this.boost = ko.observable(1);
-
         this.editable = ko.observable(false);
-
-        this.demands = new Set();
-        this.buildings = ko.computed(() => Math.max(0, parseFloat(this.amount())) / this.tpmin).extend({ deferred: true });
         this.existingBuildings = createIntInput(0, 0).extend({ deferred: true });
         this.lockDLCIfSet(this.existingBuildings);
-        this.items = [];
 
-        this.outputAmount = ko.computed(() => this.amount());
+        this.useinputAmountByExistingBuildings = ko.observable(true);
+        this.inputAmountByOutput = ko.observable(0);
 
-        this.tradeList = new TradeList(island, this);
+        this.inputAmountByExistingBuildings = ko.computed(() => {
+            return this.existingBuildings() * this.boost() * this.tpmin;
+        });
 
-        if (params.tradeContracts && (!this.island.region || this.island.region.guid == 5000000))
-            this.contractList = new ContractList(island, this);
+        this.inputAmount = ko.pureComputed(() => {
+            var amount = this.inputAmountByOutput();
+            if (this.useinputAmountByExistingBuildings())
+                amount = Math.max(amount, this.inputAmountByExistingBuildings());
+            return amount;
+        });
+        this.inputAmount.subscribe(amount => {
+            for (var d of this.inputDemands.values())
+                d.updateAmount(amount);
+        });
+
+        this.buildings = ko.computed(() => this.inputAmount() / this.tpmin / this.boost()).extend({ deferred: true });
+        this.lockDLCIfSet(this.buildings);
+        
+        this.inputProducts = new Map();
 
         this.notes = ko.observable("");
     }
@@ -40,10 +53,58 @@ export class Consumer extends NamedElement {
         return this.inputs || [];
     }
 
-
     referenceProducts(assetsMap) {
-        this.getInputs().forEach(i => i.product = assetsMap.get(i.Product));
+        if (this.inputs)
+            this.inputs.forEach(i => i.product = assetsMap.get(i.Product));
         this.availableItems = ko.pureComputed(() => this.items.filter(i => i.available()));
+
+        this.inputDemandsSubscription = ko.computed(() => {
+            if (!this.inputs)
+                return;
+
+            var inputs = new Map();
+            this.inputs.forEach(i => { inputs.set(i.Product, i.Amount) });
+            var items = this.items.filter(item => item.replacements).sort((a, b) => a.guid - b.guid);
+            for (var item of items) {
+                if (!item.checked())
+                    continue;
+
+                for (var replacement of item.replacements) {
+                    if (inputs.has(replacement[0])) {
+                        var factor = inputs.get(replacement[0]);
+                        inputs.delete(replacement[0]);
+                        if (replacement[1])
+                            inputs.set(replacement[1], factor);
+                    }
+                }
+            }
+
+            var inputProducts = new Map();
+            for (var guid of inputs.keys()) {
+                var p = assetsMap.get(guid);
+
+                if (p.isAbstract)
+                    continue;
+
+                if (this.inputDemands.has(guid)) {
+                    inputProducts.set(guid, this.inputDemands.get(guid));
+                    this.inputDemands.delete(guid);
+                } else {
+                    var d = new Demand({
+                        guid: guid,
+                        consumer: this,
+                        factor: inputs.get(guid),
+                    }, assetsMap);
+                    d.updateAmount(this.inputAmount());
+                    inputProducts.set(guid, d);
+                }
+            }
+
+            for (var d of this.inputDemands.values())
+                d.factory().remove(d);
+
+            this.inputDemands = inputProducts;
+        });
     }
 
 
@@ -76,42 +137,8 @@ export class Consumer extends NamedElement {
     }
 
     updateAmount() {
-        var sum = 0;
-        this.demands.forEach(d => {
-            var a = d.amount();
-            //            if (a <= -ACCURACY || a > 0)
-            sum += a;
-        });
-
-        if (this.extraDemand && sum + this.extraDemand.amount() < -ACCURACY) {
-            if (sum < 0) {
-                this.extraDemand.updateAmount(0);
-                this.amount(0);
-            } else {
-
-                this.extraDemand.updateAmount(-sum);
-            }
-        }
-        else {
-            var val = Math.max(0, sum);
-            if (val < 1e-16)
-                val = 0;
-            this.amount(val);
-        }
 
     }
-
-
-    add(demand) {
-        this.demands.add(demand);
-        this.updateAmount();
-    }
-
-    remove(demand) {
-        this.demands.delete(demand);
-        this.updateAmount();
-    }
-
 }
 
 export class Module extends Consumer {
@@ -129,13 +156,6 @@ export class PublicConsumerBuilding extends Consumer {
 
         this.needs = [];
 
-        this.existingBuildings.subscribe(b => {
-            this.amount(b * this.tpmin);
-
-            for (var d of this.needs)
-                d.updateAmount(this.amount());
-        });
-
         this.visible = ko.computed(() => {
             if (!this.available())
                 return false;
@@ -145,33 +165,6 @@ export class PublicConsumerBuilding extends Consumer {
 
             return true;
         });
-    }
-
-    referenceProducts(assetsMap) {
-        super.referenceProducts(assetsMap);
-
-        this.needs = [];
-
-        for (var input of this.getInputs()) {
-            var p = assetsMap.get(input.Product);
-            if (p == null)
-                continue;
-
-            var d;
-            let items = this.items.filter(item => item.replacements && item.replacements.has(input.Product));
-            if (p.isAbstract) {
-                if (items.length)
-                    d = new ItemExtraDemand({ factory: ko.observable(this) }, input, items, input.Amount || 1, assetsMap);
-            } else {
-                if (items.length)
-                    d = new ItemDemandSwitch({ factory: ko.observable(this) }, input, items, input.Amount || 1, assetsMap);
-                else
-                    d = new Demand({ guid: input.Product, consumer: { factory: ko.observable(this) }, "factor": input.Amount || 1 }, assetsMap);
-            }
-
-            if (d != null)
-                this.needs.push(d);
-        }
     }
 }
 
@@ -186,11 +179,74 @@ export class PalaceBuff extends NamedElement {
 export class Factory extends Consumer {
     constructor(config, assetsMap, island) {
         super(config, assetsMap, island);
-
         this.isFactory = true;
 
-        this.extraAmount = createFloatInput(0).extend({ deferred: true });
+        this.demands = ko.observableArray([]);
+
+        this.tradeList = new TradeList(island, this);
+
+        if (params.tradeContracts && (!this.island.region || this.island.region.guid == 5000000))
+            this.contractList = new ContractList(island, this);
+
         this.extraGoodProductionList = new ExtraGoodProductionList(this);
+
+        // use the history to break the cycle: extra good (lumberjack) -> building materials need (timber) -> production (sawmill) -> production (lumberjack)
+        // that cycles between two values by adding a damper
+        // [[prev val, timestamp], [prev prev val, timestamp]]
+        this.extraGoodProductionHistory = [];
+        this.extraGoodProductionAmount = ko.pureComputed(() => {
+            var val = this.extraGoodProductionList.checked() ?  this.extraGoodProductionList.amount() : 0;
+
+
+            if (this.extraGoodProductionHistory.length && Math.abs(val - this.extraGoodProductionHistory[0][0]) < ACCURACY)
+                return this.extraGoodProductionHistory[0][0];
+
+            var time = new Date();
+
+            if (this.extraGoodProductionHistory.length >= 2) {
+                // after initialization, we have this.extraGoodProductionHistory = [val, 0]
+                // when the user manually sets it to 0, the wrong value is propagated
+                // restrict to cycles triggered by automatic updates, i.e. update interval < 200 ms
+                if (Math.abs(this.extraGoodProductionHistory[1][0] - val) < ACCURACY && this.extraGoodProductionHistory[1][0] !== 0 && time - this.extraGoodProductionHistory[1][1] < 200)
+                    val = (val + this.extraGoodProductionHistory[0][0]) / 2;
+            }
+
+            this.extraGoodProductionHistory.unshift([val, time]);
+            if (this.extraGoodProductionHistory.length > 2)
+                this.extraGoodProductionHistory.pop();
+            return val;
+        });
+
+        this.totalDemands = ko.pureComputed(() => {
+            var sum = 0;
+            this.demands().forEach(d => {
+                sum += d.amount();
+            });
+
+            sum += this.tradeList.inputAmount();
+
+            if (this.contractList)
+                sum += this.contractList.inputAmount();
+
+            return sum;
+        });
+
+        this.externalProduction = ko.pureComputed(() => {
+            var sum = 0;
+
+            sum += this.tradeList.inputAmount();
+            sum += this.extraGoodProductionAmount();
+
+            if (this.contractList)
+                sum += this.contractList.inputAmount();
+
+            return sum;
+        });
+
+        this.outputAmount = ko.pureComputed(() => {
+            var diff = this.totalDemands() - this.externalProduction();
+            return diff > EPSILON ? diff : 0;
+        });
 
         this.percentBoost = createIntInput(100, 1);
         this.boost = ko.computed(() => parseInt(this.percentBoost()) / 100);
@@ -216,6 +272,7 @@ export class Factory extends Consumer {
                         this.workforceDemand.percentBoost(Math.max(0, this.workforceDemand.percentBoost() - workforceUpgrade));
                 }
             });
+            this.moduleExtraGoods = ko.pureComputed(() => this.moduleChecked() ? this.inputAmount() / this.module.additionalOutputCycle : 0);
             //moduleDemand created in island constructor after referencing products
         }
 
@@ -231,6 +288,7 @@ export class Factory extends Consumer {
                     this.percentBoost(val);
                 }
             });
+            this.fertilizerModuleExtraGoods = ko.pureComputed(() => this.fertilizerModuleChecked() ? this.inputAmount() / this.fertilizerModule.additionalOutputCycle : 0);
             //fertilizerModuleDemand created in island constructor after referencing products
         }
 
@@ -239,9 +297,11 @@ export class Factory extends Consumer {
             this.palaceBuffChecked = ko.observable(false);
             this.palaceBuff.lockDLCIfSet(this.palaceBuffChecked);
 
-            this.buffAmount = ko.computed(() => {
+            this.palaceBuffExtraGoods = ko.pureComputed(() => {
+                if (!this.palaceBuffChecked())
+                    return 0;
                 var f = this.clipped && this.clipped() && this.palaceBuff.guid !== 191141 ? 2 : 1;
-                return f * this.outputAmount() / this.palaceBuff.additionalOutputCycle;
+                return f * this.inputAmount() / this.palaceBuff.additionalOutputCycle;
             });
         }
 
@@ -267,101 +327,31 @@ export class Factory extends Consumer {
             return factor;
         });
 
-        this.requiredOutputAmount = ko.computed(() => {
-            var amount = Math.max(0, parseFloat(this.amount() + parseFloat(this.extraAmount())));
-            return amount / this.extraGoodFactor();
+        this.requiredInputAmountSubscription = ko.computed(() => {
+            this.inputAmountByOutput(this.outputAmount() / this.extraGoodFactor());
         });
 
-        this.producedOutputAmount = ko.computed(() => {
-            return this.existingBuildings() * this.boost() * this.tpmin;
+        this.useInputAmountByExistingBuildingsSubscription = ko.computed(() => {
+            this.useinputAmountByExistingBuildings(this.editable() || view.settings.utilizeExistingFactories.checked());
         });
-
-        this.outputAmount = ko.computed(() => Math.max(this.requiredOutputAmount(), this.producedOutputAmount()));
-
-        this.buildings = ko.computed(() => {
-            var buildings = this.requiredOutputAmount() / this.tpmin / this.boost();
-
-            for (var m of ["module", "fertilizerModule"]) {
-                var module = this[m];
-                var checked = this[m + "Checked"];
-                var demand = this[m + "Demand"];
-
-                if (demand)
-                    if (checked())
-                        demand.updateAmount(Math.max(Math.ceil(buildings), this.existingBuildings()) * module.tpmin);
-                    else
-                        demand.updateAmount(0);
-            }
-
-            return buildings;
-        }).extend({ deferred: true });
-        this.lockDLCIfSet(this.buildings);
+        
 
         if (this.workforceDemand)
             this.buildings.subscribe(val => this.workforceDemand.updateAmount(Math.max(val, this.buildings())));
 
-        // use the history to break the cycle: extra good (lumberjack) -> building materials need (timber) -> production (sawmill) -> production (lumberjack)
-        // that cycles between two values by adding a damper
-        // [[prev val, timestamp], [prev prev val, timestamp]]
-        this.computedExtraAmountHistory = [];
-        this.computedExtraAmount = ko.computed(() => {
-            var val = (this.extraGoodProductionList.checked() ? - this.extraGoodProductionList.amount() : 0) +
-                this.tradeList.amount() +
-                (this.contractList ? this.contractList.amount() : 0);
 
+        this.overProduction = ko.pureComputed(() => Math.max(0, (this.inputAmountByExistingBuildings() - this.inputAmountByOutput()) * this.extraGoodFactor()));
 
-            if (this.computedExtraAmountHistory.length && Math.abs(val - this.computedExtraAmountHistory[0][0]) < ACCURACY)
-                return this.computedExtraAmountHistory[0][0];
-
-            var time = new Date();
-
-            if (this.computedExtraAmountHistory.length >= 2) {
-                // after initialization, we have this.computedExtraAmountHistory = [val, 0]
-                // when the user manually sets it to 0, the wrong value is propagated
-                // restrict to cycles triggered by automatic updates, i.e. update interval < 200 ms
-                if (Math.abs(this.computedExtraAmountHistory[1][0] - val) < ACCURACY && this.computedExtraAmountHistory[1][0] !== 0 && time - this.computedExtraAmountHistory[1][1] < 200)
-                    val = (val + this.computedExtraAmountHistory[0][0]) / 2;
-            }
-
-            this.computedExtraAmountHistory.unshift([val, time]);
-            if (this.computedExtraAmountHistory.length > 2)
-                this.computedExtraAmountHistory.pop();
-            return val;
-        });
-
-        this.computedExtraAmount.subscribe(() => {
-            if (view.settings.autoApplyExtraNeed.checked())
-                setTimeout(() => this.updateExtraGoods(), 10);
-        });
-
-        this.amount.subscribe(() => {
-            if (view.settings.autoApplyExtraNeed.checked() && this.computedExtraAmount() < 0 && this.computedExtraAmount() + ACCURACY < this.extraAmount())
-                setTimeout(() => this.updateExtraGoods(), 10);
-        });
-
-        this.overProduction = ko.computed(() => {
-            var val = 0;
-
-            if (this.buildingMaterialsNeed && this.buildingMaterialsNeed.amount() > 0) {
-                return this.buildingMaterialsNeed.amount();
-            }
-
-            if (view.settings.missingBuildingsHighlight.checked() || this.editable())
-                var val = this.existingBuildings() * this.boost() * this.tpmin * this.extraGoodFactor();
-
-            return val - this.amount() - this.extraAmount();
-        });
 
         this.visible = ko.computed(() => {
             if (!this.available())
                 return false;
 
-            if (Math.abs(this.amount()) > EPSILON ||
-                Math.abs(this.extraAmount()) > EPSILON ||
+            if (Math.abs(this.inputAmount()) > EPSILON ||
+                this.totalDemands() > EPSILON ||
+                this.externalProduction() > EPSILON ||
                 this.existingBuildings() > 0 ||
-                !this.island.isAllIslands() && Math.abs(this.extraGoodProductionList.amount()) > EPSILON ||
-                Math.abs(this.tradeList.amount()) > EPSILON ||
-                this.contractList && Math.abs(this.contractList.amount()) > EPSILON)
+                this.extraGoodProductionAmount() > EPSILON)
                 return true;
 
             if (this.region && this.island.region && this.region != this.island.region)
@@ -397,15 +387,41 @@ export class Factory extends Consumer {
         if (!this.icon)
             this.icon = this.product.icon;
 
-        this.extraDemand = new FactoryDemand({ factory: this, guid: this.product.guid }, assetsMap);
-        this.extraAmountSubscription = ko.computed(() => {
-            let amount = parseFloat(this.amount());
-            let val = this.extraAmount();
-            if (val < -Math.ceil(amount * 100) / 100)
-                this.extraAmount(- Math.ceil(amount * 100) / 100);
-            else
-                this.extraDemand.updateAmount(Math.max(val, -amount));
+        for (var m of ["module", "fertilizerModule"]) {
+            var module = this[m];
+
+            if (module) {
+                this[m + "Demand"] = new Demand({ guid: module.getInputs()[0].Product, consumer: this }, assetsMap);
+            }
+        }
+
+        this.buildingSubscription = ko.computed(() => {
+            var b = Math.ceil(this.buildings() - ACCURACY);
+
+            if (view.settings.utilizeExistingFactories.checked())
+                b = Math.max(b, this.existingBuildings());
+
+            if (this.workforceDemand)
+                this.workforceDemand.updateAmount(b);
+
+            for (var m of ["module", "fertilizerModule"]) {
+                var module = this[m];
+                var checked = this[m + "Checked"];
+                var demand = this[m + "Demand"];
+
+                if (module)
+                    if (checked())
+                        demand.updateAmount(b * module.tpmin);
+                    else
+                        demand.updateAmount(0);
+            }
         });
+
+        // add extra goods only to fixed factory
+        if(this.extraGoodProductionList)
+            this.extraGoodsSubscription = ko.computed(() => {
+                this.extraGoodProductionList.checked(this.product.fixedFactory() == this);
+            });
     }
 
     getProduct() {
@@ -447,32 +463,14 @@ export class Factory extends Consumer {
         this.percentBoost(parseInt(this.percentBoost()) - 1);
     }
 
-    updateExtraGoods(depth) {
-        var val = this.computedExtraAmount();
-        var amount = this.amount();
-        if (val < -Math.ceil(amount * 100) / 100)
-            val = - Math.ceil(amount * 100) / 100;
+    add(demand) {
+        this.demands.push(demand);
+        this.updateAmount();
+    }
 
-        if (Math.abs(val - this.extraAmount()) < ACCURACY)
-            return;
-
-        this.extraAmount(val);
-
-        if (depth > 0) {
-            for (var route of this.tradeList.routes()) {
-                route.getOppositeFactory(this).updateExtraGoods(depth - 1);
-            }
-
-            if (this.contractList) {
-                for (var contract of this.contractList.exports()) {
-                    contract.importFactory.updateExtraGoods(depth - 1);
-                }
-
-                for (var contract of this.contractList.imports()) {
-                    contract.exportFactory.updateExtraGoods(depth - 1);
-                }
-            }
-        }
+    remove(demand) {
+        this.demands.remove(demand);
+        this.updateAmount();
     }
 
     applyConfigGlobally() {

@@ -2,7 +2,7 @@
 import { ACCURACY } from './util.js'
 import { PopulationLevel, Workforce } from './population.js'
 import { PopulationNeed, ResidenceEffect, ResidenceEffectCoverage } from './consumption.js'
-import { ProductCategory, Product, Demand, ItemDemandSwitch, FactoryDemandSwitch, ItemExtraDemand } from './production.js'
+import { ProductCategory, Product, Demand } from './production.js'
 import { Factory } from './factories.js'
 
 var ko = require( "knockout" );
@@ -183,7 +183,7 @@ export class ProductionChainView {
     constructor(f) {
         //this.factoryToDemands = new Map();
         this.tree = ko.computed(() => {
-            let traverse = (d, node) => {
+/*         let traverse = (d, node) => {
                 if (d.factory && d.amount) {
                     var a = ko.isObservable(d.amount) ? parseFloat(d.amount()) : parseFloat(d.amount);
                     var f = ko.isObservable(d.factory) ? d.factory() : d.factory;
@@ -280,6 +280,8 @@ export class ProductionChainView {
             processNode(root);
 
             return root;
+            */
+            return null;
         });
     }
 }

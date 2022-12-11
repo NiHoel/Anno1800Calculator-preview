@@ -71,19 +71,29 @@ export class TradeList {
                 this.npcRoutes = traders.map(t => new NPCTradeRoute($.extend({}, t, { to: island, toFactory: factory })));
         }
 
-        this.amount = ko.computed(() => {
+        this.inputAmount = ko.pureComputed(() => {
             var amount = 0;
-
-            for (var route of (this.npcRoutes || [])) {
-                amount -= route.checked() ? route.amount : 0;
-            }
-
-            for (var route of this.routes()) {
-                amount += (route.isExport(this) ? 1 : -1) * route.amount();
-            }
+            for (var route of this.routes())
+                if(route.isExport(this))
+                    amount += route.amount();
 
             return amount;
         });
+
+        this.outputAmount = ko.pureComputed(() => {
+            var amount = 0;
+
+            for (var route of (this.npcRoutes || []))
+                amount += route.checked() ? route.amount : 0;
+
+            for (var route of this.routes())
+                if (!route.isExport(this))
+                    amount += route.amount();
+
+            return amount;
+        });
+
+        this.amount = ko.pureComputed(() => this.inputAmount() - this.outputAmount());
 
         // interface elements to create a new route
         this.unusedIslands = ko.observableArray();
@@ -149,8 +159,7 @@ export class TradeList {
             }
         });
         var overProduction = this.factory.overProduction();
-        if (overProduction == 0)
-            overProduction = -this.factory.computedExtraAmount();
+
         this.export(overProduction > 0);
         this.newAmount(Math.abs(overProduction));
 
@@ -350,21 +359,25 @@ export class ContractList {
         this.imports = ko.observableArray();
         this.exports = ko.observableArray();
 
-
-        this.amount = ko.computed(() => {
+        this.inputAmount = ko.pureComputed(() => {
             var amount = 0;
 
-            for (var contract of this.imports()) {
-                amount -= contract.importAmount();
-            }
-
-            for (var contract of this.exports()) {
+            for (var contract of this.exports())
                 amount += contract.exportAmount();
-            }
 
             return amount;
         });
 
+        this.outputAmount = ko.pureComputed(() => {
+            var amount = 0;
+
+            for (var contract of this.imports())
+                amount += contract.importAmount();
+
+            return amount;
+        })
+
+        this.amount = ko.pureComputed(() => this.inputAmount() - this.outputAmount());
     }
 }
 
@@ -831,8 +844,7 @@ export class ContractCreatorFactory {
                 return;
 
             var overProduction = f.overProduction();
-            if (overProduction == 0)
-                overProduction = -f.computedExtraAmount();
+
 
             if (!f.contractList.island.isAllIslands() && f.contractList.exports().length) {
                 this.export(true);

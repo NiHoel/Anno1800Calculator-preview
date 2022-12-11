@@ -79,15 +79,9 @@
             </div>
 
             <!-- amount -->
-            <div data-bind="if: !$root.settings.simpleView.checked()">
+            <div>
                 <div class="ui-fchain-item-amount" href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
-                    <div class="ui-fchain-item-load"><span data-bind="text: formatNumber($data.instance().amount())"></span><span> t/min</span></div>
-
-                </div>
-            </div>
-            <div data-bind="if: $root.settings.simpleView.checked()">
-                <div class="ui-fchain-item-amount" href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
-                    <div class="ui-fchain-item-load"><span data-bind="text: formatNumber($data.instance().outputAmount() * $data.instance().extraGoodFactor())"></span><span> t/min</span></div>
+                    <div class="ui-fchain-item-load"><span data-bind="text: formatNumber($data.instance().outputAmount())"></span><span> t/min</span></div>
 
                 </div>
             </div>
@@ -136,29 +130,7 @@
                 <div style="flex: 100 1 auto;"></div>
             </div>
         </div>
-        <div data-bind="if: !$root.settings.simpleView.checked()">
-            <div class="ui-fchain-item-load" data-bind="visible: $root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked() || $root.dlcsMap.get('dlc7').checked()">
-                <div class="ui-fchain-item-extra-input">
-                    <div class="input-group input-group-sm spinner mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">+ </span>
-                            <span data-bind="visible: $data.instance().extraAmount() < -ACCURACY  + $data.instance().computedExtraAmount()">
-                                <span class="fa fa-exclamation-triangle danger-icon"></span>
-                            </span>
-                        </div>
-                        <input step="0.1" class="form-control" type="number" value="0" data-bind="value: $data.instance().extraAmount, attr: {id: $data.guid + '-extraAmount-input'}" />
-                        <div class="input-group-append">
-                            <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.instance().extraAmount, id: $data.guid + '-extraAmount-input' }}"></div>
-                        </div>
-                    </div>
-                </div>
-                <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.outputAmount.name}" style="border-top-color: inherit; border-top-style: solid; border-top-width: 1px;">
-                    <div class="ui-fchain-item-load"><span data-bind="text: formatNumber($data.instance().outputAmount())"></span><span> t/min</span></div>
-                </div>
-
-            </div>
-
-        </div>
+        
     </div>
 
 </div>

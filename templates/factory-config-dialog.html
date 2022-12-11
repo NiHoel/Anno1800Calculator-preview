@@ -14,14 +14,8 @@
                             <tr>
                                 <td>
                                     <div class="inline-list">
-                                        <span class="custom-control custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: 'fc-' + $data.factory.guid + '-' + $data.item.guid + '-equipped' }">
-                                            <label class="custom-control-label" data-bind="attr: { for: 'fc-' + $data.factory.guid + '-' + $data.item.guid + '-equipped', title: $data.factory.getRegionExtendedName() }" src-only style="vertical-align: top;">
-
-                                            </label>
-                                        </span>
-                                        <img class="icon-sm" class="mr-2" src="../icons/icon_marketplace_2d_light.png" data-bind="attr: { src: $data.item.icon ? $data.item.icon : null}"><!-- item icon -->
-                                        <span data-bind="text: $data.name"></span> <!-- item name -->
+                                        <div data-bind="component: {name: 'icon-checkbox', params: {asset: $data.item, checked: $data.checked, id: 'fc-' + $data.factory.guid + '-' + $data.item.guid + '-equipped'}}"></div>
+                                        <span class="ml-1" data-bind="text: $data.name"></span> <!-- item name -->
                                     </div>
                                 </td>
                                 <td>
@@ -32,7 +26,7 @@
                                             <span style="flex: 100 1 auto;"></span>
 
                                             <span style="flex: auto;" daba-bind="visible: $data.product.visible()">
-                                                <img class="icon-sm" src="../icons/icon_marketplace_2d_light.png" data-bind="attr: { src: $data.product.icon ? $data.product.icon  : null, alt: $data.product.name}" />
+                                                <img class="icon-sm" data-bind="attr: { src: $data.product.icon ? $data.product.icon  : null, alt: $data.product.name }" />
                                             </span>
 
                                             <span style="flex: 100 1 auto;"></span>
@@ -41,28 +35,12 @@
                                     <!-- input replacements -->
                                     <div data-bind="if: $data.replacementArray">
                                         <div data-bind="foreach: $data.replacementArray">
-                                            <div class="ui-fchain-item-icon-replacement">
-                                                <span class="strike-through">
-                                                    <img src="../icons/icon_marketplace_2d_light.png" data-bind="attr: { src: $data.old.icon ? $data.old.icon : null, alt: $data.old.name }" width="30" height="30">
-                                                </span>
-                                                <div class="ui-replacement-spacer">
-                                                    →
-                                                </div>
-                                                <img src="../icons/icon_marketplace_2d_light.png" data-bind="attr: { src: $data.new.icon ? $data.new.icon : null, alt: $data.new.name }" width="30" height="30">
-                                            </div>
+                                            <div data-bind="component: {name: 'replacement', params: {old: $data.old, new: $data.new}}"></div>
                                         </div>
                                     </div>
                                     <!-- workforce replacement -->
                                     <div data-bind="if: $data.replacingWorkforce && $parent.workforceDemand.isSwitch">
-                                        <div class="ui-fchain-item-icon-replacement">
-                                            <span class="strike-through">
-                                                <img src="../icons/icon_marketplace_2d_light.png" data-bind="attr: { src: $parent.workforceDemand.defaultWorkforce.icon ? $parent.workforceDemand.defaultWorkforce.icon : null, alt: $parent.workforceDemand.defaultWorkforce.name }" width="30" height="30">
-                                            </span>
-                                            <div class="ui-replacement-spacer">
-                                                →
-                                            </div>
-                                            <img src="../icons/icon_marketplace_2d_light.png" data-bind="attr: { src: $parent.workforceDemand.replacingWorkforce.icon ? $parent.workforceDemand.replacingWorkforce.icon : null, alt: $parent.workforceDemand.replacingWorkforce.name }" width="30" height="30">
-                                        </div>
+                                        <div data-bind="component: {name: 'replacement', params: {old: $parent.workforceDemand.defaultWorkforce, new: $parent.workforceDemand.replacingWorkforce}}"></div>
                                     </div>
                                 </td>
                             </tr>
@@ -81,7 +59,7 @@
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $data.trader.guid + '-npcRoute-checked' }">
                                 <label class="custom-control-label" data-bind="attr: { for: $data.trader.guid + '-npcRoute-checked' }" src-only style="vertical-align: top;">
-                                    <img class="icon-sm" src="../icons/icon_marketplace_2d_light.png" data-bind="attr:{src: $data.trader.icon}" />
+                                    <img class="icon-sm" data-bind="attr:{src: $data.trader.icon}" />
                                     <span data-bind="text: $data.trader.name"></span>
                                 </label>
                             </div>
@@ -97,7 +75,7 @@
                                 <tr>
                                     <td>
                                         <span data-bind="if: $data.getOpposite($parent).session">
-                                            <img src="../icons/icon_marketplace_2d_light.png" class="icon-sm icon-light" data-bind="attr: {src: $data.getOpposite($parent).session.icon}" />
+                                            <img class="icon-sm icon-light" data-bind="attr: {src: $data.getOpposite($parent).session.icon}" />
                                         </span>
                                         <a href="#" data-bind="text: $data.getOpposite($parent).name, click: () => {$root.selectedFactory($data.getOppositeFactory($parent.factory)); $root.island($data.getOpposite($parent))}"></a>
                                     </td> <!-- island name -->
@@ -110,7 +88,7 @@
                                             <span data-bind="if: !$data.top5Factories().length">0</span>
                                             <span data-bind="foreach: $data.top5Factories" style="display: flex; flex-flow: wrap; justify-content: center">
                                                 <span class="mr-1">
-                                                    <img src="../icons/icon_marketplace_2d_light.png" width="25" height="25" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
+                                                    <img  width="25" height="25" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
 
                                                 </span>
                                                 <span class="mr-3" data-bind="text: $root.settings.missingBuildingsHighlight.checked() ? $data.existingBuildings() : Math.ceil($data.buildings())"></span>
@@ -222,7 +200,7 @@
                                                         <img class="icon-sm icon-light" src="../icons/icon_transporter_loading_light.png" />
 
                                                         <a href="#" data-bind="click: () => {$root.selectedFactory($data.importFactory)}, attr: {title: $data.importFactory.name()}" style="margin: 0 0.25rem;">
-                                                            <img class="icon-sm" src="../icons/icon_marketplace_2d_light.png" data-bind="attr: { src: $data.importFactory.icon ? $data.importFactory.icon : null, alt: $data.importFactory.name}">
+                                                            <img class="icon-sm" data-bind="attr: { src: $data.importFactory.icon ? $data.importFactory.icon : null, alt: $data.importFactory.name}">
                                                         </a>
                                                     </span>
                                                 </div>
@@ -250,7 +228,7 @@
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text">
                                                         <img class="icon-sm icon-light" src="../icons/icon_transporter_unloading_light.png" />
-                                                        <img class="icon-sm" src="../icons/icon_marketplace_2d_light.png" data-bind="attr: { src: $data.exportFactory.icon ? $data.exportFactory.icon : null, alt: $data.exportFactory.name}" style="margin: 0 0.25rem;">
+                                                        <img class="icon-sm" data-bind="attr: { src: $data.exportFactory.icon ? $data.exportFactory.icon : null, alt: $data.exportFactory.name}" style="margin: 0 0.25rem;">
 
                                                     </span>
                                                 </div>
@@ -283,7 +261,7 @@
                                                     <span class="input-group-text">
                                                         <img class="icon-sm icon-light" src="../icons/icon_transporter_unloading_light.png" />
                                                         <a href="#" data-bind="click: () => {$root.selectedFactory($data.exportFactory)}, attr: {title: $data.exportFactory.name()}" style="margin: 0 0.25rem;">
-                                                            <img class="icon-sm" src="../icons/icon_marketplace_2d_light.png" data-bind="attr: { src: $data.exportFactory.icon ? $data.exportFactory.icon : null, alt: $data.exportFactory.name}">
+                                                            <img class="icon-sm" data-bind="attr: { src: $data.exportFactory.icon ? $data.exportFactory.icon : null, alt: $data.exportFactory.name}">
                                                         </a>
                                                     </span>
                                                     <span data-bind="if: $root.settings.missingBuildingsHighlight.checked() && $data.exportFactory.overProduction() < -ACCURACY">
@@ -314,7 +292,7 @@
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text">
                                                         <img class="icon-sm icon-light" src="../icons/icon_transporter_loading_light.png" />
-                                                        <img class="icon-sm" src="../icons/icon_marketplace_2d_light.png" data-bind="attr: { src: $data.importFactory.icon ? $data.importFactory.icon : null, alt: $data.importFactory.name}" style="margin: 0 0.25rem;">
+                                                        <img class="icon-sm" data-bind="attr: { src: $data.importFactory.icon ? $data.importFactory.icon : null, alt: $data.importFactory.name}" style="margin: 0 0.25rem;">
                                                     </span>
                                                 </div>
                                                 <input step="0.1" min="0" class="form-control" type="number" value="0" data-bind="value: importAmount, attr: {id: $data.exportFactory.guid + '-import-contract-import-amount-input' } " />
@@ -380,7 +358,7 @@
                             <div class="input-group input-group-short spinner input-transfer-amount">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">
-                                        <img class="icon-sm" src="../icons/icon_marketplace_2d_light.png" data-bind="attr: { src: $root.selectedFactory().icon ? $root.selectedFactory().icon : null, alt:$root.selectedFactory().name}" style="margin: 0 0.25rem;">
+                                        <img class="icon-sm" data-bind="attr: { src: $root.selectedFactory().icon ? $root.selectedFactory().icon : null, alt:$root.selectedFactory().name}" style="margin: 0 0.25rem;">
                                     </span>
                                 </div>
                                 <input step="0.1" class="form-control" type="number" value="0" data-bind="value: newAmount, attr: {id: 'factory-new-contract-amount-input' }" />
@@ -394,73 +372,38 @@
                                 <span class="fa fa-plus"></span>
                             </button>
                         </form>
-
                         <hr />
-                    </div>
-                </div>
-
-                <div data-bind="if: !$root.settings.simpleView.checked() && $data.isFactory && ($root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked() || $data.contractList && $root.dlcsMap.get('dlc7').checked())">
-                    <div class="inline-list-stretched" style="padding: .75rem;">
-                        <div data-bind="if: $root.settings.tradeRoutes.checked()">
-                            <span class="mr-3" data-bind="text: $root.settings.tradeRoutes.name"></span>
-                            <span data-bind="text: formatNumber(-$data.tradeList.amount())"></span>
-                            <span class="mr-3"> t/min</span>
-                        </div>
-                        <div data-bind="if: $data.contractList && $root.dlcsMap.get('dlc7').checked()">
-                            <span class="mr-3" data-bind="text: $root.texts.docklands.name"></span>
-                            <span data-bind="text: formatNumber(-$data.contractList.amount())"></span>
-                            <span class="mr-3"> t/min</span>
-                        </div>
-                        <div data-bind="if: $root.settings.additionalProduction.checked()">
-                            <span class="custom-control custom-checkbox" style="display:unset">
-                                <input type="checkbox" class="custom-control-input" data-bind="checked: $data.extraGoodProductionList.checked, attr: { id: $data.guid + '-extraGoodProductionList-checked' }">
-                                <label class="custom-control-label" data-bind="attr: { for: $data.guid + '-extraGoodProductionList-checked' }, text: $root.texts.extraGoods.name" src-only style="vertical-align: top;">
-
-                                </label>
-                            </span>
-                            <span data-bind="text: formatNumber($data.extraGoodProductionList.amountWithSelf())"></span>
-                            <span class="mr-3"> t/min</span>
-                        </div>
-                        <div>
-                            <button class="btn btn-sm btn-light" data-bind="click: () => $data.updateExtraGoods(1), enable: $data.amount() || $data.extraGoodProductionList.amount() || $data.tradeList.amount() || $data.contractList && $data.contractList.amount()">
-                                <span data-bind="text: $root.texts.apply.name">Apply</span>
-                            </button>
-                        </div>
                     </div>
                 </div>
                 <table class="table table-striped">
                     <tbody>
-                        <tr data-bind="if: !$root.settings.simpleView.checked() && $data.isFactory && ($root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked() || $data.contractList && $root.dlcsMap.get('dlc7').checked())">
-                            <!-- extra goods -->
+                        <tr>
+                            <!-- existing buildings and boost -->
                             <td>
-                                <span data-bind="text: $root.texts.extraNeed.name"></span>
-                            </td>
-                            <td>
+                                <div class="inline-list-stretched">
 
-
-                                <div class="float-right">
-                                    <span data-bind="if: $data.extraAmount() < -ACCURACY + $data.computedExtraAmount()">
-                                        <span class="fa fa-exclamation-triangle danger-icon"></span>
-                                    </span>
-                                    <div class="input-group input-group-short spinner">
-                                        <input step="0.1" class="form-control" type="number" value="0" data-bind="value: extraAmount, attr: {id: $data.guid + '-extraAmount-input'} " />
-                                        <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.extraAmount, id: $data.guid + '-extraAmount-input' }}"></div>
+                                    <div data-bind="if: $data.editable() || $root.settings.missingBuildingsHighlight.checked() && (!$data.region || !$data.island.region || $data.region === $data.island.region) ">
+                                        <div data-bind="component: { name: 'existing-buildings-input', params: $data}"></div>
                                     </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr data-bind="if: $data.percentBoost">
-                            <!-- boost -->
-                            <td>
-                                <span data-bind="text: $root.texts.productionBoost.name"></span>
-                            </td>
-                            <td>
-                                <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.productionBoost.name}">
-                                    <div class="input-group input-group-short spinner">
-                                        <input class="form-control" type="number" value="100" step="1" min="1" data-bind="value: percentBoost, attr: {id: $data.guid + '-percentBoost-input'}" />
-                                        <div class="input-group-append">
-                                            <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.percentBoost, id: $data.guid + '-percentBoost-input' }}"></div>
-                                            <span class="input-group-text">%</span>
+                                    <div data-bind="if: !!$data.clipped">
+                                        <div class="custom-control custom-checkbox" data-bind="visible: !!$data.clipped">
+                                            <input type="checkbox" class="custom-control-input" data-bind="checked: $data.clipped, attr: { id: $data.guid + '-clipped' }">
+                                            <label class="custom-control-label" data-bind="attr: { for: $data.guid + '-clipped', title: 'Clipping' }" src-only>
+                                                Clipping
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div href="#" data-toggle="tooltip" data-bind="if: $data.percentBoost, attr: {'title' : $root.texts.productionBoost.name}">
+                                        <div class="input-group input-group spinner" style="max-width: 50%">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text" data-bind="text:$root.texts.productionBoost.name ">
+                                                </div>
+                                            </div>
+                                            <input class="form-control" type="number" value="100" step="1" min="1" data-bind="value: percentBoost, attr: {id: $data.guid + '-percentBoost-input'}" />
+                                            <div class="input-group-append">
+                                                <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.percentBoost, id: $data.guid + '-percentBoost-input' }}"></div>
+                                                <span class="input-group-text">%</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -469,10 +412,8 @@
                         <tr data-bind="with: $data.workforceDemand">
                             <!-- workforce -->
                             <td>
-                                <span data-bind="text: $root.texts.workforce.name"></span>
-                            </td>
-                            <td>
                                 <div class="inline-list-stretched">
+                                    <span data-bind="text: $root.texts.workforce.name"></span>
                                     <div class="input-group input-group-short spinner">
                                         <input class="form-control" type="number" value="100" step="10" min="0" data-bind="value: percentBoost, attr: {id: $parent.guid + '-workforcePercentBoost-input'}" />
                                         <div class="input-group-append">
@@ -483,180 +424,76 @@
                                     <div>
 
                                         <span data-bind="text: formatNumber($data.amount())"></span>
-                                        <img class="mr-2 icon-sm" src="../icons/icon_marketplace_2d_light.png" data-bind="attr: { src: $data.workforce().icon ? $data.workforce().icon : null, alt: $data.workforce().name}">
+                                        <img class="mr-2 icon-sm" data-bind="attr: { src: $data.workforce().icon ? $data.workforce().icon : null, alt: $data.workforce().name}">
                                     </div>
                                 </div>
-
-                            </td>
-                        </tr>
-                        <tr data-bind="if: $data.editable() || $root.settings.missingBuildingsHighlight.checked() && (!$data.region || !$data.island.region || $data.region === $data.island.region) ">
-                            <!-- existing buildings -->
-                            <td>
-                                <span data-bind="text: $root.texts.existingNumberOfBuildings.name"></span>
-                            </td>
-                            <td>
-                                <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.existingNumberOfBuildings.name}">
-                                    <div class="input-group input-group-short spinner">
-                                        <input class="form-control" type="number" value="0" step="1" min="0" data-bind="value: existingBuildings, attr:{id: $data.guid + '-existingBuildings-input'}" />
-                                        <div class="input-group-append">
-                                            <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.existingBuildings, id: $data.guid + '-existingBuildings-input' }}"></div>
-                                        </div>
-                                    </div>
-                                </div>
-
                             </td>
                         </tr>
 
-                        <tr data-bind="if: $root.settings.missingBuildingsHighlight.checked() && $data.overProduction">
-                            <!-- overproduction -->
-                            <td>
-                                <span data-bind="text: $root.texts.overproduction.name"></span>
-                            </td>
-                            <td>
-                                <div class="float-right">
-                                    <span data-bind="text: formatNumber($data.overProduction())"></span><span> t/min</span>
-                                </div>
-                            </td>
-                        </tr>
-
-                        <tr data-bind="if: $data.palaceBuff && $data.palaceBuffChecked()">
+                        <tr data-bind="if: $data.palaceBuff && $data.palaceBuff.visible()">
                             <!-- extra goods palace -->
                             <td>
-                                <span data-bind="text: $root.texts.extraGoods.name"></span>
-                                <span>: </span>
-                                <span data-bind="text: $data.palaceBuff.name"></span>
-                            </td>
-                            <td>
-                                <div class="float-right">
-                                    <img class="mr-2 icon-sm" src="../icons/icon_marketplace_2d_light.png" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name}">
-                                    <span data-bind="text: formatNumber($data.buffAmount())"></span><span> t/min</span>
+                                <div class="inline-list-stretched">
+                                    <div class="inline-list">
+                                        <div data-bind="component: {name: 'icon-checkbox', params: {asset: $data.palaceBuff, checked: $data.palaceBuffChecked, id: $data.guid + '-palaceBuff'}}"></div>
+                                        <span class="ml-1" data-bind="text: $data.palaceBuff.name"></span>
+                                    </div>
+                                    <div data-bind="component: {name: 'additional-output', params: {amount: $data.palaceBuffExtraGoods}}"></div>
                                 </div>
                             </td>
                         </tr>
-                        <tr data-bind="if: $data.module && $data.moduleChecked()">
+                        <tr data-bind="if: $data.module && $data.module.visible()">
                             <!-- extra goods module -->
                             <td>
-                                <span data-bind="text: $root.texts.extraGoods.name"></span>
-                                <span>: </span>
-                                <span data-bind="text: $data.module.name"></span>
-                            </td>
-                            <td>
-                                <div class="float-right">
-                                    <img class="mr-2 icon-sm" src="../icons/icon_marketplace_2d_light.png" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name}">
-                                    <span data-bind="text: formatNumber($data.outputAmount() / $data.module.additionalOutputCycle)"></span><span> t/min</span>
+                                <div class="inline-list-stretched">
+                                    <div class="inline-list">
+                                        <div data-bind="component: {name: 'icon-checkbox', params: {asset: $data.module, checked: $data.moduleChecked, id: $data.guid + '-module'}}"></div>
+                                        <span class="ml-1" data-bind="text: $data.module.name"></span>
+                                    </div>
+                                    <div>
+                                        <img class="mr-2 icon-sm" data-bind="attr: { src: $data.moduleDemand.product.icon ? $data.moduleDemand.product.icon : null, alt: $data.moduleDemand.product.name}">
+                                        <img class="icon-sm icon-light ml-1" src="../icons/icon_marketplace_2d_light.png" data-bind="attr: {title: $root.texts.consumption.name}">
+                                        <span data-bind="text: formatNumber($data.moduleDemand.amount())"></span><span> t/min</span>
+                                    </div>
+                                    <div data-bind="component: {name: 'additional-output', params: {amount: $data.moduleExtraGoods}}"></div>
                                 </div>
                             </td>
+
                         </tr>
-                        <tr data-bind="if: $data.module && $data.moduleChecked()">
-                            <!-- consumption module -->
-                            <td>
-                                <span data-bind="text: $root.texts.consumption.name"></span>
-                                <span>: </span>
-                                <span data-bind="text: $data.module.name"></span>
-                            </td>
-                            <td>
-                                <div class="float-right">
-                                    <img class="mr-2 icon-sm" src="../icons/icon_marketplace_2d_light.png" data-bind="attr: { src: $data.moduleDemand.product.icon ? $data.moduleDemand.product.icon : null, alt: $data.moduleDemand.product.name}">
-                                    <span data-bind="text: formatNumber($data.moduleDemand.amount())"></span><span> t/min</span>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr data-bind="if: $data.fertilizerModule && $data.fertilizerModuleChecked()">
+
+                        <tr data-bind="if: $data.fertilizerModule && $data.fertilizerModule.visible()">
                             <!-- extra goods fertilizer fertilizerModule -->
                             <td>
-                                <span data-bind="text: $root.texts.extraGoods.name"></span>
-                                <span>: </span>
-                                <span data-bind="text: $data.fertilizerModule.name"></span>
-                            </td>
-                            <td>
-                                <div class="float-right">
-                                    <img class="mr-2 icon-sm" src="../icons/icon_marketplace_2d_light.png" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name}">
-                                    <span data-bind="text: formatNumber($data.outputAmount() / $data.fertilizerModule.additionalOutputCycle)"></span><span> t/min</span>
+                                <div class="inline-list-stretched">
+                                    <div class="inline-list">
+                                        <div data-bind="component: {name: 'icon-checkbox', params: {asset: $data.fertilizerModule, checked: $data.fertilizerModuleChecked, id: $data.guid + '-fertilizerModule'}}"></div>
+                                        <span class="ml-1" data-bind="text: $data.fertilizerModule.name"></span>
+                                    </div>
+                                    <div>
+                                        <img class="mr-2 icon-sm" data-bind="attr: { src: $data.fertilizerModuleDemand.product.icon ? $data.fertilizerModuleDemand.product.icon : null, alt: $data.fertilizerModuleDemand.product.name}">
+                                        <img class="icon-sm icon-light ml-1" src="../icons/icon_marketplace_2d_light.png" data-bind="attr: {title: $root.texts.consumption.name}">
+                                        <span data-bind="text: formatNumber($data.fertilizerModuleDemand.amount())"></span><span> t/min</span>
+                                    </div>
+                                    <div data-bind="component: {name: 'additional-output', params: {amount: $data.fertilizerModuleExtraGoods}}"></div>
                                 </div>
                             </td>
                         </tr>
-                        <tr data-bind="if: $data.fertilizerModule && $data.fertilizerModuleChecked()">
-                            <!-- consumption fertilizerModule -->
-                            <td>
-                                <span data-bind="text: $root.texts.consumption.name"></span>
-                                <span>: </span>
-                                <span data-bind="text: $data.fertilizerModule.name"></span>
-                            </td>
-                            <td>
-                                <div class="float-right">
-                                    <img class="mr-2 icon-sm" src="../icons/icon_marketplace_2d_light.png" data-bind="attr: { src: $data.fertilizerModuleDemand.product.icon ? $data.fertilizerModuleDemand.product.icon : null, alt: $data.fertilizerModuleDemand.product.name}">
-                                    <span data-bind="text: formatNumber($data.fertilizerModuleDemand.amount())"></span><span> t/min</span>
-                                </div>
-                            </td>
-                        </tr>
+
                     </tbody>
                 </table>
-                <div class="ui-fchain-item-module" data-bind="visible: !$root.settings.simpleView.checked() && (!!$data.module || !!$data.palaceBuff || !!$data.clipped)">
-                    <div style="flex: 100 1 auto;"></div>
-
-                    <!-- module -->
-                    <div data-bind="if: !!$data.module && $data.module.visible()" style="flex: auto;">
-                        <div class="custom-control custom-checkbox" data-bind="visible: !!$data.module">
-                            <input type="checkbox" class="custom-control-input" data-bind="checked: $data.moduleChecked, attr: { id: $data.guid + '-module' }">
-                            <label class="custom-control-label" data-bind="attr: { for: $data.guid + '-module', title: $data.module.name }" src-only style="vertical-align: top;">
-
-                            </label>
-                        </div>
-                    </div>
-                    <div data-bind="if: !!$data.module && $data.module.visible()" style="flex: auto;">
-                        <img class="icon-sm" src="../icons/icon_marketplace_2d_light.png" data-bind="attr: { src: $data.module.icon ? $data.module.icon  : null, alt: $data.module.name, for: $data.guid + '-module', title: $data.module.name }" style="margin-right: 0.75em;margin-left: -0.25em;" />
-                    </div>
-
-                    <!-- fertilizerModule -->
-                    <div data-bind="if: !!$data.fertilizerModule && $data.fertilizerModule.visible()" style="flex: auto;">
-                        <div class="custom-control custom-checkbox" data-bind="visible: !!$data.fertilizerModule">
-                            <input type="checkbox" class="custom-control-input" data-bind="checked: $data.fertilizerModuleChecked, attr: { id: $data.guid + '-fertilizerModule' }">
-                            <label class="custom-control-label" data-bind="attr: { for: $data.guid + '-fertilizerModule', title: $data.fertilizerModule.name }" src-only style="vertical-align: top;">
-
-                            </label>
-                        </div>
-                    </div>
-                    <div data-bind="if: !!$data.fertilizerModule && $data.fertilizerModule.visible()" style="flex: auto;">
-                        <img class="icon-sm" src="../icons/icon_marketplace_2d_light.png" data-bind="attr: { src: $data.fertilizerModule.icon ? $data.fertilizerModule.icon  : null, alt: $data.fertilizerModule.name, for: $data.guid + '-fertilizerModule', title: $data.fertilizerModule.name }" style="margin-right: 0.75em;margin-left: -0.25em;" />
-                    </div>
-
-                    <!-- palace buff -->
-                    <div data-bind="if: !!$data.palaceBuff && $data.palaceBuff.visible()" style="flex: auto;">
-                        <div class="custom-control custom-checkbox" data-bind="visible: !!$data.palaceBuff">
-                            <input type="checkbox" class="custom-control-input" data-bind="checked: $data.palaceBuffChecked, attr: { id: $data.guid + '-palaceBuff' }">
-                            <label class="custom-control-label" data-bind="attr: { for: $data.guid + '-palaceBuff', title: $data.palaceBuff.name }" src-only style="vertical-align: top;">
-
-                            </label>
-                        </div>
-                    </div>
-                    <div data-bind="if: !!$data.palaceBuff && $data.palaceBuff.visible()" style="flex: auto;">
-                        <img class="icon-sm" src="../icons/icon_marketplace_2d_light.png" data-bind="attr: { src: $data.palaceBuff.icon ? $data.palaceBuff.icon  : null, alt: $data.palaceBuff.name, for: $data.guid + '-palaceBuff', title: $data.palaceBuff.name }" style="margin-right: 0.75em;margin-left: -0.25em;" />
-                    </div>
-
-                    <!-- clipping  -->
-                    <div data-bind="if: !!$data.clipped" style="flex: auto;">
-                        <div class="custom-control custom-checkbox" data-bind="visible: !!$data.clipped">
-                            <input type="checkbox" class="custom-control-input" data-bind="checked: $data.clipped, attr: { id: $data.guid + '-clipped' }">
-                            <label class="custom-control-label" data-bind="attr: { for: $data.guid + '-clipped', title: 'Clipping' }" src-only style="vertical-align: top;">
-                                Clipping
-                            </label>
-                        </div>
-                    </div>
-                    <div style="flex: 100 1 auto;"></div>
-                </div>
 
                 <div data-bind="if: $data.isFactory && ($data.extraGoodProductionList.nonZero().length && $root.settings.additionalProduction.checked())">
                     <hr />
 
-                    <h6><span data-bind="text: $root.texts.extraGoods.name">Extra Goods</span><span> </span><img src="../icons/icon_marketplace_2d_light.png" width="35" height="35" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name}" /></h6>
+                    <h6><span data-bind="text: $root.texts.extraGoods.name">Extra Goods</span><span> </span><img width="35" height="35" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name}" /></h6>
                     <table class="table table-striped">
                         <tbody data-bind="foreach: $data.extraGoodProductionList.nonZero">
                             <tr>
 
                                 <td>
 
-                                    <img class="icon-sm" src="../icons/icon_marketplace_2d_light.png" data-bind="attr: { src: $data.item.item.icon ? $data.item.item.icon : null, alt: $data.item.name}"> <!-- item icon -->
-                                    <img class="icon-sm" src="../icons/icon_marketplace_2d_light.png" data-bind="attr: { src: $data.factory.icon ? $data.factory.icon : null, alt: $data.factory.name}">
+                                    <img class="icon-sm" data-bind="attr: { src: $data.item.item.icon ? $data.item.item.icon : null, alt: $data.item.name}"> <!-- item icon -->
+                                    <img class="icon-sm" data-bind="attr: { src: $data.factory.icon ? $data.factory.icon : null, alt: $data.factory.name}">
 
                                 </td> <!-- factory icon -->
                                 <td>

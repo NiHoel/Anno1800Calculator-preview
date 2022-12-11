@@ -15,14 +15,7 @@
                                 <span data-bind="text: $root.texts.buildings.name"></span>
                             </td>
                             <td>
-                                <div>
-                                    <div class="input-group input-group-short spinner">
-                                        <input class="form-control" type="number" value="0" step="1" min="0" data-bind="value: existingBuildings, enable: canEdit, attr: {id: $data.guid + '-existing-buildings-dialog-input'}" />
-                                        <div class="input-group-append">
-                                            <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.existingBuildings, id: $data.guid + '-existing-buildings-dialog-input' }}"></div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <div data-bind="component: { name: 'existing-buildings-input', params: $data}"></div>
                             </td>
                             <td>
                                 <button type="button" class="btn" data-bind="enable: $root.settings.consumptionModifier.checked()">
@@ -52,18 +45,7 @@
                                     </td>
                                     <!-- existing buildings -->
                                     <td>
-
-                                        <div class="input-group input-group-short spinner float-left" style="max-width: 8rem;">
-                                            <div class="input-group-prepend">
-                                                <div class="input-group-text">
-                                                    <img class="icon-sm icon-light" src="../icons/icon_house_white.png" />
-                                                </div>
-                                            </div>
-                                            <input class="form-control" type="number" value="0" step="1" min="0" data-bind="value: existingBuildings, attr: {id: $data.guid + '-existing-buildings-dialog-input'}" />
-                                            <div class="input-group-append">
-                                                <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.existingBuildings, id: $data.guid + '-existing-buildings-dialog-input' }}"></div>
-                                            </div>
-                                        </div>
+                                        <div data-bind="component: { name: 'existing-buildings-input', params: $data}"></div>
 
                                     </td>
 

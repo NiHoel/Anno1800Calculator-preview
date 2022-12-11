@@ -34,17 +34,7 @@
                             <td>
                                 <span data-bind="foreach: $data.availableEquipments" class="inline-list-centered">
 
-                                    <span style="flex-basis: fit-content;">
-                                        <span class="custom-control custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $data.factory.guid + '-' + $data.item.guid + '-equipped' }">
-                                            <label class="custom-control-label" data-bind="attr: { for: $data.factory.guid + '-' + $data.item.guid + '-equipped', title: $data.factory.getRegionExtendedName() }" src-only style="vertical-align: top;">
-                                                <span class="mr-2" style="flex-basis: fit-content;">
-                                                    <img src="../icons/icon_marketplace_2d_light.png" width="25" height="25" data-bind="attr: { src: $data.factory.icon ? $data.factory.icon  : null, alt: $data.factory.name, for: $data.factory.guid + '-' + $data.item.guid + '-equipped', title: $data.factory.getRegionExtendedName() }" style="margin-right: 0.75em; margin-left: -0.25em;" />
-                                                </span>
-                                            </label>
-                                        </span>
-                                    </span>
-
+                                    <div style="flex-basis: fit-content;" data-bind="component: { name: 'icon-checkbox', params: {asset: $data.factory, checked: $data.checked, id: $data.factory.guid + '-' + $data.item.guid + '-equipped', title: $data.factory.getRegionExtendedName.bind($data.factory)}}"></div>
 
                                 </span>
                             </td>

@@ -1,4 +1,4 @@
-// @ts-check
+﻿// @ts-check
 import { NumberInputHandler } from './util.js'
 
 var ko = require( "knockout" );
@@ -84,3 +84,67 @@ ko.components.register('residence-effect-entry', {
         `
 });
 
+ko.components.register('replacement', {
+    viewModel: function (params) {
+        this.old = params.old;
+        this.replacing = params.new;
+    }, template:
+        ` <div class="ui-fchain-item-icon-replacement">
+            <span class="strike-through">
+                <img class="icon-sm" src="" data-bind="attr: { src: old.icon ? old.icon : null, alt: old.name }">
+            </span>
+            <div class="ui-replacement-spacer">
+                    &rarr;
+            </div>
+            <div>
+                <img class="icon-sm" src="" data-bind="attr: { src: replacing.icon ? replacing.icon : null, alt: replacing.name }">
+            </div>
+
+        </div>`
+});
+
+ko.components.register('existing-buildings-input', {
+    viewModel: function (asset) {
+        this.asset = asset;
+        this.texts = window.view.texts;
+    }, template:
+        `<div class="input-group input-group-short spinner float-left" style="max-width: 8rem;">
+            <div class="input-group-prepend" data-bind="src: {title: texts.existingNumberOfBuildings.name()}">
+                <div class="input-group-text">
+                    <img class="icon-sm icon-light" src="icons/icon_house_white.png" />
+                </div>
+            </div>
+            <input class="form-control" type="number" value="0" step="1" min="0" data-bind="value: asset.existingBuildings, attr: {id: asset.guid + '-existing-buildings-input'}" />
+            <div class="input-group-append">
+                <div data-bind="component: { name: 'number-input-increment', params: { obs: asset.existingBuildings, id: asset.guid + '-existing-buildings-input' }}"></div>
+            </div>
+        </div>`
+});
+
+ko.components.register('icon-checkbox', {
+    viewModel: function (params) {
+        this.asset = params.asset;
+        this.checked = params.checked || this.asset.checked;
+        this.id = params.id || this.asset.guid;
+        this.title = params.title || this.asset.name
+    }, template:
+        `<div class="custom-control custom-checkbox">
+            <input type="checkbox" class="custom-control-input" data-bind="checked: checked, attr: { 'id': id, 'title': title() }">
+            <label class="custom-control-label" data-bind="attr: { for: id }" src-only style="vertical-align: top;">
+                <span class="mr-2" style="flex-basis: fit-content;">
+                    <img class="icon-sm" src="" data-bind="attr: { src: asset.icon ? asset.icon  : null, alt: title(), for: id }" />
+                </span>
+            </label>
+        </div>`
+});
+
+ko.components.register('additional-output', {
+    viewModel: function (params) {
+        this.amount = params.amount;
+        this.texts = window.view.texts;
+    }, template:
+        `<div data-bind="src: { title: texts.extraGoods.name}">
+            <img class="icon-sm icon-light mr-2" src="icons/icon_add_goods_socket_white.png"/>
+            <span data-bind="text: formatNumber(amount()) + ' t/min'"></span>
+        </div>`
+});

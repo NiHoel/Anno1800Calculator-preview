@@ -703,11 +703,10 @@ $(document).ready(function () {
     //update links of download buttons
     $.getJSON("https://api.github.com/repos/NiHoel/Anno1800UXEnhancer/releases/latest").done((release) => {
         $('#download-calculator-server-button').attr("href", release.assets[0].browser_download_url);
-    });
-
-    installImportConfigListener();
+    });    
 
     init(isFirstRun);
 
     $('[data-toggle="popover"]').popover();
+    installImportConfigListener(); // must occur after template binding
 })

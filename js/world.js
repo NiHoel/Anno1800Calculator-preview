@@ -375,21 +375,6 @@ class Island {
             f.referenceProducts(assetsMap);
         });
 
-        // setup demands induced by modules
-        for (let factory of params.factories) {
-            let f = assetsMap.get(factory.guid);
-
-            if (!f)
-                continue;
-
-            for (var m of ["module", "fertilizerModule"]) {
-                var module = f[m];
-
-                if (module)
-                    f[m + "Demand"] = new Demand({ guid: module.getInputs()[0].Product, region: f.region }, assetsMap);
-            }
-        }
-
 
         for (var building of (params.residenceBuildings || [])) {
             var b = new ResidenceBuilding(building, assetsMap, this);
@@ -472,18 +457,6 @@ class Island {
                 for (let b of p.factories) {
                     if (b) {
                         b.editable(true);
-                        let n = new BuildingMaterialsNeed({ guid: p.guid, factory: b, product: p }, assetsMap);
-                        b.boost.subscribe(() => n.updateAmount());
-                        b.existingBuildings.subscribe(() => n.updateAmount());
-                        b.amount.subscribe(() => n.updateAmount());
-                        b.extraAmount.subscribe(() => n.updateAmount());
-                        if (b.palaceBuff)
-                            b.palaceBuffChecked.subscribe(() => n.updateAmount());
-                        this.buildingMaterialsNeeds.push(n);
-
-                        persistInt(b, "existingBuildings");
-
-                        n.updateAmount();
                     }
                 }
         }
@@ -506,15 +479,6 @@ class Island {
                 persistInt(f.workforceDemand, "percentBoost", `${f.guid}.workforce.percentBoost`);
         }
 
-        // negative extra amount must be set after the demands of the population and public buildings are generated
-        // otherwise it would be set to zero
-        for (let f of this.factories) {
-            persistFloat(f, "extraAmount");
-            persistBool(f.extraGoodProductionList, "checked", `${f.guid}.extraGoodProductionList.checked`);
-        }
-
-        // force update once all pending notifications are processed
-        setTimeout(() => { this.buildingMaterialsNeeds.forEach(b => b.updateAmount()) }, 1000);
 
         this.workforce = this.workforce.filter(w => w.demands.length);
 
