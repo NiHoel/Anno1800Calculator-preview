@@ -304,25 +304,19 @@ export class PopulationLevel extends NamedElement {
     }
 
     applyConfigGlobally() {
-        var affectingItems = new Set();
-
         for (var isl of view.islands()) {
+            // region is null for allIslands
             if (this.region && isl.region && this.region != isl.region)
                 continue;
 
             var other = isl.assetsMap.get(this.guid);
 
-            for (var i of affectingItems)
-                if (isl.assetsMap.has(i.guid))
-                    isl.assetsMap.get(i.guid).checked(i.checked());
+            for (var r of this.allResidences)
+                if (isl.assetsMap.has(r.guid))
+                    isl.assetsMap.get(r.guid).applyEffects(r.serializeEffects());
 
-            for (var i = 0; i < this.needs.length; i++) {
-                other.needs[i].checked(this.needs[i].checked());
-                other.needs[i].percentBoost(this.needs[i].percentBoost());
-            }
-
-            for (var i = 0; i < this.buildingNeeds.length; i++)
-                other.buildingNeeds[i].checked(this.buildingNeeds[i].checked());
+            for (var guid of this.needsMap.keys())
+                other.needsMap.get(guid).checked(this.needsMap.get(guid).checked());
 
         }
     }

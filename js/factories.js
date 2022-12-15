@@ -36,10 +36,6 @@ export class Consumer extends NamedElement {
                 amount = Math.max(amount, this.inputAmountByExistingBuildings());
             return amount;
         });
-        this.inputAmount.subscribe(amount => {
-            for (var d of this.inputDemands.values())
-                d.updateAmount(amount);
-        });
 
         this.buildings = ko.computed(() => this.inputAmount() / this.tpmin / this.boost()).extend({ deferred: true });
         this.lockDLCIfSet(this.buildings);
@@ -62,9 +58,11 @@ export class Consumer extends NamedElement {
             if (!this.inputs)
                 return;
 
+            var amount = this.inputAmount();
+
             var inputs = new Map();
             this.inputs.forEach(i => { inputs.set(i.Product, i.Amount) });
-            var items = this.items.filter(item => item.replacements).sort((a, b) => a.guid - b.guid);
+            var items = this.items.filter(item => item.replacements).sort((a, b) => a.item.guid - b.item.guid);
             for (var item of items) {
                 if (!item.checked())
                     continue;
@@ -89,13 +87,14 @@ export class Consumer extends NamedElement {
                 if (this.inputDemands.has(guid)) {
                     inputProducts.set(guid, this.inputDemands.get(guid));
                     this.inputDemands.delete(guid);
+                    inputProducts.get(guid).updateAmount(amount);
                 } else {
                     var d = new Demand({
                         guid: guid,
                         consumer: this,
                         factor: inputs.get(guid),
                     }, assetsMap);
-                    d.updateAmount(this.inputAmount());
+                    d.updateAmount(amount);
                     inputProducts.set(guid, d);
                 }
             }
@@ -195,7 +194,7 @@ export class Factory extends Consumer {
         // [[prev val, timestamp], [prev prev val, timestamp]]
         this.extraGoodProductionHistory = [];
         this.extraGoodProductionAmount = ko.pureComputed(() => {
-            var val = this.extraGoodProductionList.checked() ?  this.extraGoodProductionList.amount() : 0;
+            var val = this.extraGoodProductionList.checked() ? this.extraGoodProductionList.amount() : 0;
 
 
             if (this.extraGoodProductionHistory.length && Math.abs(val - this.extraGoodProductionHistory[0][0]) < ACCURACY)
@@ -215,7 +214,7 @@ export class Factory extends Consumer {
             if (this.extraGoodProductionHistory.length > 2)
                 this.extraGoodProductionHistory.pop();
             return val;
-        });
+        }).extend({ deferred: true });
 
         this.totalDemands = ko.pureComputed(() => {
             var sum = 0;
@@ -234,11 +233,11 @@ export class Factory extends Consumer {
         this.externalProduction = ko.pureComputed(() => {
             var sum = 0;
 
-            sum += this.tradeList.inputAmount();
+            sum += this.tradeList.outputAmount();
             sum += this.extraGoodProductionAmount();
 
             if (this.contractList)
-                sum += this.contractList.inputAmount();
+                sum += this.contractList.outputAmount();
 
             return sum;
         });
@@ -247,6 +246,10 @@ export class Factory extends Consumer {
             var diff = this.totalDemands() - this.externalProduction();
             return diff > EPSILON ? diff : 0;
         });
+
+        this.displayedAmount = ko.pureComputed(() => {
+
+        })
 
         this.percentBoost = createIntInput(100, 1);
         this.boost = ko.computed(() => parseInt(this.percentBoost()) / 100);
@@ -417,11 +420,6 @@ export class Factory extends Consumer {
             }
         });
 
-        // add extra goods only to fixed factory
-        if(this.extraGoodProductionList)
-            this.extraGoodsSubscription = ko.computed(() => {
-                this.extraGoodProductionList.checked(this.product.fixedFactory() == this);
-            });
     }
 
     getProduct() {

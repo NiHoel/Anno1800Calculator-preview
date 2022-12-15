@@ -1,5 +1,5 @@
 // @ts-check
-import { ACCURACY, ALL_ISLANDS, createIntInput, createFloatInput, NamedElement } from './util.js'
+import { ACCURACY, ALL_ISLANDS, createIntInput, createFloatInput, NamedElement, EPSILON } from './util.js'
 import { Product } from './production.js'
 import { Factory } from './factories.js'
 
@@ -160,8 +160,8 @@ export class TradeList {
         });
         var overProduction = this.factory.overProduction();
 
-        this.export(overProduction > 0);
-        this.newAmount(Math.abs(overProduction));
+        this.export(overProduction > EPSILON);
+        this.newAmount(Math.max(overProduction, this.factory.totalDemands() - this.factory.externalProduction()));
 
         this.unusedIslands(islands);
     }
@@ -851,7 +851,7 @@ export class ContractCreatorFactory {
                 this.newAmount(Math.max(0, overProduction));
             } else if (f.contractList.imports().length) {
                 this.export(false);
-                this.newAmount(Math.abs(Math.min(0, overProduction)));
+                this.newAmount(f.totalDemands() - f.externalProduction());
             } else {
                 if (overProduction < 0 &&
                     (f.product.canImport && (f.contractList.island.isAllIslands() || !f.contractList.exports().length))) {

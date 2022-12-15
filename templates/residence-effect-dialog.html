@@ -106,6 +106,9 @@
                 <div class="mt-4" data-bind="component: { name: 'notes-section', params:{ $data: $data.need}}"></div>
             </div>
             <div class="modal-footer">
+                <btn class="btn btn-light" data-bind="click: $data.applyConfigGlobally, visible: $root.islands().length > 1">
+                    <span data-bind="text: $root.texts.applyGlobally.name()">Apply Globally</span>
+                </btn>
             </div>
         </div>
     </div>

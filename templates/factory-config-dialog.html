@@ -15,7 +15,7 @@
                                 <td>
                                     <div class="inline-list">
                                         <div data-bind="component: {name: 'icon-checkbox', params: {asset: $data.item, checked: $data.checked, id: 'fc-' + $data.factory.guid + '-' + $data.item.guid + '-equipped'}}"></div>
-                                        <span class="ml-1" data-bind="text: $data.name"></span> <!-- item name -->
+                                        <span class="ml-1" data-bind="text: $data.name, attr: {for: 'fc-' + $data.factory.guid + '-' + $data.item.guid + '-equipped'}"></span> <!-- item name -->
                                     </div>
                                 </td>
                                 <td>
@@ -394,7 +394,7 @@
                                         </div>
                                     </div>
                                     <div href="#" data-toggle="tooltip" data-bind="if: $data.percentBoost, attr: {'title' : $root.texts.productionBoost.name}">
-                                        <div class="input-group input-group spinner" style="max-width: 50%">
+                                        <div class="input-group input-group spinner">
                                             <div class="input-group-prepend">
                                                 <div class="input-group-text" data-bind="text:$root.texts.productionBoost.name ">
                                                 </div>

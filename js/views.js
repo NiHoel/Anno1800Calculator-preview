@@ -55,32 +55,35 @@ export class ViewMode {
 
         ];
 
-        this.simpleViewSubscription = ko.computed(() => {
+        view.settings.needUnlockConditions.visible(false);
+
+        /*this.simpleViewSubscription = ko.computed(() => {
             var checked = view.settings.simpleView.checked();
 
             if (checked) {
                 view.settings.populationInput("0");
                 view.settings.additionalProduction.checked(false);
                 view.settings.consumptionModifier.checked(true);
-                view.settings.needUnlockConditions.checked(true);
+                //view.settings.needUnlockConditions.checked(true);
 
             }
 
             for (var option of this.hiddenOptions)
                 if (view.settings[option])
                     view.settings[option].visible(!checked);
-        });
+        });*/
 
 
         this.hideSimple = false;
-        if (firstRun || localStorage.getItem("simpleView") == null) {
+        /*if (firstRun || localStorage.getItem("simpleView") == null) {
             localStorage.setItem("simpleView", 0);
 
             this.showOnStartup = true;
 
             if (view.settings.additionalProduction.checked())
                 this.hideSimple = true;
-        }
+        }*/
+        this.full();
     }
 
     simple() {
@@ -98,7 +101,7 @@ export class ViewMode {
         view.settings.additionalProduction.checked(true);
         view.settings.consumptionModifier.checked(true);
         view.settings.missingBuildingsHighlight.checked(true);
-        view.settings.needUnlockConditions.checked(true);
+        //view.settings.needUnlockConditions.checked(true);
         view.settings.decimalsForBuildings.checked(true);
 
         for (var dlc of view.dlcs.values()) {
@@ -399,5 +402,18 @@ export class ResidenceEffectView {
     sort() {
         this.aggregates.sort((a, b) => a.residenceEffect.compare(b.residenceEffect));
         this.unusedEffects.sort((a, b) => a.compare(b));
+    }
+
+    applyConfigGlobally() {
+        for (var isl of view.islands()) {
+            // region is null for allIslands
+            if (this.region && isl.region && this.region != isl.region)
+                continue;
+
+            for (var r of this.residences)
+                if (isl.assetsMap.has(r.guid))
+                    isl.assetsMap.get(r.guid).applyEffects(r.serializeEffects());
+
+        }
     }
 }

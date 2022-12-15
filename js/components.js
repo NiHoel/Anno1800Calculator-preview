@@ -114,7 +114,7 @@ ko.components.register('existing-buildings-input', {
                     <img class="icon-sm icon-light" src="icons/icon_house_white.png" />
                 </div>
             </div>
-            <input class="form-control" type="number" value="0" step="1" min="0" data-bind="value: asset.existingBuildings, attr: {id: asset.guid + '-existing-buildings-input'}" />
+            <input class="form-control" type="number" value="0" step="1" min="0" data-bind="value: asset.existingBuildings, enable: asset.canEdit == null || asset.canEdit(), attr: {id: asset.guid + '-existing-buildings-input'}" />
             <div class="input-group-append">
                 <div data-bind="component: { name: 'number-input-increment', params: { obs: asset.existingBuildings, id: asset.guid + '-existing-buildings-input' }}"></div>
             </div>

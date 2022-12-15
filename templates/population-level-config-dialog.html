@@ -22,6 +22,13 @@
                                     <img data-toggle="modal" data-target="#residence-effect-dialog" class="icon-sm  icon-light" src="../icons/icon_marketplace_2d_light.png" data-bind="click: () => $data.prepareResidenceEffectView()" />
                                 </button>
                             </td>
+                            <td>
+                                <div class="inline-list" data-bind="foreach: $data.residence.effectCoverage">
+                                    <div data-bind="attr: {title: formatPercentage(100 * $data.coverage()).substr(1) + ' ' + $data.residenceEffect.name()}">
+                                        <img class="icon-sm" data-bind="attr: {src: $data.residenceEffect.icon}" />
+                                    </div>
+                                </div>
+                            </td>
                         </tr>
 
                     </tbody>
@@ -82,7 +89,7 @@
                             <span class="fa fa-chevron-down"></span>
                             <span data-bind="text: $root.texts[needType].name">Needs</span>
                         </legend>
-                        <div data-bind="attr: { id : '#population-level-' + needType}" class="collapse show">
+                        <div data-bind="attr: { id : 'population-level-' + needType}" class="collapse show">
                             <table class="table table-striped">
                                 <tbody data-bind="foreach: $data[needType].filter(n => !n.hidden || !n.hidden())">
                                     <tr data-bind="css:{inactive: $data.isInactive}">

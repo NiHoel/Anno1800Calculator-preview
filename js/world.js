@@ -291,6 +291,7 @@ class Island {
             persistBool(f, "fertilizerModuleChecked", `${f.guid}.fertilizerModule.checked`);
             persistBool(f, "palaceBuffChecked", `${f.guid}.palaceBuff.checked`);
             persistInt(f, "percentBoost");
+            persistBool(f.extraGoodProductionList, "checked", `${f.guid}.extraGoodProductionList.checked`);
         }
 
         let products = [];
@@ -577,24 +578,14 @@ class Island {
                 if (a.palaceBuffChecked)
                     a.palaceBuffChecked(false);
                 a.percentBoost(100);
-                a.extraAmount(0);
                 a.extraGoodProductionList.checked(true);
             }
             if (a instanceof ResidenceBuilding) {
                 a.existingBuildings(0);
-                a.limitPerHouse(a.limitLowerBound);
-                a.limit(0);
-                a.fixLimitPerHouse(true);
+                a.applyEffects({});
             }
             if (a instanceof PopulationLevel) {
-                a.existingBuildings(0);
-                a.amountPerHouse(a.fullHouse);
-                a.limitPerHouse(a.residence.limitLowerBound);
-                a.amount(0);
-                a.limit(0);
-                a.fixAmountPerHouse(true);
-                a.fixLimitPerHouse(true);
-                for (var n of (a.needs || []))
+                 for (var n of (a.needs || []))
                     if (n.notes)
                         n.notes("");
             }

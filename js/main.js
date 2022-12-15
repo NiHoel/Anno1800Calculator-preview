@@ -1,4 +1,4 @@
-import { ACCURACY, formatNumber, formatPercentage, versionCalculator, NamedElement, Option, DLC } from './util.js'
+import { ACCURACY, isPreview, formatNumber, formatPercentage, versionCalculator, NamedElement, Option, DLC } from './util.js'
 import { languageCodes, texts as locaTexts, options, serverOptions } from './i18n.js'
 
 
@@ -11,7 +11,7 @@ import { DarkMode, ViewMode, Template, ProductionChainView, ResidenceEffectView 
 
 
 import './components.js'
-import './params.js'
+import '../params.js'
 
 var ko = require("knockout");
 require("knockout-amd-helpers");
@@ -435,7 +435,7 @@ function init(isFirstRun, configVersion) {
         }
     }
 
-    view.settings.populationInput = ko.observable("1");
+    view.settings.populationInput = ko.observable("0");
     if (localStorage) {
         let id = "settings.populationInput";
         let oldId = "settings.existingBuildingsInput";
@@ -454,6 +454,7 @@ function init(isFirstRun, configVersion) {
             localStorage.removeItem(oldId);
         }
     }
+    view.settings.needUnlockConditions.checked(false);
 
     view.assetsMap = new Map();
 
@@ -539,52 +540,7 @@ function init(isFirstRun, configVersion) {
     view.selectedContractManager = ko.observable(view.island().contractManager);
     view.selectedResidenceEffectView = ko.observable(new ResidenceEffectView([view.island().residenceBuildings[0]]));
 
-    $('#factory-config-dialog').on('show.bs.modal',
-        () => {
-            view.productionChain(new ProductionChainView(view.selectedFactory()));
-        });
 
-    $('#factory-choose-dialog').on('show.bs.modal',
-        () => {
-            view.selectedMultiFactoryProducts(view.island().multiFactoryProducts
-                .filter(p => p.availableFactories().length > 1)
-                .sort((a, b) => a.name().localeCompare(b.name())));
-            view.selectedReplaceInputItems(view.island().replaceInputItems);
-        });
-
-    $('#item-equipment-dialog').on('show.bs.modal',
-        () => {
-            view.selectedExtraGoodItems(view.island().extraGoodItems);
-        });
-
-    $('#contract-management-dialog').on('show.bs.modal',
-        () => {
-            view.selectedContractManager(view.island().contractManager);
-        });
-
-    $('*').on('hidden.bs.modal', () => {
-        for (var dialog of ['contract-management', 'download', 'factory-choose', 'factory-config', 'island-management', 'island-rename', 'item-equipment', 'population-level-config', 'residence-effect', 'settings', 'trade-routes-management', 'view-mode', 'help'])
-            if ($('#' + dialog + '-dialog').attr('class').indexOf("show") != -1) {
-                $('body').addClass('modal-open');
-                break;
-            }
-    });
-
-
-    // store collapsable state of skyline configuration closing and reopening would otherwise restore the default
-    view.selectedPopulationLevel.subscribe(() => {
-        setTimeout(() => {
-            $('#population-level-building-configuration').collapse(view.skyscraperDropdownStatus());
-            $('#population-level-building-configuration').off();
-            $('#population-level-building-configuration').on("hidden.bs.collapse shown.bs.collapse", function (event) {
-                if ($(this).hasClass("show")) {
-                    view.skyscraperDropdownStatus("show");
-                } else {
-                    view.skyscraperDropdownStatus("hide");
-                }
-            });
-        }, 200);
-    })
 
     view.tradeManager = new TradeManager();
 
@@ -615,6 +571,53 @@ function init(isFirstRun, configVersion) {
     view.viewMode = new ViewMode(isFirstRun);
 
     ko.applyBindings(view, $(document.body)[0]);
+
+    // events must be registered afte apply bindings since this adds dialogs to the html
+    $('#factory-config-dialog').on('show.bs.modal',
+    () => {
+        view.productionChain(new ProductionChainView(view.selectedFactory()));
+    });
+
+    $('#factory-choose-dialog').on('show.bs.modal',
+        () => {
+            view.selectedMultiFactoryProducts(view.island().multiFactoryProducts
+                .filter(p => p.availableFactories().length > 1)
+                .sort((a, b) => a.name().localeCompare(b.name())));
+        });
+
+    $('#item-equipment-dialog').on('show.bs.modal',
+        () => {
+            view.selectedExtraGoodItems(view.island().extraGoodItems);
+        });
+
+    $('#contract-management-dialog').on('show.bs.modal',
+        () => {
+            view.selectedContractManager(view.island().contractManager);
+        });
+
+    $('*').on('hidden.bs.modal', () => {
+        for (var dialog of ['contract-management', 'download', 'factory-choose', 'factory-config', 'island-management', 'island-rename', 'item-equipment', 'population-level-config', 'residence-effect', 'settings', 'trade-routes-management', 'view-mode', 'help'])
+            if ($('#' + dialog + '-dialog').attr('class').indexOf("show") != -1) {
+                $('body').addClass('modal-open');
+                break;
+            }
+    });
+
+
+    // store collapsable state of skyline configuration; closing and reopening would otherwise restore the default
+    view.selectedPopulationLevel.subscribe(() => {
+        setTimeout(() => {
+            $('#population-level-building-configuration').collapse(view.skyscraperDropdownStatus());
+            $('#population-level-building-configuration').off();
+            $('#population-level-building-configuration').on("hidden.bs.collapse shown.bs.collapse", function (event) {
+                if ($(this).hasClass("show")) {
+                    view.skyscraperDropdownStatus("show");
+                } else {
+                    view.skyscraperDropdownStatus("hide");
+                }
+            });
+        }, 200);
+    })
 
     if (view.viewMode.showOnStartup)
         $('#view-mode-dialog').modal("show");
@@ -669,8 +672,9 @@ function init(isFirstRun, configVersion) {
     });
 
 
-    // listen for the server providing the population count
-    window.reader = new PopulationReader();
+    if(!isPreview)
+        // listen for the server providing the population count
+        window.reader = new PopulationReader();
 }
 
 
@@ -684,8 +688,19 @@ $(document).ready(function () {
         view.texts[attr] = new NamedElement({ name: attr, locaText: locaTexts[attr] });
     }
 
-    // check version of calculator - display update and new feature notification
-    checkAndShowNotifications();
+    if(!isPreview)
+        // check version of calculator - display update and new feature notification
+        checkAndShowNotifications();
+    else
+        $.notify({
+            // options
+            message: view.texts.newFeature.name()
+        }, {
+            // settings
+            type: 'danger',
+            placement: { align: 'center' },
+            timer: 60000
+        });
 
     //update links of download buttons
     $.getJSON("https://api.github.com/repos/NiHoel/Anno1800UXEnhancer/releases/latest").done((release) => {

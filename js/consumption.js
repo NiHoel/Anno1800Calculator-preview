@@ -49,7 +49,7 @@ export class ResidenceNeed {
 
     initDependencies(residenceNeedsMap){
         this.residenceNeedsMap = residenceNeedsMap;
-        this.substituionSubscription = ko.computed(() => {
+        this.substitutionSubscription = ko.computed(() => {
             /** @type [ResidenceEffectEntryCoverage] */
             var arr = this.residence.entryCoveragePerProduct().get(this.need.product);
             if(arr == null)
