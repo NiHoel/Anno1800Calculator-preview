@@ -11,7 +11,7 @@ import { DarkMode, ViewMode, Template, ProductionChainView, ResidenceEffectView 
 
 
 import './components.js'
-import '../params.js'
+import './params.js'
 
 var ko = require("knockout");
 require("knockout-amd-helpers");
