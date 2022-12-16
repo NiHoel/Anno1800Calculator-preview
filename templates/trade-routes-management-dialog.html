@@ -60,7 +60,7 @@
                             </td>
                             <td>
                                 <div class="float-right">
-                                    <span data-bind="if: !$data.isExport($parent) && $root.settings.missingBuildingsHighlight.checked() && $data.fromFactory.overProduction() < -ACCURACY">
+                                    <span data-bind="if: !$data.isExport($parent) && $root.settings.missingBuildingsHighlight.checked() && $data.fromFactory.substitutableOutputAmount() > ACCURACY">
                                         <span class="fa fa-exclamation-triangle danger-icon"></span>
                                     </span>
                                     <div class="input-group input-group-short spinner">

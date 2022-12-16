@@ -105,10 +105,10 @@
                                                 </button>
                                             </div>
                                         </div>
-                                        <div data-bind="if: !$data.isExport($parent) && $parent.factory.overProduction() < -ACCURACY">
+                                        <div data-bind="if: !$data.isExport($parent) && $parent.factory.substitutableOutputAmount() > ACCURACY">
                                             <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.importDeficit.name}">
-                                                <span data-bind="text: formatNumber(-$parent.factory.overProduction())"></span>
-                                                <button class="btn btn-light btn-sm" data-bind="click: () => $data.amount($data.amount() - $parent.factory.overProduction())">
+                                                <span data-bind="text: formatNumber($parent.factory.substitutableOutputAmount())"></span>
+                                                <button class="btn btn-light btn-sm" data-bind="click: () => $data.amount($data.amount() + $parent.factory.substitutableOutputAmount())">
                                                     <span class="fa fa-sign-in"> </span>
                                                 </button>
                                             </div>
@@ -128,7 +128,7 @@
                                                         <img class="icon-sm icon-light" src="../icons/icon_transporter_loading_light.png" />
                                                     </span>
                                                 </div>
-                                                <span data-bind="if: !$data.isExport($parent) && $root.settings.missingBuildingsHighlight.checked() && $data.fromFactory.overProduction() < -ACCURACY">
+                                                <span data-bind="if: !$data.isExport($parent) && $root.settings.missingBuildingsHighlight.checked() && $data.fromFactory.substitutableOutputAmount() > ACCURACY">
                                                     <span class="fa fa-exclamation-triangle danger-icon"></span>
                                                 </span>
                                             </div>
@@ -232,7 +232,7 @@
 
                                                     </span>
                                                 </div>
-                                                <span data-bind="if: $root.settings.missingBuildingsHighlight.checked() && $data.exportFactory.overProduction() < -ACCURACY">
+                                                <span data-bind="if: $root.settings.missingBuildingsHighlight.checked() && $data.exportFactory.substitutableOutputAmount() > ACCURACY">
                                                     <span class="fa fa-exclamation-triangle danger-icon"></span>
                                                 </span>
                                                 <input step="0.1" min="0" class="form-control" type="number" value="0" data-bind="value: exportAmount, attr: {id: $data.importFactory.guid + '-export-contract-export-amount-input' } " />
@@ -264,7 +264,7 @@
                                                             <img class="icon-sm" data-bind="attr: { src: $data.exportFactory.icon ? $data.exportFactory.icon : null, alt: $data.exportFactory.name}">
                                                         </a>
                                                     </span>
-                                                    <span data-bind="if: $root.settings.missingBuildingsHighlight.checked() && $data.exportFactory.overProduction() < -ACCURACY">
+                                                    <span data-bind="if: $root.settings.missingBuildingsHighlight.checked() && $data.exportFactory.substitutableOutputAmount() > ACCURACY">
                                                         <span class="fa fa-exclamation-triangle danger-icon"></span>
                                                     </span>
                                                 </div>
@@ -277,10 +277,10 @@
                                         </td>
                                         <td><span>&rarr;</span></td>
                                         <td>
-                                            <div class="float-right" data-bind="if: $parent.factory.overProduction() < -ACCURACY">
+                                            <div class="float-right" data-bind="if: $parent.factory.substitutableOutputAmount() > ACCURACY">
                                                 <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.importDeficit.name}">
-                                                    <span data-bind="text: formatNumber($parent.factory.overProduction())"></span>
-                                                    <button class="btn btn-light btn-sm" data-bind="click: () => $data.importAmount($data.importAmount() - $parent.factory.overProduction())">
+                                                    <span data-bind="text: formatNumber($parent.factory.substitutableOutputAmount())"></span>
+                                                    <button class="btn btn-light btn-sm" data-bind="click: () => $data.importAmount($data.importAmount() + $parent.factory.substitutableOutputAmount())">
                                                         <span class="fa fa-sign-in"> </span>
                                                     </button>
                                                 </div>

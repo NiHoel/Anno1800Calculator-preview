@@ -242,14 +242,9 @@ export class Factory extends Consumer {
             return sum;
         });
 
-        this.outputAmount = ko.pureComputed(() => {
-            var diff = this.totalDemands() - this.externalProduction();
-            return diff > EPSILON ? diff : 0;
-        });
+        this.inputAmountByExtraGoods = ko.observable(0);
 
-        this.displayedAmount = ko.pureComputed(() => {
 
-        })
 
         this.percentBoost = createIntInput(100, 1);
         this.boost = ko.computed(() => parseInt(this.percentBoost()) / 100);
@@ -329,6 +324,13 @@ export class Factory extends Consumer {
 
             return factor;
         });
+
+        this.outputAmount = ko.pureComputed(() => {
+            var diff = Math.max(this.inputAmountByExtraGoods() * this.extraGoodFactor(), this.totalDemands() - this.externalProduction());
+            return diff > EPSILON ? diff : 0;
+        });
+
+        this.substitutableOutputAmount = ko.pureComputed(() => Math.max(0, this.totalDemands() - this.externalProduction() - this.inputAmountByExtraGoods() * this.extraGoodFactor()));
 
         this.requiredInputAmountSubscription = ko.computed(() => {
             this.inputAmountByOutput(this.outputAmount() / this.extraGoodFactor());

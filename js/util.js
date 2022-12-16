@@ -178,60 +178,6 @@ export function createFloatInput(init, min = -Infinity, max = Infinity, callback
 
 
 
-function batchImports(source, destinations, factories) {
-    if (!(source instanceof Island))
-        source = view.islandManager.getByName(source);
-
-    for (var dest of destinations) {
-        if (!(dest instanceof Island))
-            dest = view.islandManager.getByName(dest);
-
-        for (var f of factories) {
-            var list = dest.assetsMap.get(f).tradeList;
-
-            if (list.factory.overProduction() > -ACCURACY)
-                continue;
-
-            list.onShow();
-            if (list.unusedIslands.indexOf(source) == -1)
-                continue;
-
-            list.selectedIsland(source);
-            list.export(false);
-            list.newAmount(Math.abs(list.factory.overProduction()));
-            list.create();
-        }
-    }
-}
-
-function batchExports(sources, destination, factories) {
-    if (!(destination instanceof Island))
-        destination = view.islandManager.getByName(destination);
-
-    for (var src of sources) {
-        if (!(src instanceof Island))
-            src = view.islandManager.getByName(src);
-
-        for (var f of factories) {
-            var list = src.assetsMap.get(f).tradeList;
-
-            if (list.factory.overProduction() < ACCURACY)
-                continue;
-
-            list.onShow();
-            if (list.unusedIslands.indexOf(destination) == -1)
-                continue;
-
-            list.selectedIsland(destination);
-            list.export(true);
-            list.newAmount(Math.abs(list.factory.overProduction()));
-            list.create();
-        }
-    }
-}
-
-
-
 export class NamedElement {
     constructor(config) {
         $.extend(this, config);

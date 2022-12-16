@@ -119,7 +119,7 @@
                                                         <img class="icon-sm" src="../icons/icon_marketplace_2d_light.png" data-bind="attr: { src: $data.exportFactory.icon ? $data.exportFactory.icon : null, alt: $data.exportFactory.name}">
                                                     </a>
                                                 </span>
-                                                <span data-bind="if: $root.settings.missingBuildingsHighlight.checked() && $data.exportFactory.overProduction() < -ACCURACY">
+                                                <span data-bind="if: $root.settings.missingBuildingsHighlight.checked() && $data.exportFactory.substitutableOutputAmount() > ACCURACY">
                                                     <span class="fa fa-exclamation-triangle danger-icon"></span>
                                                 </span>
                                             </div>

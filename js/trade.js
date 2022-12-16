@@ -161,7 +161,7 @@ export class TradeList {
         var overProduction = this.factory.overProduction();
 
         this.export(overProduction > EPSILON);
-        this.newAmount(Math.max(overProduction, this.factory.totalDemands() - this.factory.externalProduction()));
+        this.newAmount(Math.max(overProduction, this.factory.substitutableOutputAmount()));
 
         this.unusedIslands(islands);
     }
@@ -844,6 +844,7 @@ export class ContractCreatorFactory {
                 return;
 
             var overProduction = f.overProduction();
+            var outputAmount = f.substitutableOutputAmount();
 
 
             if (!f.contractList.island.isAllIslands() && f.contractList.exports().length) {
@@ -851,13 +852,13 @@ export class ContractCreatorFactory {
                 this.newAmount(Math.max(0, overProduction));
             } else if (f.contractList.imports().length) {
                 this.export(false);
-                this.newAmount(f.totalDemands() - f.externalProduction());
+                this.newAmount(outputAmount);
             } else {
-                if (overProduction < 0 &&
+                if (outputAmount > 0 &&
                     (f.product.canImport && (f.contractList.island.isAllIslands() || !f.contractList.exports().length))) {
                     // do not use this.canImport() since it may not be updated yet
                     this.export(false);
-                    this.newAmount(Math.abs(overProduction));
+                    this.newAmount(outputAmount);
                 } else {
                     this.export(true);
                     this.newAmount(Math.max(0, overProduction));
