@@ -971,50 +971,6 @@ params={
             "tpmin": 1.3333333333333335
         },
         {
-            "guid": 5989,
-            "iconPath": "data/ui/2kimages/main/3dicons/icon_cement.png",
-            "inputs": [
-                {
-                    "Product": 1591,
-                    "StorageAmount": 6
-                }
-            ],
-            "locaText": {
-                "chinese": "水泥矿",
-                "english": "Cement Mine",
-                "french": "Mine de ciment",
-                "german": "Zementvorkommen/Zementwerk",
-                "italian": "Miniera di cemento",
-                "japanese": "セメント鉱山",
-                "korean": "시멘트 광산",
-                "polish": "Kopalnia cementu",
-                "russian": "Известняковый карьер",
-                "spanish": "Mina de cemento",
-                "taiwanese": "水泥礦"
-            },
-            "maintenances": [
-                {
-                    "Amount": 50,
-                    "InactiveAmount": 25,
-                    "Product": 1010017
-                },
-                {
-                    "Amount": 45,
-                    "Product": 1010366
-                }
-            ],
-            "name": "Cement Mine",
-            "outputs": [
-                {
-                    "Amount": 1,
-                    "Product": 1010231,
-                    "StorageAmount": 8
-                }
-            ],
-            "region": 5000001,
-            "tpmin": 4
-        },
-        {
             "canClip": false,
             "fertilizerModule": 25240,
             "guid": 1010262,
@@ -10214,61 +10170,6 @@ params={
             "tpmin": 2
         },
         {
-            "canClip": false,
-            "guid": 7319,
-            "iconPath": "data/ui/2kimages/main/3dicons/goods_africa/icon_salt.png",
-            "locaText": {
-                "chinese": "Sea Salt Factory",
-                "english": "Sea Salt Factory",
-                "french": "Sea Salt Factory",
-                "german": "Sea Salt Factory",
-                "italian": "Sea Salt Factory",
-                "japanese": "Sea Salt Factory",
-                "korean": "Sea Salt Factory",
-                "polish": "Sea Salt Factory",
-                "russian": "Sea Salt Factory",
-                "spanish": "Sea Salt Factory",
-                "taiwanese": "Sea Salt Factory"
-            },
-            "maintenances": [
-                {
-                    "Amount": 5,
-                    "InactiveAmount": 3,
-                    "Product": 1010017,
-                    "VectorElement": {
-                        "InheritanceMapV2": {
-                            "Entry": {
-                                "Index": 0,
-                                "TemplateName": "FarmBuilding"
-                            }
-                        }
-                    }
-                },
-                {
-                    "Amount": 15,
-                    "Product": 1010366,
-                    "VectorElement": {
-                        "InheritanceMapV2": {
-                            "Entry": {
-                                "Index": 1,
-                                "TemplateName": "FarmBuilding"
-                            }
-                        }
-                    }
-                }
-            ],
-            "name": "Sea Salt Factory",
-            "outputs": [
-                {
-                    "Amount": 1,
-                    "Product": 114358,
-                    "StorageAmount": 4
-                }
-            ],
-            "region": 5000001,
-            "tpmin": 2
-        },
-        {
             "guid": 7919,
             "iconPath": "data/ui/2kimages/main/3dicons/production_goods/icon_squid.png",
             "locaText": {
@@ -11462,144 +11363,6 @@ params={
             ],
             "region": 5000001,
             "tpmin": 0.5
-        },
-        {
-            "guid": 2397,
-            "iconPath": "data/ui/2kimages/main/3dicons/icon_steel.png",
-            "inputs": [
-                {
-                    "Amount": 1,
-                    "Product": 1010227,
-                    "StorageAmount": 8
-                },
-                {
-                    "Amount": 1,
-                    "Product": 1010226,
-                    "StorageAmount": 6
-                }
-            ],
-            "locaText": {
-                "chinese": "高炉",
-                "english": "Furnace",
-                "french": "Fourneau",
-                "german": "Hochofen",
-                "italian": "Fornace",
-                "japanese": "溶鉱炉",
-                "korean": "제철소",
-                "polish": "Piec hutniczy",
-                "russian": "Плавильня",
-                "spanish": "Alto horno",
-                "taiwanese": "高爐"
-            },
-            "maintenances": [
-                {
-                    "Amount": 100,
-                    "InactiveAmount": 50,
-                    "Product": 1010017
-                },
-                {
-                    "Amount": 100,
-                    "Product": 1010115
-                }
-            ],
-            "name": "Furnace",
-            "outputs": [
-                {
-                    "Amount": 1,
-                    "Product": 1010219,
-                    "StorageAmount": 4
-                }
-            ],
-            "region": 5000001,
-            "tpmin": 2
-        },
-        {
-            "guid": 2399,
-            "iconPath": "data/ui/2kimages/main/3dicons/icon_coal_2.png",
-            "inputs": [
-                {
-                    "Product": 1591,
-                    "StorageAmount": 6
-                }
-            ],
-            "locaText": {
-                "chinese": "煤矿",
-                "english": "Coal Mine",
-                "french": "Mine de charbon",
-                "german": "Kohlemine",
-                "italian": "Miniera di carbone",
-                "japanese": "炭鉱",
-                "korean": "석탄 광산",
-                "polish": "Kopalnia węgla",
-                "russian": "Угольная шахта",
-                "spanish": "Mina de carbón",
-                "taiwanese": "煤礦"
-            },
-            "maintenances": [
-                {
-                    "Amount": 50,
-                    "InactiveAmount": 25,
-                    "Product": 1010017
-                },
-                {
-                    "Amount": 50,
-                    "Product": 1010115
-                }
-            ],
-            "name": "Coal Mine",
-            "outputs": [
-                {
-                    "Amount": 1,
-                    "Product": 1010226,
-                    "StorageAmount": 8
-                }
-            ],
-            "region": 5000001,
-            "tpmin": 4
-        },
-        {
-            "guid": 2400,
-            "iconPath": "data/ui/2kimages/main/3dicons/icon_iron.png",
-            "inputs": [
-                {
-                    "Product": 1591,
-                    "StorageAmount": 6
-                }
-            ],
-            "locaText": {
-                "chinese": "铁矿",
-                "english": "Iron Mine",
-                "french": "Mine de fer",
-                "german": "Eisenmine",
-                "italian": "Miniera di ferro",
-                "japanese": "鉄鉱",
-                "korean": "철광산",
-                "polish": "Kopalnia żelaza",
-                "russian": "Железный рудник",
-                "spanish": "Mina de hierro",
-                "taiwanese": "鐵礦"
-            },
-            "maintenances": [
-                {
-                    "Amount": 50,
-                    "InactiveAmount": 25,
-                    "Product": 1010017
-                },
-                {
-                    "Amount": 50,
-                    "Product": 1010115
-                }
-            ],
-            "name": "Iron Mine",
-            "outputs": [
-                {
-                    "Amount": 1,
-                    "Product": 1010227,
-                    "StorageAmount": 8
-                }
-            ],
-            "region": 5000001,
-            "tpmin": 4
         },
         {
             "dlcs": [
@@ -25288,8 +25051,7 @@ params={
             "name": "Steel",
             "producers": [
                 1010297,
-                6080,
-                2397
+                6080
             ]
         },
         {
@@ -25475,8 +25237,7 @@ params={
                 1010298,
                 1010304,
                 114705,
-                1345,
-                2399
+                1345
             ]
         },
         {
@@ -25505,8 +25266,7 @@ params={
             "name": "Iron",
             "producers": [
                 1010305,
-                1388,
-                2400
+                1388
             ]
         },
         {
@@ -25587,7 +25347,6 @@ params={
             "mainFactory": 1010309,
             "name": "Cement",
             "producers": [
-                5989,
                 1010309
             ]
         },
@@ -27434,8 +27193,7 @@ params={
             "mainFactory": 114440,
             "name": "Salt",
             "producers": [
-                114440,
-                7319
+                114440
             ]
         },
         {
