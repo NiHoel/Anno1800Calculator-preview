@@ -331,6 +331,12 @@ export class Factory extends Consumer {
         });
 
         this.substitutableOutputAmount = ko.pureComputed(() => Math.max(0, this.totalDemands() - this.externalProduction() - this.inputAmountByExtraGoods() * this.extraGoodFactor()));
+        this.isHighlightedAsMissing = ko.pureComputed(() => {
+            if (!view.settings.missingBuildingsHighlight.checked())
+                return false;
+
+            return this.buildings() > this.existingBuildings() + ACCURACY;
+        });
 
         this.requiredInputAmountSubscription = ko.computed(() => {
             this.inputAmountByOutput(this.outputAmount() / this.extraGoodFactor());

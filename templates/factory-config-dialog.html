@@ -128,7 +128,7 @@
                                                         <img class="icon-sm icon-light" src="../icons/icon_transporter_loading_light.png" />
                                                     </span>
                                                 </div>
-                                                <span data-bind="if: !$data.isExport($parent) && $root.settings.missingBuildingsHighlight.checked() && $data.fromFactory.substitutableOutputAmount() > ACCURACY">
+                                                <span data-bind="if: !$data.isExport($parent) && $data.fromFactory.isHighlightedAsMissing()">
                                                     <span class="fa fa-exclamation-triangle danger-icon"></span>
                                                 </span>
                                             </div>
@@ -232,7 +232,7 @@
 
                                                     </span>
                                                 </div>
-                                                <span data-bind="if: $root.settings.missingBuildingsHighlight.checked() && $data.exportFactory.substitutableOutputAmount() > ACCURACY">
+                                                <span data-bind="if: $data.exportFactory.isHighlightedAsMissing()">
                                                     <span class="fa fa-exclamation-triangle danger-icon"></span>
                                                 </span>
                                                 <input step="0.1" min="0" class="form-control" type="number" value="0" data-bind="value: exportAmount, attr: {id: $data.importFactory.guid + '-export-contract-export-amount-input' } " />
@@ -264,7 +264,7 @@
                                                             <img class="icon-sm" data-bind="attr: { src: $data.exportFactory.icon ? $data.exportFactory.icon : null, alt: $data.exportFactory.name}">
                                                         </a>
                                                     </span>
-                                                    <span data-bind="if: $root.settings.missingBuildingsHighlight.checked() && $data.exportFactory.substitutableOutputAmount() > ACCURACY">
+                                                    <span data-bind="if: $data.exportFactory.isHighlightedAsMissing()">
                                                         <span class="fa fa-exclamation-triangle danger-icon"></span>
                                                     </span>
                                                 </div>
