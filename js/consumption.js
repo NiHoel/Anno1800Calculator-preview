@@ -11,14 +11,6 @@ export class Need extends Demand {
     constructor(config, assetsMap) {
         super(config, assetsMap);
         this.isNeed = true;
-        this.allDemands = [];
-
-        let treeTraversal = node => {
-            if (node instanceof Demand && !(node instanceof Need))
-                this.allDemands.push(node);
-            (node.demands || []).forEach(treeTraversal);
-        }
-        treeTraversal(this);
     }
 
 }
@@ -42,16 +34,34 @@ export class ResidenceNeed {
                 var total = this.residence.consumingLimit() * this.need.tpmin * newspaper;
                 return  total * (this.fulfillment() - this.substitution())
             });
-
-            this.need.addResidenceNeed(this);
         }
+
+        this.need.addResidenceNeed(this);
+
+        this.residentsPerHouse = ko.pureComputed(() => {
+            var sum = this.residence.residentsPerNeed.get(this.need.guid) || 0;
+            for (var c of this.residence.getConsumptionEntries(this.need)) {
+                var coverage = c.residenceEffectCoverage.coverage();
+                sum += coverage * (c.residenceEffectEntry.residents || 0);
+            }
+            return sum;
+        });
+
+        this.residents = ko.pureComputed(() => {
+            var sum = this.residence.existingBuildings() * (this.residence.residentsPerNeed.get(this.need.guid) || 0);
+            for (var c of this.residence.getConsumptionEntries(this.need)) {
+                var coverage = c.residenceEffectCoverage.coverage();
+                sum += Math.round(coverage * this.residence.existingBuildings()) *(c.residenceEffectEntry.residents || 0);
+            }
+            return Math.floor(sum * this.fulfillment());
+        })
     }
 
     initDependencies(residenceNeedsMap){
         this.residenceNeedsMap = residenceNeedsMap;
         this.substitutionSubscription = ko.computed(() => {
             /** @type [ResidenceEffectEntryCoverage] */
-            var arr = this.residence.entryCoveragePerProduct().get(this.need.product);
+            var arr = this.residence.getConsumptionEntries(this.need);
             if(arr == null)
                 return; // no effect for this product
             
@@ -114,10 +124,7 @@ export class NoFactoryNeed extends PublicBuildingNeed {
         this.amount = ko.observable(0);
         if (this.factor == null)
             this.factor = 1;
-
-        this.allDemands = []; // compatibility with Need
-
-        PopulationNeed.prototype.initAggregation.bind(this)(assetsMap);
+       
 
         this.residentsInput = ko.pureComputed(() => {
             return this.amount() * this.residentsInputFactor;
@@ -131,6 +138,10 @@ export class PopulationNeed extends Need {
     constructor(config, level, assetsMap) {
         super(config, assetsMap);
         this.level = level;
+
+        this.residentsUnlockCondition = 0;
+        if (this.unlockCondition && this.unlockCondition.populationLevel == level.guid)
+            this.residentsUnlockCondition = this.unlockCondition.amount;
 
         this.initHidden(assetsMap);
         this.initAggregation(assetsMap);
@@ -157,6 +168,21 @@ export class PopulationNeed extends Need {
             this.hidden = ko.computed(() => !this.available());
             this.residences = this.level.allResidences;
         }
+
+        this.residenceNeeds = ko.observableArray([]);
+
+        this.addResidenceNeed = function (need) {
+            this.residenceNeeds.push(need);
+        }
+
+        this.totalResidents = ko.pureComputed(() => {
+            var sum = 0;
+            for (var n of this.residenceNeeds()) {
+                sum += n.residents();
+            }
+
+            return sum;
+        });
     }
 
     initAggregation(assetsMap) {
@@ -164,12 +190,8 @@ export class PopulationNeed extends Need {
 
         this.checked = ko.observable(true);
 
-        this.notes = ko.observable("");
+        this.notes = ko.observable("");   
 
-        this.residenceNeeds = ko.observableArray([]);
-        this.addResidenceNeed = function(need){
-            this.residenceNeeds.push(need);
-        }
 
         this.residenceNeedsSubscription = ko.computed(() => {
             var sum = 0;
@@ -178,6 +200,8 @@ export class PopulationNeed extends Need {
 
             this.amount(sum);
         });
+
+
     }
 
     initBans(level, assetsMap) {
@@ -192,16 +216,16 @@ export class PopulationNeed extends Need {
 
                 if (config.populationLevel != level.guid) {
                     var l = assetsMap.get(config.populationLevel);
-                    return l.amount() < config.amount;
+                    return l.residents() < config.amount;
                 }
 
-                if (level.amount() >= config.amount)
+                if (level.residents() >= config.amount)
                     return false;
 
                 var residence = level.residence.upgradedBuilding;
                 while (residence) {
                     var l = residence.populationLevel;
-                    var amount = l.amount();
+                    var amount = l.residents();
                     if (amount > 0)
                         return false;
 
@@ -209,8 +233,9 @@ export class PopulationNeed extends Need {
                 }
 
                 return true;
-            });
+            }).extend({ deferred: true }); // deferred necessary for updating population level residents
 
+            this.isInactive(this.locked());
             this.locked.subscribe(locked => this.isInactive(locked));
         }
 

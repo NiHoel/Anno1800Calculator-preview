@@ -10,17 +10,18 @@
                 <table class="table table-striped">
                     <tbody>
                         <tr>
-                            <!-- existing buildings -->
-                            <td>
-                                <span data-bind="text: $root.texts.buildings.name"></span>
-                            </td>
                             <td>
                                 <div data-bind="component: { name: 'existing-buildings-input', params: $data}"></div>
                             </td>
                             <td>
-                                <button type="button" class="btn" data-bind="enable: $root.settings.consumptionModifier.checked()">
-                                    <img data-toggle="modal" data-target="#residence-effect-dialog" class="icon-sm  icon-light" src="../icons/icon_marketplace_2d_light.png" data-bind="click: () => $data.prepareResidenceEffectView()" />
-                                </button>
+                                <div class="input-group input-group spinner" style="max-width: 10rem;">
+                                    <div class="input-group-prepend" data-bind="src: {title: texts.residents.name()}">
+                                        <div class="input-group-text">
+                                            <img class="icon-sm icon-light" src="../icons/icon_resource_population.png" />
+                                        </div>
+                                    </div>
+                                    <input class="form-control" type="text" value="0" step="100" min="0" data-bind="value: $data.residentsInput, enable: $data.canEdit == null || $data.canEdit()" />
+                                </div>
                             </td>
                             <td>
                                 <div class="inline-list" data-bind="foreach: $data.residence.effectCoverage">
@@ -28,6 +29,11 @@
                                         <img class="icon-sm" data-bind="attr: {src: $data.residenceEffect.icon}" />
                                     </div>
                                 </div>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-light btn-sm float-right" data-bind="enable: $root.settings.consumptionModifier.checked()">
+                                    <img data-toggle="modal" data-target="#residence-effect-dialog" class="icon-sm  icon-light" src="../icons/icon_marketplace_2d_light.png" data-bind="click: () => $data.prepareResidenceEffectView()" />
+                                </button>
                             </td>
                         </tr>
 
@@ -55,7 +61,10 @@
                                         <div data-bind="component: { name: 'existing-buildings-input', params: $data}"></div>
 
                                     </td>
-
+                                    <td data-bind="if: $data.residents() > 0">
+                                        <img class="icon-sm icon-light" src="../icons/icon_resource_population.png" />
+                                        <span class="ml-1" data-bind="text: formatNumber($data.residents())"></span>
+                                    </td>
                                     <td data-bind="if: $root.settings.consumptionModifier.checked()">
                                         <span data-bind="if: $data.panoramaCoverage() > 1 + ACCURACY / 100">
                                             <span class="fa fa-exclamation-triangle danger-icon" data-bind="attr: {title: '> 100% ' + $root.texts.panoramaEffect.name()}"></span>
@@ -67,7 +76,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <button class="btn btn-light btn-sm" data-bind="click: () => {$data.prepareResidenceEffectView()}" data-toggle="modal" data-target="#residence-effect-dialog">
+                                        <button class="btn btn-light btn-sm float-right" data-bind="click: () => {$data.prepareResidenceEffectView()}" data-toggle="modal" data-target="#residence-effect-dialog">
                                             <img class="icon-sm icon-light" src="../icons/icon_marketplace_2d_light.png" />
                                         </button>
                                     </td>
@@ -105,6 +114,11 @@
                                             </span>
 
 
+                                        </td>
+                                        <td>
+                                        <td data-bind="if: $data.totalResidents != null && $data.totalResidents() > 0">
+                                            <img class="icon-sm icon-light" src="../icons/icon_resource_population.png" />
+                                            <span class="ml-1" data-bind="text: formatNumber($data.totalResidents())"></span>
                                         </td>
                                         <td>
                                             <div class="inline-list" style="justify-content: right">

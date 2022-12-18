@@ -454,7 +454,6 @@ function init(isFirstRun, configVersion) {
             localStorage.removeItem(oldId);
         }
     }
-    view.settings.needUnlockConditions.checked(false);
 
     view.assetsMap = new Map();
 

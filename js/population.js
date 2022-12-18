@@ -1,6 +1,6 @@
 // @ts-check
 import { ACCURACY, EPSILON, delayUpdate, createIntInput, createFloatInput, NamedElement } from './util.js'
-import { MetaProduct, NoFactoryProduct } from './production.js'
+import { MetaProduct, NoFactoryProduct, Product } from './production.js'
 import { NoFactoryNeed, PopulationNeed, PublicBuildingNeed, ResidenceEffectCoverage, ResidenceEffectEntryCoverage, ResidenceNeed } from './consumption.js'
 import { ResidenceEffectView} from './views.js'
 
@@ -46,6 +46,7 @@ export class ResidenceBuilding extends NamedElement {
         this.consumingLimit = null;
         this.needsMap = null;
         this.residenceNeedsMap = null;
+        this.residents = ko.observable(0);
     }
 
     initializeNeeds(needsMap){
@@ -58,9 +59,8 @@ export class ResidenceBuilding extends NamedElement {
 
                 sum += this.existingBuildings() * (this.residentsPerNeed.get(n.guid) || 0);
                 
-                /** @type [ResidenceEffectEntryCoverage] */
-                var arr = this.entryCoveragePerProduct().get(n.product);
-                for(const entry of (arr || []))
+
+                for (/** @type [ResidenceEffectEntryCoverage] */ const entry of this.getConsumptionEntries(n))
                     sum += this.existingBuildings() * entry.getResidents();
 
             }
@@ -76,6 +76,16 @@ export class ResidenceBuilding extends NamedElement {
         });
 
         this.residenceNeedsMap.forEach(n => n.initDependencies(this.residenceNeedsMap));
+        this.residentsSubscription = ko.computed(() => {
+            var sum = 0;
+            for (var n of this.residenceNeedsMap.values()) {
+                if (!n.residents)
+                    console.log(n);
+                sum += n.residents();
+            }
+
+            this.residents(sum);
+        });
     }
 
     addEffect(effect) {
@@ -108,6 +118,21 @@ export class ResidenceBuilding extends NamedElement {
         }
 
         return residents * this.existingBuildings();
+    }
+
+    /**
+     * @param {Product|ResidenceNeed|Need } need
+     * @returns {[ResidenceEffectEntryCoverage]}
+     */
+    getConsumptionEntries(need) {
+        if (!(need instanceof Product)) {
+            if (need instanceof ResidenceNeed)
+                need = need.need;
+
+            need = need.product;
+        }
+
+        return this.entryCoveragePerProduct().get(need) || [];
     }
 
     serializeEffects() {
@@ -183,7 +208,6 @@ export class PopulationLevel extends NamedElement {
         });
 
 
-        this.amount = createIntInput(0, 0);
         this.existingBuildings = ko.pureComputed({
             read: () => {
                 var sum = 0;
@@ -241,7 +265,44 @@ export class PopulationLevel extends NamedElement {
         });
 
         this.allResidences.forEach(r => r.initializeNeeds(this.needsMap));
+        this.residents = ko.pureComputed(() => {
+            var sum = 0;
+            for (var r of this.allResidences)
+                sum += r.residents();
 
+            return sum;
+        });
+        this.residentsInput = ko.pureComputed({
+            read: () => formatNumber(this.residents()),
+            write: val => {
+                val = parseInt(val.replace(/[^\d]/g, ""));
+                if (!this.canEdit() || !isFinite(val) || val < 0) {
+                    this.residentsInput.notifySubscribers();
+                    return;
+                }
+                
+                var perHouse = 0;
+
+                for (var n of this.residence.residenceNeedsMap.values()) {
+                    if (n.need.residentsUnlockCondition && val < n.need.residentsUnlockCondition)
+                        continue;
+
+                    var fulfillment = n.need.checked() ? 1 : n.substitution();
+
+                    perHouse += fulfillment * this.residence.residentsPerNeed.get(n.need.guid);
+                    for (var c of this.residence.getConsumptionEntries(n)) {
+                        var coverage = c.residenceEffectCoverage.coverage();
+                        perHouse += coverage * fulfillment * (c.residenceEffectEntry.residents || 0);
+                    }
+                }
+
+                var buildings = Math.round(val / perHouse);
+                if (buildings !== this.residence.existingBuildings())
+                    this.residence.existingBuildings(buildings);
+                else
+                    this.residentsInput.notifySubscribers();
+            }
+        }).extend({ deferred: true }); // deferred necessary for updating population level residents
 
         if (this.skyscraperLevels || this.specialResidence) {
             // ensure that the value for the population level and those summed over the buildings match
@@ -296,11 +357,11 @@ export class PopulationLevel extends NamedElement {
     }
 
     incrementAmount() {
-        this.amount(parseFloat(this.amount()) + 1);
+        this.residents(parseFloat(this.residents()) + 1);
     }
 
     decrementAmount() {
-        this.amount(parseFloat(this.amount()) - 1);
+        this.residents(parseFloat(this.residents()) - 1);
     }
 
     applyConfigGlobally() {

@@ -55,8 +55,6 @@ export class ViewMode {
 
         ];
 
-        view.settings.needUnlockConditions.visible(false);
-
         /*this.simpleViewSubscription = ko.computed(() => {
             var checked = view.settings.simpleView.checked();
 
