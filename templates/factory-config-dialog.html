@@ -50,7 +50,7 @@
                     <hr />
                 </div>
 
-                <div data-bind="if: $root.settings.tradeRoutes.checked() && $data.isFactory">
+                <div data-bind="if: $data.tradeList != null && $data.tradeList.visible()">
                     <div data-bind="with: $data.tradeList">
 
                         <h6><span data-bind="text: $root.settings.tradeRoutes.name">Trade Routes</span></h6>

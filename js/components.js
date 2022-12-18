@@ -109,7 +109,7 @@ ko.components.register('existing-buildings-input', {
         this.texts = window.view.texts;
     }, template:
         `<div class="input-group input-group-short spinner float-left" style="max-width: 10rem;">
-            <div class="input-group-prepend" data-bind="src: {title: texts.existingNumberOfBuildings.name()}">
+            <div class="input-group-prepend" data-bind="src: {title: texts.residences.name()}">
                 <div class="input-group-text">
                     <img class="icon-sm icon-light" src="icons/icon_house_white.png" />
                 </div>

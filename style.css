@@ -492,6 +492,11 @@ div:last-child > .input-group-btn-vertical, div:last-child > .input-group-btn-ve
     margin-top: -1px;
 }
 
+.input-group-sm .icon-sm {
+    width: 20px;
+    height: 20px;
+}
+
 .input-group {
     flex-wrap: unset;
 }

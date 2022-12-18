@@ -100,6 +100,16 @@ export class TradeList {
         this.selectedIsland = ko.observable();
         this.export = ko.observable(false);
         this.newAmount = ko.observable(0);
+
+        this.visible = ko.pureComputed(() => {
+            if (this.npcRoutes != null && this.npcRoutes.length > 0)
+                return true;
+
+            if (this.island.isAllIslands())
+                return false;
+
+            return view.islands().length > 2;
+        });
     }
 
     canCreate() {
