@@ -435,26 +435,6 @@ function init(isFirstRun, configVersion) {
         }
     }
 
-    view.settings.populationInput = ko.observable("0");
-    if (localStorage) {
-        let id = "settings.populationInput";
-        let oldId = "settings.existingBuildingsInput";
-        if (localStorage.getItem(id) != null)
-            view.settings.populationInput(localStorage.getItem(id));
-
-        view.settings.populationInput.subscribe(val => {
-            if (val != "0" && val != "1" && val != "2")
-                view.settings.populationInput("1");
-
-            localStorage.setItem(id, val);
-        });
-
-        if (localStorage.getItem(oldId) != null) {
-            view.settings.populationInput("0");
-            localStorage.removeItem(oldId);
-        }
-    }
-
     view.assetsMap = new Map();
 
     view.regions = [];

@@ -86,8 +86,7 @@
                             <td>
                                 <div class="inline-list">
                                     <span class="mr-3">
-                                        <img class="icon-sm" src="../icons/icon_residence.png" data-bind="visible: $root.settings.populationInput() != '0'">
-                                        <img class="icon-sm" src="../icons/icon_house.png" data-bind="visible: $root.settings.populationInput() == '0'">
+                                        <img class="icon-sm" src="../icons/icon_residence.png">
                                     </span>
                                     <span data-bind="if: !$data.top2Population().length">0</span>
                                     <!-- ko foreach: $data.top2Population -->
@@ -96,7 +95,7 @@
                                             <img class="icon-sm" src="../icons/icon_marketplace_2d_light.png" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
 
                                         </span>
-                                        <span class="mr-3" data-bind="text: formatNumber($data.existingBuildings())"></span>
+                                        <span class="mr-3" data-bind="text: formatNumber($data.residents())"></span>
                                     </span>
                                     <!-- /ko -->
                                 </div>

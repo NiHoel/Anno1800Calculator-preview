@@ -59,7 +59,6 @@ export class ViewMode {
             var checked = view.settings.simpleView.checked();
 
             if (checked) {
-                view.settings.populationInput("0");
                 view.settings.additionalProduction.checked(false);
                 view.settings.consumptionModifier.checked(true);
                 //view.settings.needUnlockConditions.checked(true);

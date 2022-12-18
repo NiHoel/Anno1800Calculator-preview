@@ -487,12 +487,9 @@ class Island {
         this.noFactoryProducts = noFactoryProducts;
 
         this.top2Population = ko.computed(() => {
-            var useHouses = view.settings.populationInput() == "0";
-            var comp = useHouses
-                ? (a, b) => b.existingBuildings() - a.existingBuildings()
-                : (a, b) => b.amount() - a.amount();
+            var comp = (a, b) => b.residents() - a.residents();
 
-            return [...this.populationLevels].sort(comp).slice(0, 2).filter(l => useHouses ? l.existingBuildings() : l.amount());
+            return [...this.populationLevels].sort(comp).slice(0, 2).filter(l => l.residents());
         });
 
         this.top5Factories = ko.computed(() => {
