@@ -130,6 +130,8 @@ export class NoFactoryNeed extends PublicBuildingNeed {
             return this.amount() * this.residentsInputFactor;
         });
 
+        PopulationNeed.prototype.initAggregation.bind(this)(assetsMap);
+
         this.product.addNeed(this);
     }
 }

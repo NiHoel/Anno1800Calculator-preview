@@ -513,7 +513,7 @@ function init(isFirstRun, configVersion) {
     view.skyscraperDropdownStatus = ko.observable("hide");
     view.selectedFactory = ko.observable(view.island().factories[0]);
     view.selectedPopulationLevel = ko.observable(view.island().populationLevels[0]);
-    view.productionChain = ko.observable(new ProductionChainView(view.selectedFactory()));
+    view.productionChain = new ProductionChainView(view.selectedFactory);
     view.selectedMultiFactoryProducts = ko.observable(view.island().multiFactoryProducts);
     view.selectedExtraGoodItems = ko.observable(view.island().extraGoodItems);
     view.selectedContractManager = ko.observable(view.island().contractManager);
@@ -552,11 +552,6 @@ function init(isFirstRun, configVersion) {
     ko.applyBindings(view, $(document.body)[0]);
 
     // events must be registered afte apply bindings since this adds dialogs to the html
-    $('#factory-config-dialog').on('show.bs.modal',
-    () => {
-        view.productionChain(new ProductionChainView(view.selectedFactory()));
-    });
-
     $('#factory-choose-dialog').on('show.bs.modal',
         () => {
             view.selectedMultiFactoryProducts(view.island().multiFactoryProducts

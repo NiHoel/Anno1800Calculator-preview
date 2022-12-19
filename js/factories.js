@@ -16,7 +16,8 @@ export class Consumer extends NamedElement {
             this.region = assetsMap.get(config.region);
 
         this.items = [];
-        this.inputDemands = new Map();
+        this.inputDemandsMap = new Map();
+        this.inputDemands = ko.observableArray([]);
 
         this.boost = ko.observable(1);
         this.editable = ko.observable(false);
@@ -40,8 +41,6 @@ export class Consumer extends NamedElement {
         this.buildings = ko.computed(() => this.inputAmount() / this.tpmin / this.boost()).extend({ deferred: true });
         this.lockDLCIfSet(this.buildings);
         
-        this.inputProducts = new Map();
-
         this.notes = ko.observable("");
     }
 
@@ -77,32 +76,37 @@ export class Consumer extends NamedElement {
                 }
             }
 
-            var inputProducts = new Map();
+            var map = new Map();
+            var demands = [];
             for (var guid of inputs.keys()) {
                 var p = assetsMap.get(guid);
 
                 if (p.isAbstract)
                     continue;
 
-                if (this.inputDemands.has(guid)) {
-                    inputProducts.set(guid, this.inputDemands.get(guid));
-                    this.inputDemands.delete(guid);
-                    inputProducts.get(guid).updateAmount(amount);
+                var d = this.inputDemandsMap.get(guid)
+                if (d) {
+                    map.set(guid, d);
+                    demands.push(d)
+                    this.inputDemandsMap.delete(guid);
+                    d.updateAmount(amount);
                 } else {
-                    var d = new Demand({
+                    d = new Demand({
                         guid: guid,
                         consumer: this,
                         factor: inputs.get(guid),
                     }, assetsMap);
                     d.updateAmount(amount);
-                    inputProducts.set(guid, d);
+                    demands.push(d);
+                    map.set(guid, d);
                 }
             }
 
-            for (var d of this.inputDemands.values())
+            for (var d of this.inputDemandsMap.values())
                 d.factory().remove(d);
 
-            this.inputDemands = inputProducts;
+            this.inputDemandsMap = map;
+            this.inputDemands(demands);
         });
     }
 

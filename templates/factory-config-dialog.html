@@ -508,7 +508,7 @@
 
 
                 </div>
-                <div data-bind="if: $root.productionChain().tree() && $root.productionChain.tree().buildings > ACCURACY">
+                <div data-bind="if: $root.productionChain.tree()">
                     <hr />
                     <div class="tree" data-bind="with: $root.productionChain.tree()" style="justify-content: center">
                         <ul data-bind="template: 'treeElement'"></ul>

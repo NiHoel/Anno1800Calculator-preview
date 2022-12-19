@@ -96,9 +96,9 @@
                     </div>
                 </form>
 
-                <div data-bind="if: $data.productionChain && $data.productionChain.tree() && $root.productionChain.tree().buildings > ACCURACY">
+                <div data-bind="if: $data.productionChain && $data.productionChain.tree()">
                     <hr />
-                    <div class="tree" data-bind="with: $root.productionChain.tree()" style="justify-content: center">
+                    <div class="tree" data-bind="with: $data.productionChain.tree()" style="justify-content: center">
                         <ul data-bind="template: 'treeElement'"></ul>
                     </div>
                 </div>

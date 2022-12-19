@@ -1,9 +1,9 @@
 // @ts-check
 import { ACCURACY } from './util.js'
-import { PopulationLevel, Workforce } from './population.js'
+import { PopulationLevel, ResidenceBuilding, Workforce } from './population.js'
 import { PopulationNeed, ResidenceEffect, ResidenceEffectCoverage } from './consumption.js'
 import { ProductCategory, Product, Demand } from './production.js'
-import { Factory } from './factories.js'
+import { Consumer, Factory } from './factories.js'
 
 var ko = require( "knockout" );
 
@@ -167,110 +167,70 @@ export class Template {
 export class ProductionChainView {
     /**
      * 
-     * @param {Factory | Need} f
+     * @param {KnockoutObservable<Factory|Consumer>} factory
+     * @param {KnockoutObservable<number>|null} amount
      */
-    constructor(f) {
-        //this.factoryToDemands = new Map();
-        this.tree = ko.computed(() => {
-/*         let traverse = (d, node) => {
-                if (d.factory && d.amount) {
-                    var a = ko.isObservable(d.amount) ? parseFloat(d.amount()) : parseFloat(d.amount);
-                    var f = ko.isObservable(d.factory) ? d.factory() : d.factory;
-                    if (Math.abs(a) < ACCURACY)
-                        return node;
+    constructor(factory, amount = null) {
+        this.factory = factory;
+        this.amount = amount;
 
-                    if (!node)
-                        node = {
-                            amount: a,
-                            factory: f,
-                            children: []
+        this.tree = ko.pureComputed(() => {
+            let traverse = (/** @type Factory|Consumer */consumer, amount) => {
+                    if (amount < ACCURACY)
+                        return null;
+
+                    if (!(consumer instanceof Factory)){
+                        return {
+                            'amount': amount,
+                            'factory': consumer,
+                            'buildings': amount / consumer.tpmin / consumer.boost(),
+                            'children': consumer.inputDemands().map(d => traverse(d.factory(), amount))
+                        }; 
+                    }
+
+                    var factory = /** @type Factory */ consumer;
+
+                    var icon = null;
+                    var maxSubAmount = factory.outputAmount ? factory.outputAmount() : factory.inputAmount();
+                    if (factory.tradeList && factory.tradeList.amount() > maxSubAmount){
+                        maxSubAmount = factory.tradeList.amount()
+                        icon = "./icons/icon_shiptrade.png"
+                    }
+                    if (factory.contractList && factory.contractList.amount() > maxSubAmount){
+                        maxSubAmount = factory.contractList.amount()
+                        icon = "./icons/icon_docklands_2d_white.png"
+                    } 
+                    if (factory.extraGoodProductionAmount && factory.extraGoodProductionAmount() > maxSubAmount) {
+                        maxSubAmount = factory.extraGoodProductionAmount()
+                        icon = "./icons/icon_add_goods_socket_white.png"
+                    } 
+                    
+                    if(icon){
+                        return {
+                            'amount': amount,
+                            'factory': factory,
+                            'children': [],
+                            'icon': icon
                         }
-                    else
-                        node.amount += a;
-                } else
-                    return node;
-
-                var childDemands = d.demands.flatMap(e => {
-                    if (e instanceof ItemDemandSwitch || e instanceof FactoryDemandSwitch)
-                        return e.demands;
-                    else if (e instanceof ItemExtraDemand)
-                        return [e.demand];
-                    return [e];
-                });
-
-                if (node.children.length) {
-                    for (var i = 0; i < node.children.length; i++) {
-                        if (node.children[i])
-                            traverse(childDemands[i], node.children[i]);
                     }
-                } else {
-                    for (var e of childDemands) {
-                        node.children.push(traverse(e));
-                    }
-                }
 
-                return node;
-            }
+                    var inputAmount = amount / factory.extraGoodFactor();
+                    return {
+                        'amount': amount,
+                        'factory': factory,
+                        'buildings': inputAmount / factory.tpmin / factory.boost(),
+                        'children': factory.inputDemands().map(d => traverse(d.factory(), inputAmount))
+                    };           
 
-            var root = null;
-            var demands = f.demands;
+            };
 
-            if (f instanceof PopulationNeed) {
-                root = traverse(f);
-            }
-            else if (!demands.size && f.needs && f.needs.length) {
-                root = {
-                    amount: f.amount(),
-                    factory: f,
-                    buildings: f.existingBuildings(),
-                    children: []
-                }
-
-                for (var d of f.needs) {
-                    if (d instanceof ItemDemandSwitch || d instanceof FactoryDemandSwitch)
-                        for (var e of d.demands)
-                            root.children.push(traverse(e));
-                    else if (d instanceof ItemExtraDemand)
-                        root.children.push(traverse(d.demand));
-                    else
-                        root.children.push(traverse(d));
-                }
-            } else {
-
-
-                ////this.factoryToDemands.clear();
-                for (var d of f.demands) {
-                    root = traverse(d, root);
-                }
-
-                if (f.extraDemand) {
-                    root = traverse(view.selectedFactory().extraDemand, root);
-                }
-            }
-
-            let processNode = node => {
-                if (!node)
-                    return;
-
-                if (!node.buildings) {
-                    var factor = 1;
-
-                    if (node.factory.extraGoodFactor)
-                        factor = node.factory.extraGoodFactor();
-
-                    var inputAmount = node.amount / factor;
-                    node.buildings = Math.max(0, inputAmount) / node.factory.tpmin / node.factory.boost();
-                }
-
-                node.children.forEach(c => processNode(c));
-                node.children = node.children.filter(c => c && c.amount > ACCURACY);
-            }
-
-            processNode(root);
-
-            return root;
-            */
-            return null;
+            var amount = this.amount;
+            if (amount == null)
+                amount = this.factory().outputAmount;
+            if (amount == null)
+                amount = this.factory().inputAmount;
+            return traverse(this.factory(), amount());
+             
         });
     }
 }
@@ -278,7 +238,7 @@ export class ProductionChainView {
 class ResidenceEffectAggregate {
     /**
      * 
-     * @param {ko.observable} totalResidences
+     * @param {KnockoutObservable<number>} totalResidences
      * @param {ResidenceBuilding} residence
      * @param {ResidenceEffectCoverage} residenceEffectCoverage
      */
@@ -304,6 +264,11 @@ class ResidenceEffectAggregate {
 }
 
 export class ResidenceEffectView {
+    /**
+     * 
+     * @param {[ResidenceBuilding]} residences 
+     * @param {PopulationNeed} need 
+     */
     constructor(residences, need = null) {
         this.residences = residences.filter(r => r.available());
         this.percentCoverage = ko.observable(100);
@@ -349,7 +314,7 @@ export class ResidenceEffectView {
 
         this.need = need;
         if (need instanceof PopulationNeed) {
-            this.productionChainView = new ProductionChainView(need);
+            this.productionChain = new ProductionChainView(need.factory, need.amount);
         }
 
         this.sort();

@@ -93,7 +93,7 @@ export class TradeList {
             return amount;
         });
 
-        this.amount = ko.pureComputed(() => this.inputAmount() - this.outputAmount());
+        this.amount = ko.pureComputed(() => this.outputAmount() - this.inputAmount() );
 
         // interface elements to create a new route
         this.unusedIslands = ko.observableArray();
@@ -387,7 +387,7 @@ export class ContractList {
             return amount;
         })
 
-        this.amount = ko.pureComputed(() => this.inputAmount() - this.outputAmount());
+        this.amount = ko.pureComputed(() => this.outputAmount() - this.inputAmount());
     }
 }
 
