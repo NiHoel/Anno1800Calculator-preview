@@ -800,8 +800,8 @@ Siehe folgenden Link für weitere Informationen: `,
         korean: "새로운 Anno1800 계산기 버전이 제공됩니다. 다운로드 버튼을 클릭하십시오."
     },
     newFeature: {
-        english: "IMPORTANT: Large parts of the calculator have been re-written - but not yet been thoroughly tested. Please report all bugs and calculation inaccuricies to: DuxVitae#7882 on discord.\nTODO:\n* Production chain view\n* Workforce replacement\n* Rework factory configuration dialog\n* Help\n* Performance",
-        german: "WICHTIG: Große Teile des Warenrechners wurden überarbeitet - aber noch nicht tiefgreifen getestet. Bitte meldet alle Bugs und Berechnungsungenauigkeiten an: DuxVitae#7882 auf Discord.\nTODO:\n* Produktionskettenansicht\n* Ersetzen der Arbeitskräfte\n* Menü zum Konfigurieren von Fabriken überarbeiten\n* Hilfe\n* Performance",
+        english: "IMPORTANT: Large parts of the calculator have been re-written - but not yet been thoroughly tested. Please report all bugs and calculation inaccuricies to: DuxVitae#7882 on discord.\nTODO:\n* Workforce replacement\n* Rework factory configuration dialog\n* Help\n* Performance",
+        german: "WICHTIG: Große Teile des Warenrechners wurden überarbeitet - aber noch nicht tiefgreifen getestet. Bitte meldet alle Bugs und Berechnungsungenauigkeiten an: DuxVitae#7882 auf Discord.\nTODO:\n* Ersetzen der Arbeitskräfte\n* Menü zum Konfigurieren von Fabriken überarbeiten\n* Hilfe\n* Performance",
     },
     helpContent: {
         german:
