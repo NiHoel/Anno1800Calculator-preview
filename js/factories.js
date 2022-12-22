@@ -1,6 +1,6 @@
 // @ts-check
 import { ACCURACY, EPSILON, createIntInput, createFloatInput, NamedElement } from './util.js'
-import { Workforce, WorkforceDemand, WorkforceDemandSwitch } from './population.js'
+import { Workforce, WorkforceDemand } from './population.js'
 import { ExtraGoodProductionList, Demand} from './production.js'
 import { TradeList, ContractList } from './trade.js'
 
@@ -18,6 +18,7 @@ export class Consumer extends NamedElement {
         this.items = [];
         this.inputDemandsMap = new Map();
         this.inputDemands = ko.observableArray([]);
+        this.workforceDemand = null;
 
         this.boost = ko.observable(1);
         this.editable = ko.observable(false);
@@ -61,11 +62,8 @@ export class Consumer extends NamedElement {
 
             var inputs = new Map();
             this.inputs.forEach(i => { inputs.set(i.Product, i.Amount) });
-            var items = this.items.filter(item => item.replacements).sort((a, b) => a.item.guid - b.item.guid);
+            var items = this.items.filter(item => item.replacements && item.checked()).sort((a, b) => a.item.guid - b.item.guid);
             for (var item of items) {
-                if (!item.checked())
-                    continue;
-
                 for (var replacement of item.replacements) {
                     if (inputs.has(replacement[0])) {
                         var factor = inputs.get(replacement[0]);
@@ -115,13 +113,20 @@ export class Consumer extends NamedElement {
         for (let m of this.maintenances || []) {
             let a = assetsMap.get(m.Product);
             if (a instanceof Workforce) {
-                let items = this.items.filter(item => item.replacingWorkforce && item.replacingWorkforce != a);
-                if (items.length)
-                    this.workforceDemand = new WorkforceDemandSwitch($.extend({ factory: this, workforce: a }, m), items[0], assetsMap);
-                else
-                    this.workforceDemand = new WorkforceDemand($.extend({ factory: this, workforce: a }, m), assetsMap);
+                this.workforceDemand = new WorkforceDemand($.extend({ factory: this, workforce: a }, m));
 
-                this.existingBuildings.subscribe(val => this.workforceDemand.updateAmount(Math.max(val, this.buildings())));
+
+                this.workforceDemandSubscription = ko.computed(() => {
+
+                let items = this.items.filter(item => item.replacingWorkforce && item.replacingWorkforce != a && item.checked()).sort((a, b) => a.item.guid - b.item.guid);
+                if(items.length)
+                    this.workforceDemand.updateWorkforce(items[0].replacingWorkforce)
+                else
+                    this.workforceDemand.updateWorkforce(null);
+                    
+
+                
+                });
                 this.buildings.subscribe(val => this.workforceDemand.updateAmount(Math.max(val, this.buildings())));
             }
         }

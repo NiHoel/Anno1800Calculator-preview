@@ -480,7 +480,7 @@ class Island {
         }
 
 
-        this.workforce = this.workforce.filter(w => w.demands.length);
+        this.workforce = this.workforce.filter(w => w.demands().length);
 
         this.assetsMap = assetsMap;
         this.products = products;

@@ -39,8 +39,8 @@
                                         </div>
                                     </div>
                                     <!-- workforce replacement -->
-                                    <div data-bind="if: $data.replacingWorkforce && $parent.workforceDemand.isSwitch">
-                                        <div data-bind="component: {name: 'replacement', params: {old: $parent.workforceDemand.defaultWorkforce, new: $parent.workforceDemand.replacingWorkforce}}"></div>
+                                    <div data-bind="if: $data.replacingWorkforce && $parent.workforceDemand.defaultWorkforce.guid !== $data.replacingWorkforce">
+                                        <div data-bind="component: {name: 'replacement', params: {old: $parent.workforceDemand.defaultWorkforce, new: $data.replacingWorkforce}}"></div>
                                     </div>
                                 </td>
                             </tr>

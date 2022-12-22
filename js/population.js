@@ -416,8 +416,15 @@ export class CommuterWorkforce extends NamedElement {
 export class Workforce extends NamedElement {
     constructor(config, assetsMap) {
         super(config);
-        this.amount = ko.observable(0);
-        this.demands = [];
+        this.demands = ko.observableArray([]);
+
+        this.amount = ko.pureComputed(() => {
+            var sum = 0;
+            for (var d of this.demands())
+                sum += d.amount();
+
+            return sum;
+        });
 
         this.visible = ko.pureComputed(() => {
             if (!this.available())
@@ -427,19 +434,19 @@ export class Workforce extends NamedElement {
         });
     }
 
-    updateAmount() {
-        var sum = 0;
-        this.demands.forEach(d => sum += d.workforce() == this ? d.amount() : 0);
-        this.amount(sum);
-    }
+
 
     add(demand) {
         this.demands.push(demand);
     }
+
+    remove(demand){
+        this.demands.remove(demand);
+    }
 }
 
 export class WorkforceDemand extends NamedElement {
-    constructor(config, assetsMap) {
+    constructor(config) {
         super(config);
         this.buildings = 0;
 
@@ -449,10 +456,26 @@ export class WorkforceDemand extends NamedElement {
             this.updateAmount(this.buildings);
         });
 
+        /** @type KnockoutObservable<Workforce> */
         this.workforce = ko.observable(config.workforce);
+        this.defaultWorkforce = config.workforce;
         this.workforce().add(this);
 
-        this.amount.subscribe(val => this.workforce().updateAmount());
+    }
+
+    /**
+     * 
+     * @param {Workforce|null} workforce 
+     */
+    updateWorkforce(workforce = null){
+        if(workforce == null)
+            workforce = this.defaultWorkforce;
+
+        if (workforce !== this.workforce()){
+            this.workforce().remove(this);
+            this.workforce(workforce);
+            this.workforce().add(this);
+        }
     }
 
     updateAmount(buildings) {
@@ -463,20 +486,3 @@ export class WorkforceDemand extends NamedElement {
     }
 }
 
-export class WorkforceDemandSwitch extends WorkforceDemand {
-    constructor(config, item, assetsMap) {
-        super(config, assetsMap);
-        this.isSwitch = true;
-        this.item = item;
-        this.defaultWorkforce = this.workforce();
-        this.replacingWorkforce = this.item.replacingWorkforce;
-
-        this.replacingWorkforce.add(this);
-
-        this.item.checked.subscribe(checked => {
-            this.workforce(checked ? this.replacingWorkforce : this.defaultWorkforce);
-            this.defaultWorkforce.updateAmount();
-            this.replacingWorkforce.updateAmount();
-        });
-    }
-}
