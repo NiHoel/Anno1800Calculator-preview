@@ -232,6 +232,15 @@ export class ProductionChainView {
             return traverse(this.factory(), amount());
              
         });
+
+        this.breadth = ko.pureComputed(() => {
+            if (this.tree() == null)
+                return 0;
+
+            var traverse = node => Math.max(1, (node.children || []).map(n => traverse(n)).reduce((a,b) => a +b, 0));
+
+            return traverse(this.tree());
+        })
     }
 }
 

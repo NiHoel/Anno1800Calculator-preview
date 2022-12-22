@@ -335,7 +335,9 @@ export class Factory extends Consumer {
         });
 
         this.outputAmount = ko.pureComputed(() => {
-            var diff = Math.max(this.inputAmountByExtraGoods() * this.extraGoodFactor(), this.totalDemands() - this.externalProduction());
+            var diff = Math.max(this.inputAmountByExtraGoods() * this.extraGoodFactor(), 
+                this.totalDemands() - this.externalProduction(),
+                this.useinputAmountByExistingBuildings() ? this.inputAmountByExistingBuildings() * this.extraGoodFactor() : 0);
             return diff > EPSILON ? diff : 0;
         });
 
