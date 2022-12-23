@@ -17,6 +17,7 @@ export function setDefaultFixedFactories(assetsMap) {
     assetsMap.get(120032).fixedFactory(assetsMap.get(101252));
     assetsMap.get(1010216).fixedFactory(assetsMap.get(1010294));
     assetsMap.get(1010214).fixedFactory(assetsMap.get(1010292));
+    assetsMap.get(1010206).fixedFactory(assetsMap.get(1010284));
 }
 
 function removeSpaces(string) {

@@ -93,13 +93,14 @@ ko.components.register('replacement', {
             <span class="strike-through">
                 <img class="icon-sm" src="" data-bind="attr: { src: old.icon ? old.icon : null, alt: old.name }">
             </span>
+            <!-- ko if: replacing -->
             <div class="ui-replacement-spacer">
                     &rarr;
             </div>
             <div>
                 <img class="icon-sm" src="" data-bind="attr: { src: replacing.icon ? replacing.icon : null, alt: replacing.name }">
             </div>
-
+            <!-- /ko -->
         </div>`
 });
 

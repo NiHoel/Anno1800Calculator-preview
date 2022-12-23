@@ -118,7 +118,8 @@ export class Consumer extends NamedElement {
 
                 this.workforceDemandSubscription = ko.computed(() => {
 
-                let items = this.items.filter(item => item.replacingWorkforce && item.replacingWorkforce != a && item.checked()).sort((a, b) => a.item.guid - b.item.guid);
+                // for workforce replacement, the last applied item matters
+                let items = this.items.filter(item => item.replacingWorkforce && item.replacingWorkforce != a && item.checked()).sort((a, b) => b.item.guid - a.item.guid);
                 if(items.length)
                     this.workforceDemand.updateWorkforce(items[0].replacingWorkforce)
                 else
