@@ -916,61 +916,6 @@ params={
             "tpmin": 2
         },
         {
-            "guid": 5988,
-            "iconPath": "data/ui/2kimages/main/3dicons/icon_reinforced_concrete.png",
-            "inputs": [
-                {
-                    "Amount": 1,
-                    "Product": 1010231,
-                    "StorageAmount": 6
-                },
-                {
-                    "Amount": 1,
-                    "Product": 1010234,
-                    "StorageAmount": 6
-                },
-                {
-                    "Amount": 1,
-                    "Product": 1010219,
-                    "StorageAmount": 6
-                }
-            ],
-            "locaText": {
-                "chinese": "混凝土工厂",
-                "english": "Concrete Works",
-                "french": "Cimenterie",
-                "german": "Betonwerk",
-                "italian": "Fabbrica di calcestruzzo",
-                "japanese": "コンクリート工場",
-                "korean": "콘크리트 건물",
-                "polish": "Betoniarnia",
-                "russian": "Бетоносмесительный завод",
-                "spanish": "Construcciones de hormigón",
-                "taiwanese": "混凝土工廠"
-            },
-            "maintenances": [
-                {
-                    "Amount": 100,
-                    "InactiveAmount": 50,
-                    "Product": 1010017
-                },
-                {
-                    "Amount": 100,
-                    "Product": 1010366
-                }
-            ],
-            "name": "Concrete Works",
-            "outputs": [
-                {
-                    "Amount": 1,
-                    "Product": 1010202,
-                    "StorageAmount": 6
-                }
-            ],
-            "region": 5000001,
-            "tpmin": 1.3333333333333335
-        },
-        {
             "canClip": false,
             "fertilizerModule": 25240,
             "guid": 1010262,
@@ -4460,51 +4405,6 @@ params={
             ],
             "region": 5000001,
             "tpmin": 2
-        },
-        {
-            "canClip": true,
-            "guid": 101303,
-            "inputs": [
-            ],
-            "locaText": {
-                "brazilian": "Saltpetre Works",
-                "chinese": "硝石采石场",
-                "english": "Saltpetre Works",
-                "french": "Salpêtrière",
-                "german": "Salpeterwerk",
-                "italian": "Salina",
-                "japanese": "硝石の採石場",
-                "korean": "초석 작업장",
-                "polish": "Wytwórnia saletry",
-                "portuguese": "Saltpetre Works",
-                "russian": "Фабрика селитры",
-                "spanish": "Taller de salitre",
-                "taiwanese": "硝石採石場"
-            },
-            "maintenances": [
-                {
-                    "Amount": 250,
-                    "InactiveAmount": 125,
-                    "Product": 1010017,
-                    "VectorElement": null
-                },
-                {
-                    "Amount": 125,
-                    "Product": 1010367,
-                    "VectorElement": null
-                }
-            ],
-            "name": "coastal_colony01_02 (Niter Coast Building)",
-            "outputs": [
-                {
-                    "Amount": 1,
-                    "Product": 1010232,
-                    "StorageAmount": 1
-                }
-            ],
-            "palaceBuff": 191141,
-            "region": 5000001,
-            "tpmin": 0.5
         },
         {
             "canClip": false,
@@ -10740,17 +10640,19 @@ params={
             "inputs": [
             ],
             "locaText": {
-                "chinese": "矿坑",
-                "english": "Mineral Mine",
-                "french": "Mine de minéraux",
-                "german": "Erzmine",
-                "italian": "Miniera di minerali",
-                "japanese": "鉱山",
-                "korean": "금광",
-                "polish": "Kopalnia minerałów",
-                "russian": "Минеральная шахта",
-                "spanish": "Mina de mineral",
-                "taiwanese": "礦坑"
+                "brazilian": "Iron Mine",
+                "chinese": "铁矿",
+                "english": "Iron Mine",
+                "french": "Mine de fer",
+                "german": "Eisenmine",
+                "italian": "Miniera di ferro",
+                "japanese": "鉄鉱",
+                "korean": "철광산",
+                "polish": "Kopalnia żelaza",
+                "portuguese": "Iron Mine",
+                "russian": "Железный рудник",
+                "spanish": "Mina de hierro",
+                "taiwanese": "鐵礦"
             },
             "maintenances": [
                 {
@@ -12175,7 +12077,13 @@ params={
                 "spanish": "François Strindberg, joyero real",
                 "taiwanese": "「皇家珠寶工匠」法蘭索瓦．史特林堡"
             },
-            "name": "François Strindberg, Crown Jeweller"
+            "name": "François Strindberg, Crown Jeweller",
+            "replaceInputs": [
+                {
+                    "NewInput": null,
+                    "OldInput": 1010256
+                }
+            ]
         },
         {
             "factories": [
@@ -14604,7 +14512,6 @@ params={
             "factories": [
                 100416,
                 101267,
-                101303,
                 1010310,
                 1010560,
                 1010309,
@@ -14644,7 +14551,6 @@ params={
             "factories": [
                 100416,
                 101267,
-                101303,
                 1010310,
                 1010560,
                 1010309,
@@ -18110,17 +18016,6 @@ params={
             "guid": 191141,
             "name": "Bronze Age Exhibition",
             "product": 1010231
-        },
-        {
-            "additionalOutputCycle": 10,
-            "amount": 1,
-            "dlcs": [
-                "dlc4"
-            ],
-            "factory": 101303,
-            "guid": 191141,
-            "name": "Bronze Age Exhibition",
-            "product": 1010232
         },
         {
             "additionalOutputCycle": 10,
@@ -24480,7 +24375,6 @@ params={
             "name": "Saltpeter",
             "producers": [
                 1010310,
-                101303,
                 8027
             ]
         },
@@ -24512,7 +24406,6 @@ params={
             ]
         },
         {
-            "differentFactoryInputs": true,
             "exchangeWeight": 764.7695249999999,
             "guid": 1010202,
             "iconPath": "data/ui/2kimages/main/3dicons/icon_reinforced_concrete.png",
@@ -24534,7 +24427,6 @@ params={
             "mainFactory": 1010280,
             "name": "Reinforced Concrete",
             "producers": [
-                5988,
                 1010280
             ]
         },
