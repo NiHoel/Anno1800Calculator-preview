@@ -2,6 +2,7 @@
     <div class="modal-dialog modal-lg" data-bind="css: {'modal-xl': $root.productionChain.breadth() > 5}">
         <div class="modal-content">
             <div class="modal-header">
+                <span class="icon-light mr-2" data-bind="visible: $data.region, component: {name: 'asset-icon', params: $data.region}"></span>
                 <h4 data-bind="text: $data.name">Factory Name</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 

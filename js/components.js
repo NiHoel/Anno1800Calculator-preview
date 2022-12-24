@@ -43,6 +43,29 @@ ko.components.register('asset-icon', {
     template: `<img class="icon-sm" src="" data-bind="attr: { src: asset.icon ? asset.icon : null, alt: asset.name, title: asset.name}">`
 });
 
+ko.components.register('factory-header', {
+    viewModel: function (params) {
+        this.$data = params.data;
+        this.hasButton = params.button;
+        this.$root = window.view;
+    },
+    template:
+        `<div class="ui-fchain-item-tr-button" data-bind="if: hasButton">
+            <div>
+                <button class="btn btn-light btn-sm" data-bind="click: () => {$root.selectedFactory($data.instance())}" data-toggle="modal" data-target="#factory-config-dialog">
+                    <span class="fa fa-sliders"></span>
+                </button>
+            </div>
+        </div>
+
+        <div class="ui-fchain-item-name" data-bind="text: $data.name, visible: !$root.settings.hideNames.checked()"></div>
+
+        <div class="ui-fchain-item-icon mb-2">
+            <img class="icon-tile" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
+            <img class="subscript-icon icon-light" data-bind="visible: $root.island().isAllIslands() && $data.region, attr: {src: $data.region ? $data.region.icon : null, title: $data.region ? $data.region.name : null}">
+        </div>`
+})
+
 ko.components.register('residence-label', {
     viewModel: function (residence) {
         this.residence = residence;

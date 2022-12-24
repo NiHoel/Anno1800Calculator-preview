@@ -414,6 +414,9 @@ export class RecipeList extends NamedElement {
 
         this.island = island;
 
+        if (list.region)
+            this.region = assetsMap.get(list.region);
+
         this.recipeBuildings = list.recipeBuildings.map(r => {
             var a = assetsMap.get(r);
             a.recipeList = this;

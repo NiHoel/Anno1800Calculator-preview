@@ -1,19 +1,8 @@
 <div data-bind="visible: $data.instance().visible">
 
     <div class="ui-fchain-item" data-bind="css: $data.instance().isHighlightedAsMissing() ? 'danger' : ''">
-        <div class="ui-fchain-item-tr-button">
-            <div>
-                <button class="btn btn-light btn-sm" data-bind="click: () => {$root.selectedFactory($data.instance())}" data-toggle="modal" data-target="#factory-config-dialog">
-                    <span class="fa fa-sliders"></span>
-                </button>
-            </div>
-        </div>
+        <factory-header params="data: $data, button: true"></factory-header>
 
-        <div class="ui-fchain-item-name" data-bind="text: $data.getRegionExtendedName(), visible: !$root.settings.hideNames.checked()"></div>
-
-        <div class="ui-fchain-item-icon mb-2">
-            <img class="icon-tile" src="../icons/icon_marketplace_2d_light.png" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
-        </div>
         <div class="ui-fchain-item-boost">
             <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.productionBoost.name}, visible: !$root.settings.hideProductionBoost.checked()">
                 <div class="input-group input-group-sm mb-3 spinner">
