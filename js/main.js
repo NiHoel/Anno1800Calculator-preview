@@ -7,7 +7,7 @@ import { NewspaperNeedConsumption, NewspaperNeedConsumptionEntry } from './consu
 import { Consumer } from './factories.js'
 import { NPCTrader, ContractUpgradeManager, TradeManager, ContractCreatorFactory } from './trade.js'
 import { Region, Session, IslandManager } from './world.js'
-import { DarkMode, ViewMode, Template, ProductionChainView, ResidenceEffectView } from './views.js'
+import { DarkMode, ViewMode, Template, ProductionChainView, ResidenceEffectView, CollapsibleStates } from './views.js'
 
 
 import './components.js'
@@ -510,7 +510,7 @@ function init(isFirstRun, configVersion) {
 
 
     // set up modal dialogs
-    view.skyscraperDropdownStatus = ko.observable("hide");
+    view.collapsibleStates = new CollapsibleStates();
     view.selectedFactory = ko.observable(view.island().factories[0]);
     view.selectedPopulationLevel = ko.observable(view.island().populationLevels[0]);
     view.productionChain = new ProductionChainView(view.selectedFactory);
@@ -577,21 +577,6 @@ function init(isFirstRun, configVersion) {
             }
     });
 
-
-    // store collapsable state of skyline configuration; closing and reopening would otherwise restore the default
-    view.selectedPopulationLevel.subscribe(() => {
-        setTimeout(() => {
-            $('#population-level-building-configuration').collapse(view.skyscraperDropdownStatus());
-            $('#population-level-building-configuration').off();
-            $('#population-level-building-configuration').on("hidden.bs.collapse shown.bs.collapse", function (event) {
-                if ($(this).hasClass("show")) {
-                    view.skyscraperDropdownStatus("show");
-                } else {
-                    view.skyscraperDropdownStatus("hide");
-                }
-            });
-        }, 200);
-    })
 
     if (view.viewMode.showOnStartup)
         $('#view-mode-dialog').modal("show");

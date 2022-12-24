@@ -388,3 +388,52 @@ export class ResidenceEffectView {
         }
     }
 }
+
+class Collapsible {
+    constructor(id, collapsed) {
+        this.id = id;
+        this.collapsed = ko.observable(!!collapsed);
+    }
+}
+
+export class CollapsibleStates {
+    constructor() {
+        this.key = "collapsibleStates";
+        this.collapsibles = ko.observableArray([]);
+
+        if (localStorage) {
+            try {
+                let json = JSON.parse(localStorage.getItem(this.key));
+                for (var id in json)
+                    this.collapsibles.push(new Collapsible(id, parseInt(json[id])))
+            } catch (e) {
+                console.error(e);
+            }
+
+
+            this.collapsiblesSubscription = ko.computed(() => {
+                var json = {};
+                for (var c of this.collapsibles())
+                    json[c.id] = c.collapsed() ? 1 : 0;
+
+                localStorage.setItem(this.key, JSON.stringify(json));
+            });
+        }
+    }
+
+    /**
+     * 
+     * @param {string} id
+     * @param {boolean} collapsed
+     * @returns {Collapsible}
+     */
+    get(id, collapsed) {
+        for (var c of this.collapsibles())
+            if (c.id == id)
+                return c;
+
+        var c = new Collapsible(id, collapsed);
+        this.collapsibles.push(c);
+        return c;
+    }
+}

@@ -41,15 +41,8 @@
                 </table>
 
                 <!-- Separate configuration for skyscrapers and houses -->
-                <fieldset class="collapsable-section" data-bind="if: $data.availableResidences().length > 1">
-                    <legend class="collapser collapsed" data-toggle="collapse" data-target="#population-level-building-configuration">
-                        <span class="fa fa-chevron-right"></span>
-                        <span class="fa fa-chevron-down"></span>
-                        <span data-bind="text:$data.skyscraperLevels ? $root.texts.skyscrapers.name : $root.texts.residences.name">Skyscrapers</span>
-                    </legend>
-
-                    <div id="population-level-building-configuration" class="collapse" data-bind="class: $root.skyscraperDropdownStatus">
-
+                <div data-bind="if: $data.availableResidences().length > 1">
+                    <collapsible params="id: 'population-level-building-configuration', heading: $data.skyscraperLevels ? $root.texts.skyscrapers.name : $root.texts.residences.name, collapsed: true, data: $data">
                         <table class="table table-striped">
                             <tbody data-bind="foreach: $data.availableResidences">
                                 <tr>
@@ -84,57 +77,47 @@
 
                             </tbody>
                         </table>
-
-
-                        <div class="clear"></div>
-                    </div>
-                </fieldset>
+                    </collapsible>
+                </div>
 
 
                 <div data-bind="foreach: {data: ['basicNeeds', 'luxuryNeeds', 'lifestyleNeeds'], as: 'needType', noChildContext: true}">
-                    <fieldset class="collapsable-section">
-                        <legend class="collapser" data-toggle="collapse" data-bind="attr: { 'data-target' : '#population-level-' + needType}">
-                            <span class="fa fa-chevron-right"></span>
-                            <span class="fa fa-chevron-down"></span>
-                            <span data-bind="text: $root.texts[needType].name">Needs</span>
-                        </legend>
-                        <div data-bind="attr: { id : 'population-level-' + needType}" class="collapse show">
-                            <table class="table table-striped">
-                                <tbody data-bind="foreach: $data[needType].filter(n => !n.hidden || !n.hidden())">
-                                    <tr data-bind="css:{inactive: $data.isInactive}">
-                                        <td>
-                                            <span class="custom-control custom-checkbox" data-bind="title: $data.product.name()">
-                                                <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, disable: $data.isInactive, attr: { id: $parent.guid + '-' + $data.product.guid + '-checked' }">
-                                                <label class="custom-control-label" data-bind="attr: { for: $parent.guid + '-' + $data.product.guid + '-checked' }" src-only style="vertical-align: top;">
-                                                    <span class="mr-2" data-bind="for: $parent.guid + '-' + $data.product.guid + '-checked'">
-                                                        <span data-bind="component: { name: 'asset-icon', params: $data.product}"></span>
-                                                        <!-- <img src="../icons/icon_marketplace_2d_light.png" class="icon-sm" data-bind="attr: { src: $data.product.icon ? $data.product.icon  : null, alt: $data.product.name, for: $parent.guid + '-' + $data.product.guid + '-checked', title: $data.product.name() }" style="margin-right: 0.75em; margin-left: -0.25em;" /> -->
-                                                    </span>
-                                                </label>
-                                            </span>
+                    <collapsible params="id: 'population-level-' + needType, heading: $root.texts[needType].name, collapsed: needType == 'lifestyleNeeds', data: $data, checkbox: $data[needType]">
+                        <table class="table table-striped" style="table-layout: fixed">
+                            <tbody data-bind="foreach: $data[needType].filter(n => !n.hidden || !n.hidden())">
+                                <tr data-bind="css:{inactive: $data.isInactive}">
+                                    <td>
+                                        <span class="custom-control custom-checkbox" data-bind="title: $data.product.name()">
+                                            <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, disable: $data.isInactive, attr: { id: $parent.guid + '-' + $data.product.guid + '-checked' }">
+                                            <label class="custom-control-label" data-bind="attr: { for: $parent.guid + '-' + $data.product.guid + '-checked' }" src-only style="vertical-align: top;">
+                                                <span class="mr-2">
+                                                    <span data-bind="component: { name: 'asset-icon', params: $data.product}"></span>
+                                                    <span data-bind="text: $data.product.name()"></span>
+                                                    <!-- <img src="../icons/icon_marketplace_2d_light.png" class="icon-sm" data-bind="attr: { src: $data.product.icon ? $data.product.icon  : null, alt: $data.product.name, for: $parent.guid + '-' + $data.product.guid + '-checked', title: $data.product.name() }" style="margin-right: 0.75em; margin-left: -0.25em;" /> -->
+                                                </span>
+                                            </label>
+                                        </span>
 
 
-                                        </td>
-                                        <td>
-                                        <td data-bind="if: $data.totalResidents != null && $data.totalResidents() > 0">
-                                            <img class="icon-sm icon-light" src="../icons/icon_resource_population.png" />
-                                            <span class="ml-1" data-bind="text: formatNumber($data.totalResidents())"></span>
-                                        </td>
-                                        <td>
-                                            <div class="inline-list" style="justify-content: right">
-                                                <div data-bind="if: $data.amount">
-                                                    <span data-bind="text: formatNumber($data.amount()) + ' t/min'"></span>
-                                                </div>
-                                                <button class="btn btn-light btn-sm ml-2" data-bind="click: () => {$parent.prepareResidenceEffectView($data)}" data-toggle="modal" data-target="#residence-effect-dialog">
-                                                    <img class="icon-sm  icon-light" src="../icons/icon_marketplace_2d_light.png" />
-                                                </button>
-
+                                    </td>
+                                    <td data-bind="if: $data.totalResidents != null && $data.totalResidents() > 0">
+                                        <img class="icon-sm icon-light" src="../icons/icon_resource_population.png" />
+                                        <span class="ml-1" data-bind="text: formatNumber($data.totalResidents())"></span>
+                                    </td>
+                                    <td>
+                                        <div class="inline-list" style="justify-content: right">
+                                            <div data-bind="if: $data.amount">
+                                                <span data-bind="text: formatNumber($data.amount()) + ' t/min'"></span>
                                             </div>
-                                        </td>
-                                    </tr>
-                            </table>
-                        </div>
-                    </fieldset>
+                                            <button class="btn btn-light btn-sm ml-2" data-bind="click: () => {$parent.prepareResidenceEffectView($data)}" data-toggle="modal" data-target="#residence-effect-dialog">
+                                                <img class="icon-sm  icon-light" src="../icons/icon_marketplace_2d_light.png" />
+                                            </button>
+
+                                        </div>
+                                    </td>
+                                </tr>
+                        </table>
+                    </collapsible>
                 </div>
 
                 <div data-bind="component: { name: 'notes-section', params:{ $data: $data}}"></div>

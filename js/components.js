@@ -149,3 +149,66 @@ ko.components.register('additional-output', {
             <span data-bind="text: formatNumber(amount()) + ' t/min'"></span>
         </div>`
 });
+
+ko.components.register('collapsible', {
+    viewModel: function (params) {
+        this.target = '#' + params.id;
+        this.heading = params.heading;
+        this.collapser = window.view.collapsibleStates.get(params.id, params.collapsed);
+        this.cssClass = ko.pureComputed(() => this.collapser.collapsed() ? "hide" : "show");
+        this.fieldsetClass = params.fieldsetClass ? params.fieldsetClass : "collapsable-section";
+        this.data = params.data;
+        this.hasCheckbox = false;
+
+        if (params.checkbox) {
+            this.hasCheckbox = true;
+            if (ko.isWriteableObservable(params.checkbox))
+                this.checked = params.checkbox;
+            else {
+                this.items = params.checkbox;
+                this.checked = ko.pureComputed({
+                    read: () => {
+                        for (var n of this.items)
+                            if (!n.checked())
+                                return false;
+
+                        return true;
+                    },
+                    write: (checked) => {
+                        for (var n of this.items)
+                            n.checked(checked);
+                    }
+                })
+            }
+        }
+
+        setTimeout(() => {
+            $(this.target).on("hidden.bs.collapse shown.bs.collapse", (event) => {
+                this.collapser.collapsed(!$(this.target).hasClass("show"));
+            });
+        });
+
+    }, template:
+        `<fieldset data-bind="class: fieldsetClass">
+            <legend class="collapser collapsed" data-toggle="collapse" data-bind="attr: {'data-target' : target}, css: {'collapsed' : collapser.collapsed()}">
+                        <span class="fa fa-chevron-right"></span>
+                        <span class="fa fa-chevron-down"></span>
+                        <!-- ko if: !hasCheckbox -->
+                        <span data-bind="text:heading"></span>
+                        <!-- /ko -->
+                        <!-- ko if: hasCheckbox -->
+                        <span class="custom-control custom-checkbox ml-1" style="display: initial">
+                            <input type="checkbox" class="custom-control-input" data-bind="checked: checked, attr: { id: target + '-check-all' }">
+                            <label class="custom-control-label" data-bind="attr: {for: target + '-check-all'}">
+                                <span data-bind="text:heading"></span>
+                            </label>
+                        </span>
+                        <!-- /ko -->
+                    </legend>
+            <div class="collapse" data-bind="attr: {'id' : collapser.id}, class: cssClass">
+                <!-- ko template: { nodes: $componentTemplateNodes, data: data } --><!-- /ko -->
+                <div class="clear"></div>
+            </div>
+          </fieldset>
+            `
+});

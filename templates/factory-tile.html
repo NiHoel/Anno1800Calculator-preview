@@ -29,19 +29,15 @@
         <div class="ui-fchain-item-attribute-group">
             <div>
                 <!-- buildings display for non-construction products -->
-                <div class="ui-fchain-item-count" data-bind="visible: !$data.editable()">
+                <div class="ui-fchain-item-count" data-bind="if: !$data.editable()">
                     <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
                         <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? formatNumber($data.instance().buildings()) : Math.ceil( $data.instance().buildings())"></span>
                         <span>x</span>
-                        <div class="btn-group" role="group" data-bind="if: !$root.settings.simpleView.checked()">
-                            <button type="button" class="btn btn-secondary" data-bind="click: () => $data.instance().incrementBuildings(), enable:  $data.instance().buildings() > 0" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">+</button>
-                            <button type="button" class="btn btn-secondary" data-bind="click: () => $data.instance().decrementBuildings(), enable:  $data.instance().buildings() >= 1.01" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">-</button>
-                        </div>
                     </div>
                 </div>
 
                 <!-- existing buildings input for non-construction products -->
-                <div class="ui-fchain-item-count" data-bind="visible: !$data.editable() && $root.settings.missingBuildingsHighlight.checked() && (!$data.instance().region || !$data.instance().island.region || $data.instance().region === $data.instance().island.region)">
+                <div class="ui-fchain-item-count" data-bind="if: !$data.editable() && $root.settings.missingBuildingsHighlight.checked() && (!$data.instance().region || !$data.instance().island.region || $data.instance().region === $data.instance().island.region)">
                     <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.existingNumberOfBuildings.name}">
                         <span data-bind="text: $root.texts.existingNumberOfBuildingsIs.name"></span>
                         <span data-bind="text: $data.instance().existingBuildings()"></span>
@@ -54,7 +50,7 @@
                 </div>
 
                 <!-- buildings input for construction material -->
-                <div class="ui-fchain-item-count" data-bind="visible: $data.editable() && (!$data.instance().region || !$data.instance().island.region || $data.instance().region === $data.instance().island.region)">
+                <div class="ui-fchain-item-count" data-bind="if: $data.editable() && (!$data.instance().region || !$data.instance().island.region || $data.instance().region === $data.instance().island.region)">
                     <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
 
                         <div class="input-group input-group-sm mb-3 spinner">
@@ -69,7 +65,7 @@
                 </div>
 
                 <!-- required buildings display for construction materials -->
-                <div class="ui-fchain-item-count" data-bind="visible: $data.editable() &&  $data.instance().buildings() > $data.instance().existingBuildings()">
+                <div class="ui-fchain-item-count" data-bind="if: $data.editable() &&  $data.instance().buildings() > $data.instance().existingBuildings()">
                     <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildingsDescription.name}" style="display: flex">
                         <span data-bind="text: $root.texts.requiredNumberOfBuildings.name"></span>
                         <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? formatNumber( $data.instance().buildings()) : Math.ceil( $data.instance().buildings())"></span>
