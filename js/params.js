@@ -1,4 +1,4 @@
-params={
+if(window.params == null)window.params={
     "dlcs": [
         {
             "guid": 4100010,
