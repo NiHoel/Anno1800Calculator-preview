@@ -234,6 +234,18 @@ nav {
     padding: 10px;
 }
 
+.ui-service-building-item.no-name {
+    height: calc(180px - 2rem);
+}
+
+.bottom-button {
+    bottom: -2px;
+    position: relative;
+    top: auto;
+    margin-left: -10px;
+    margin-right: -10px;
+}
+
 .ui-fchain-item-small {
     display: flex;
     flex-direction: column;
