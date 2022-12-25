@@ -281,7 +281,7 @@ export class Factory extends Consumer {
                 }
             });
             this.moduleExtraGoods = ko.pureComputed(() => this.moduleChecked() ? this.inputAmount() / this.module.additionalOutputCycle : 0);
-            //moduleDemand created in island constructor after referencing products
+            //moduleDemand created in this.referenceProducts
         }
 
         if (this.fertilizerModule) {
@@ -297,7 +297,7 @@ export class Factory extends Consumer {
                 }
             });
             this.fertilizerModuleExtraGoods = ko.pureComputed(() => this.fertilizerModuleChecked() ? this.inputAmount() / this.fertilizerModule.additionalOutputCycle : 0);
-            //fertilizerModuleDemand created in island constructor after referencing products
+            //fertilizerModuleDemand created in this.referenceProducts
         }
 
         if (config.palaceBuff) {
@@ -342,7 +342,7 @@ export class Factory extends Consumer {
             return diff > EPSILON ? diff : 0;
         });
 
-        this.substitutableOutputAmount = ko.pureComputed(() => Math.max(0, this.totalDemands() - this.externalProduction() - this.inputAmountByExtraGoods() * this.extraGoodFactor()));
+        this.substitutableOutputAmount = ko.pureComputed(() => Math.max(0, this.totalDemands() - this.externalProduction() - Math.max(this.inputAmountByExtraGoods(), this.inputAmountByExistingBuildings()) * this.extraGoodFactor()));
         this.isHighlightedAsMissing = ko.pureComputed(() => {
             if (!view.settings.missingBuildingsHighlight.checked())
                 return false;
@@ -415,7 +415,7 @@ export class Factory extends Consumer {
             var module = this[m];
 
             if (module) {
-                this[m + "Demand"] = new Demand({ guid: module.getInputs()[0].Product, consumer: this }, assetsMap);
+                this[m + "Demand"] = new Demand({ guid: module.getInputs()[0].Product, consumer: this, module: module }, assetsMap);
             }
         }
 

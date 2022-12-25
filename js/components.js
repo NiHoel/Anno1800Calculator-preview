@@ -1,4 +1,6 @@
 ﻿// @ts-check
+import { PopulationNeed } from './consumption.js';
+import { Consumer } from './factories.js';
 import { NumberInputHandler, EPSILON } from './util.js'
 
 var ko = require("knockout");
@@ -269,4 +271,102 @@ ko.components.register('collapsible', {
             </div>
           </fieldset>
             `
+});
+
+ko.components.register('consumer-unknown', {
+    template: `<span>?</span>`
+});
+
+ko.components.register('consumer-population', {
+    template:
+        `<div class="inline-list" style="cursor: pointer" data-dismiss="modal" data-bind="click: () => {setTimeout(() => { $root.selectedPopulationLevel($data.level); $('#population-level-config-dialog').modal('show')}, 500);}" >
+            <div data-bind="component: {name: 'asset-icon', params: $data.level}"></div>
+            <span class="ml-2" data-bind="text: $data.level.name"></span>
+        </div>`
+});
+
+ko.components.register('consumer-factory', {
+    template:
+        `<div class="inline-list" style="cursor: pointer" data-bind="click: () => {$root.selectedFactory($data.consumer);}" >
+            <div data-bind="component: {name: 'asset-icon', params: $data.consumer}"></div>
+            <span class="ml-2" data-bind="text: $data.consumer.getRegionExtendedName()"></span>
+        </div>`
+});
+
+ko.components.register('consumer-module', {
+    template:
+        `<div class="inline-list" style="cursor: pointer" data-bind="click: () => {$root.selectedFactory($data.consumer);}" >
+            <div data-bind="component: {name: 'asset-icon', params: $data.consumer}"></div>
+            <div class="ml-2" data-bind="component: {name: 'asset-icon', params: $data.module}"></div>
+            <span class="ml-2" data-bind="text: $data.module.name() + ': ' + $data.consumer.getRegionExtendedName()"></span>
+        </div>`
+});
+
+ko.components.register('consumer-entry', {
+    viewModel: function (demand) {
+        this.demand = demand;
+
+
+        this.component = "consumer-unknown";
+
+        if (this.demand instanceof PopulationNeed)
+            this.component = "consumer-population";
+        else if (this.demand.module)
+            this.component = "consumer-module";
+        else if (this.demand.consumer instanceof Consumer)
+            this.component = "consumer-factory";
+
+    }, template:
+        `<div data-bind="component: { name: component, params: demand}"></div>`
+});
+
+ko.components.register('consumer-view', {
+    viewModel: function (params) {
+        this.factory = params.factory;
+        this.populationLevelIndices = new Map();
+        this.factory.island.populationLevels.forEach((l, i) => this.populationLevelIndices.set(l.guid, i));
+
+        this.demands = ko.pureComputed(() => {
+            var demands = this.factory.demands().filter(d => d.amount() > ACCURACY);
+            return demands.sort((a, b) => {
+                if (a instanceof PopulationNeed && b instanceof PopulationNeed)
+                    return this.populationLevelIndices.get(a.level.guid) - this.populationLevelIndices.get(b.level.guid);
+
+                if (a instanceof PopulationNeed)
+                    return -1000;
+
+                if (b instanceof PopulationNeed)
+                    return 1000;
+
+                if (a.consumer && b.consumer)
+                    return a.consumer.name().localeCompare(b.consumer.name());
+
+                if (a.consumer)
+                    return -1000;
+
+                if (b.consumer)
+                    return 1000;
+
+                return b.amount() - a.amount();
+            });
+        });
+
+    }, template:
+        //        `<div data-bind="component: { name: component, params: demand}"></div>`
+        `<table class="table table-striped">
+            <tbody data-bind="foreach: demands">
+                <tr>
+                    <td>
+                        <div data-bind="component: { name: 'consumer-entry', params: $data}"></div>
+                    </td>
+                    <td>
+                        <div class="float-right">
+                            <span data-bind="text: formatNumber($data.amount())"></span>
+                            <span> t/min</span>
+                        </div>
+                    </td>
+
+                </tr>
+            </tbody>
+         </table>`
 });

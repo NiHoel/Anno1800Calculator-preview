@@ -278,7 +278,8 @@ export class ResidenceEffectView {
      * @param {[ResidenceBuilding]} residences 
      * @param {PopulationNeed} need 
      */
-    constructor(residences, need = null) {
+    constructor(residences, heading = null, need = null) {
+        this.heading = heading || window.view.texts.needConsumption.name;
         this.residences = residences.filter(r => r.available());
         this.percentCoverage = ko.observable(100);
 

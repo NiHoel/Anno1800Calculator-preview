@@ -159,7 +159,7 @@ export class ResidenceBuilding extends NamedElement {
     }
 
     prepareResidenceEffectView() {
-        view.selectedResidenceEffectView(new ResidenceEffectView([this]));
+        view.selectedResidenceEffectView(new ResidenceEffectView([this], this.name));
     }
 }
 
@@ -383,7 +383,10 @@ export class PopulationLevel extends NamedElement {
     }
 
     prepareResidenceEffectView(need = null) {
-        view.selectedResidenceEffectView(new ResidenceEffectView(this.allResidences, need));
+        var heading = this.name;
+        if (need)
+            heading = ko.pureComputed(() => this.name() + ": " + need.product.name());
+        view.selectedResidenceEffectView(new ResidenceEffectView(this.allResidences, heading, need));
     }
 }
 

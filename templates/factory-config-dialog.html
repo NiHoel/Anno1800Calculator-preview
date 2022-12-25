@@ -120,8 +120,10 @@
                                         <div>
                                             <!-- extra goods -->
                                             <span data-bind="if: $data.item.extraGoods">
-                                                <span data-bind="foreach: $data.extraGoods" class="inline-list-centered">
-                                                    <!-- icon extra goods -->
+                                                
+                                                <span class="inline-list-centered">
+                                                    <img class="icon-sm icon-light mr-2" src="../icons/icon_add_goods_socket_white.png" />
+                                                    <!-- ko foreach: $data.extraGoods -->
                                                     <span style="flex: 100 1 auto;"></span>
 
                                                     <span style="flex: auto;" daba-bind="visible: $data.product.visible()">
@@ -129,17 +131,18 @@
                                                     </span>
 
                                                     <span style="flex: 100 1 auto;"></span>
+                                                    <!-- /ko -->
                                                 </span>
                                             </span>
                                             <!-- input replacements -->
                                             <div data-bind="if: $data.replacementArray">
                                                 <div data-bind="foreach: $data.replacementArray">
-                                                    <div data-bind="component: {name: 'replacement', params: {old: $data.old, new: $data.new}}"></div>
+                                                    <replacement params="{old: $data.old, new: $data.new}"></replacement>
                                                 </div>
                                             </div>
                                             <!-- workforce replacement -->
                                             <div data-bind="if: $data.replacingWorkforce && $parent.workforceDemand.defaultWorkforce.guid !== $data.replacingWorkforce">
-                                                <div data-bind="component: {name: 'replacement', params: {old: $parent.workforceDemand.defaultWorkforce, new: $data.replacingWorkforce}}"></div>
+                                                <replacement params="{old: $parent.workforceDemand.defaultWorkforce, new: $data.replacingWorkforce}"></replacement>
                                             </div>
                                         </div>
                                     </td>
@@ -462,12 +465,9 @@
                         <table class="table table-striped">
                             <tbody data-bind="foreach: $data.extraGoodProductionList.nonZero">
                                 <tr>
-
                                     <td>
-
                                         <img class="icon-sm" data-bind="attr: { src: $data.item.item.icon ? $data.item.item.icon : null, alt: $data.item.name}"> <!-- item icon -->
                                         <img class="icon-sm" data-bind="attr: { src: $data.factory.icon ? $data.factory.icon : null, alt: $data.factory.name}">
-
                                     </td> <!-- factory icon -->
                                     <td>
                                         <div class="float-right">
@@ -482,6 +482,15 @@
                     </collapsible>
 
                 </div>
+
+
+                <div data-bind="if: $data.demands && $data.totalDemands && $data.totalDemands() > ACCURACY">
+                    <collapsible params="id: 'factory-config-consumption', heading: $root.texts.consumption.name, collapsed: true, data: $data, summary: $data.totalDemands">
+                        <consumer-view params="factory: $data"></consumer-view>
+                    </collapsible>
+
+                </div>
+
                 <div data-bind="if: $root.productionChain.tree()">
                     <collapsible params="id: 'factory-config-production-chain', heading: $root.texts.production.name, collapsed: false, data: $data, summary: $data.outputAmount">
                         <div class="tree" data-bind="with: $root.productionChain.tree()" style="justify-content: center">

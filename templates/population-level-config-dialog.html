@@ -120,7 +120,7 @@
                     </collapsible>
                 </div>
 
-                <div data-bind="component: { name: 'notes-section', params:{ $data: $data}}"></div>
+                <div class="mt-4" data-bind="component: { name: 'notes-section', params:{ $data: $data}}"></div>
             </div>
             <div class="modal-footer">
                 <btn class="btn btn-light" data-bind="click: $data.applyConfigGlobally, visible: $root.islands().length > 1">
