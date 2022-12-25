@@ -364,7 +364,8 @@ export class Factory extends Consumer {
 
 
         this.overProduction = ko.pureComputed(() => Math.max(0, (this.inputAmountByExistingBuildings() - this.inputAmountByOutput()) * this.extraGoodFactor()));
-
+        if(this.extraGoodProductionList)
+            this.extraGoodsDisplayAmount = ko.pureComputed(() => this.extraGoodProductionList.checked() ? this.extraGoodProductionList.nonZero().reduce((a, b) => a + b.amount(), 0) : 0)
 
         this.visible = ko.computed(() => {
             if (!this.available())

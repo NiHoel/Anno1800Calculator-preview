@@ -1,5 +1,5 @@
-<div id="residence-effect-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true"  data-bind="with: $root.selectedResidenceEffectView">
-    <div class="modal-dialog modal-lg"  data-bind="css: {'modal-xl': $data.productionChain && $data.productionChain.breadth() > 5}">
+<div id="residence-effect-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true" data-bind="with: $root.selectedResidenceEffectView">
+    <div class="modal-dialog modal-lg" data-bind="css: {'modal-xl': $data.productionChain && $data.productionChain.breadth() > 5}">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 data-bind="text: $root.texts.needConsumption.name">Need Consumption</h4>
@@ -97,10 +97,12 @@
                 </form>
 
                 <div data-bind="if: $data.productionChain && $data.productionChain.tree()">
-                    <hr />
-                    <div class="tree" data-bind="with: $data.productionChain.tree()" style="justify-content: center">
-                        <ul data-bind="template: 'treeElement'"></ul>
-                    </div>
+                    <collapsible params="id: 'residence-effect-need-production-chain', heading: $root.texts.production.name, collapsed: false, data: $data, summary: $data.need.amount">
+
+                        <div class="tree" data-bind="with: $data.productionChain.tree()" style="justify-content: center">
+                            <ul data-bind="template: 'treeElement'"></ul>
+                        </div>
+                    </collapsible>
                 </div>
 
                 <div class="mt-4" data-bind="component: { name: 'notes-section', params:{ $data: $data.need}}"></div>

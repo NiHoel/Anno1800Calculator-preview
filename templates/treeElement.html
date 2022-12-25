@@ -1,13 +1,10 @@
 <li>
     <shadow href="#" class="tree-node" data-bind="click: () => {$root.selectedFactory($data.factory); $('#factory-config-dialog').modal('show');}" style="cursor: pointer">
+        <factory-header params="data: $data.factory, button: false"></factory-header>
 
-
-        <div class="ui-fchain-item-icon mb-2">
-            <img class="icon-tile" src="../icons/icon_marketplace_2d_light.png" data-bind="attr: { src: $data.factory.icon ? $data.factory.icon : null, alt: $data.factory.name }">
-        </div>
         <div class="ui-fchain-item-count mb-2">
             <div data-bind="if: !!$data.icon">
-                <img class="icon-sm icon-light" data-bind="attr: {src: $data.icon}"/>
+                <img class="icon-sm icon-light" data-bind="attr: {src: $data.icon}" />
             </div>
             <div data-bind="if: !$data.icon">
                 <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
@@ -20,13 +17,13 @@
         <div class="tree-node-item-name">
             <a href="#" data-bind="text: $data.factory.name, visible: !$root.settings.hideNames.checked()"></a>
         </div>
-            <!-- amount -->
-            <div>
-                <div class="ui-fchain-item-amount" href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
-                    <div class="ui-fchain-item-load"><span data-bind="text: formatNumber($data.amount)"></span><span> t/min</span></div>
+        <!-- amount -->
+        <div>
+            <div class="ui-fchain-item-amount" href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
+                <div class="ui-fchain-item-load"><span data-bind="text: formatNumber($data.amount)"></span><span> t/min</span></div>
 
-                </div>
             </div>
+        </div>
     </shadow>
     <div data-bind="if: children.length">
         <ul data-bind="template: { name: 'treeElement', foreach: children }">

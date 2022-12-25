@@ -1,7 +1,18 @@
 ﻿// @ts-check
 import { NumberInputHandler, EPSILON } from './util.js'
 
-var ko = require( "knockout" );
+var ko = require("knockout");
+
+ko.bindingHandlers.withProperties = {
+    init: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
+        // Make a modified binding context, with a extra properties, and apply it to descendant elements
+        var innerBindingContext = bindingContext.extend(valueAccessor);
+        ko.applyBindingsToDescendants(innerBindingContext, element);
+
+        // Also tell KO *not* to bind the descendants itself, otherwise they will be bound twice
+        return { controlsDescendantBindings: true };
+    }
+};
 
 ko.components.register('number-input-increment', {
     viewModel: {
@@ -62,7 +73,7 @@ ko.components.register('factory-header', {
 
         <div class="ui-fchain-item-icon mb-2">
             <img class="icon-tile" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
-            <img class="subscript-icon icon-light" data-bind="visible: $root.island().isAllIslands() && $data.region, attr: {src: $data.region ? $data.region.icon : null, title: $data.region ? $data.region.name : null}">
+            <img class="superscript-icon icon-light" data-bind="visible: $data.region, attr: {src: $data.region ? $data.region.icon : null, title: $data.region ? $data.region.name : null}">
         </div>`
 })
 
@@ -230,7 +241,7 @@ ko.components.register('collapsible', {
         });
 
     }, template:
-        `<fieldset data-bind="class: fieldsetClass">
+        `<fieldset class="mt-4" data-bind="class: fieldsetClass">
             <legend class="collapser collapsed" data-toggle="collapse" data-bind="attr: {'data-target' : target}, css: {'collapsed' : collapser.collapsed()}">
                 <div class="summary" data-bind="if: hasSummary">
                     <span class="float-right" data-bind="class: summaryClass">

@@ -117,6 +117,20 @@ export let texts = {
         "korean": "생산성",
         "russian": "Производительность"
     },
+    production: {
+        "chinese": "生产",
+        "english": "Production",
+        "french": "Production",
+        "german": "Produktion",
+        //"guid": 22362,
+        "italian": "Produzione",
+        "japanese": "生産",
+        "korean": "생산",
+        "polish": "Produkcja",
+        "russian": "Производство",
+        "spanish": "Producción",
+        "taiwanese": "生產"
+    },
     reset: {
         "english": "Reset",
         "french": "Réinitialiser",

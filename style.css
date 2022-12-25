@@ -153,8 +153,25 @@ h1 {
     vertical-align: middle;
 }
 
+.table-fixed {
+    table-layout: fixed;
+}
+
+.table-fixed tr td {
+    text-align: center;
+}
+
+.table-fixed tr td:first-child{
+    text-align: left !important;
+}
+
+.table-fixed tr td:last-child {
+    text-align: right !important;
+}
+
+
 .modal-xl {
-    max-width: 1140px;
+    max-width: 1450px;
 }
 
 .dismiss {
@@ -517,20 +534,21 @@ p {
 
 .collapsible-section {
     border-top: 1px solid #CECECE;
-    margin-bottom: 20px;
+    margin-top: 1.5rem !important;
 }
 
 .collapsible-section legend {
     font-weight: bold;
     color: #000;
-    font-size: unset;
+    font-size: initial;
     width: unset;
     padding-right: 5px;
 }
 
+/*
 .collapser .custom-control-label::before,.collapser .custom-control-label::after {
     top: .1rem;
-}
+}*/
 
 .collapser .summary {
     width: calc(100% - 2rem);
@@ -543,8 +561,8 @@ p {
     float: right !important;
 }
 
-.bg-dark .collapser .summary>*{
-    background-color: #222;
+.bg-dark .collapser .summary > * {
+    background-color: #343a40 !important;
 }
 
 .collapser {
@@ -584,11 +602,12 @@ input[type=number]::-webkit-inner-spin-button {
     height: 25px;
 }
 
-.subscript-icon {
+.superscript-icon {
     vertical-align: bottom;
     height: 20px;
     width: 20px;
-    margin-left: -20px;
+    position: absolute;
+    margin-left: -68px;
 }
 
 .inactive {
@@ -604,21 +623,21 @@ input[type=number]::-webkit-inner-spin-button {
     display: inline-block;
 }
 
-    .strike-through::after {
-        position: absolute;
-        content: "";
-        left: 0;
-        top: 50%;
-        right: 0;
-        border-top: 3px solid;
-        border-top-color: currentcolor;
-        border-color: #CECECE;
-        -webkit-transform: rotate(-30deg);
-        -moz-transform: rotate(-30deg);
-        -ms-transform: rotate(--30deg);
-        -o-transform: rotate(-30deg);
-        transform: rotate(-30deg);
-    }
+.strike-through::after {
+    position: absolute;
+    content: "";
+    left: 0;
+    top: 33%;
+    right: 0;
+    border-top: 3px solid;
+    border-top-color: currentcolor;
+    border-color: #CECECE;
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+}
 
 .help {
     float: right;
@@ -798,7 +817,7 @@ body:not(.bg-dark) .icon-light {
 }
 
 .amount-negative {
-    color: darkred;
+    color: #DB7979;
 }
 
 .amount-positive {
