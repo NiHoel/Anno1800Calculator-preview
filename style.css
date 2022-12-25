@@ -194,18 +194,7 @@ nav {
     padding-right: 5px;
 }
 
-.collapsable-section {
-    border-top: 1px solid #CECECE;
-    margin-bottom: 20px;
-}
 
-.collapsable-section legend {
-    font-weight: bold;
-    color: #000;
-    font-size: unset;
-    width: unset;
-    padding-right: 5px;
-}
 
 .ui-fchain-item {
     float: left;
@@ -517,16 +506,49 @@ div:last-child > .input-group-btn-vertical, div:last-child > .input-group-btn-ve
     width: 6rem;
 }
 
-.collapser {
-    cursor: pointer;
-}
-
 .input-group-text {
     font-size: 0.7rem;
 }
 
 p {
     margin-bottom: unset;
+}
+
+
+.collapsible-section {
+    border-top: 1px solid #CECECE;
+    margin-bottom: 20px;
+}
+
+.collapsible-section legend {
+    font-weight: bold;
+    color: #000;
+    font-size: unset;
+    width: unset;
+    padding-right: 5px;
+}
+
+.collapser .custom-control-label::before,.collapser .custom-control-label::after {
+    top: .1rem;
+}
+
+.collapser .summary {
+    width: calc(100% - 2rem);
+    position: absolute;
+}
+
+.collapser .summary>*{
+    background-color: white;
+    padding-left: 10px;
+    float: right !important;
+}
+
+.bg-dark .collapser .summary>*{
+    background-color: #222;
+}
+
+.collapser {
+    cursor: pointer;
 }
 
 .collapser > .fa {
@@ -704,7 +726,7 @@ body:not(.bg-dark) .icon-light {
     background: #222;
 }
 
-.bg-dark .input-group-text, .bg-dark .modal-content, .bg-dark .collapsable-section legend {
+.bg-dark .input-group-text, .bg-dark .modal-content, .bg-dark .collapsible-section legend {
     color: #f8f9fa !important;
     background: #343a40 !important;
 }
@@ -775,6 +797,13 @@ body:not(.bg-dark) .icon-light {
     border-top: unset;
 }
 
+.amount-negative {
+    color: darkred;
+}
+
+.amount-positive {
+    color: green;
+}
 
 /* Tree for production chain */
 

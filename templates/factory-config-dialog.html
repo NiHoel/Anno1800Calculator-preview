@@ -484,7 +484,7 @@
                 </table>
 
                 <div data-bind="if: $data.isFactory && ($data.extraGoodProductionList.nonZero().length && $root.settings.additionalProduction.checked())">
-                    <collapsible params="id: 'factory-config-extraGoods', heading: $root.texts.extraGoods.name, collapsed: false, data: $data, checkbox: $data.extraGoodProductionList.checked">
+                    <collapsible params="id: 'factory-config-extraGoods', heading: $root.texts.extraGoods.name, collapsed: false, data: $data, checkbox: $data.extraGoodProductionList.checked, summary: $data.extraGoodProductionList.amount">
 
                         <!--<h6><span data-bind="text: $root.texts.extraGoods.name">Extra Goods</span><span> </span><img width="35" height="35" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name}" /></h6>-->
                         <table class="table table-striped">
@@ -497,10 +497,11 @@
                                         <img class="icon-sm" data-bind="attr: { src: $data.factory.icon ? $data.factory.icon : null, alt: $data.factory.name}">
 
                                     </td> <!-- factory icon -->
-                                    <td class="float-right">
-                                        <span data-bind="text: formatNumber($data.amount())"></span>
-                                        <span> t/min</span>
-
+                                    <td>
+                                        <div class="float-right">
+                                            <span data-bind="text: formatNumber($data.amount())"></span>
+                                            <span> t/min</span>
+                                        </div>
                                     </td>
 
                                 </tr>

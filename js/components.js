@@ -1,5 +1,5 @@
 ﻿// @ts-check
-import { NumberInputHandler } from './util.js'
+import { NumberInputHandler, EPSILON } from './util.js'
 
 var ko = require( "knockout" );
 
@@ -179,7 +179,7 @@ ko.components.register('collapsible', {
         this.heading = params.heading;
         this.collapser = window.view.collapsibleStates.get(params.id, params.collapsed);
         this.cssClass = ko.pureComputed(() => this.collapser.collapsed() ? "hide" : "show");
-        this.fieldsetClass = params.fieldsetClass ? params.fieldsetClass : "collapsable-section";
+        this.fieldsetClass = params.fieldsetClass ? params.fieldsetClass : "collapsible-section";
         this.data = params.data;
         this.hasCheckbox = false;
 
@@ -205,6 +205,24 @@ ko.components.register('collapsible', {
             }
         }
 
+        this.hasSummary = false;
+        if (params.summary) {
+            this.hasSummary = true;
+            this.summary = params.summary;
+            if (params.colorSummary) {
+                this.summaryWithSign = true;
+                this.summaryClass = ko.pureComputed(() => {
+                    if (Math.abs(this.summary()) < EPSILON)
+                        return "";
+
+                    return this.summary() < 0 ? "amount-negative" : "amount-positive"
+                })
+            } else {
+                this.summaryWithSign = false;
+                this.summaryClass = ko.observable("");
+            }
+        }
+
         setTimeout(() => {
             $(this.target).on("hidden.bs.collapse shown.bs.collapse", (event) => {
                 this.collapser.collapsed(!$(this.target).hasClass("show"));
@@ -214,20 +232,26 @@ ko.components.register('collapsible', {
     }, template:
         `<fieldset data-bind="class: fieldsetClass">
             <legend class="collapser collapsed" data-toggle="collapse" data-bind="attr: {'data-target' : target}, css: {'collapsed' : collapser.collapsed()}">
-                        <span class="fa fa-chevron-right"></span>
-                        <span class="fa fa-chevron-down"></span>
-                        <!-- ko if: !hasCheckbox -->
+                <div class="summary" data-bind="if: hasSummary">
+                    <span class="float-right" data-bind="class: summaryClass">
+                        <span data-bind="text: formatNumber(summary(), summaryWithSign)"></span>
+                        <span> t/min</span>
+                    </span>
+                </div>
+                <span class="fa fa-chevron-right"></span>
+                <span class="fa fa-chevron-down"></span>
+                <!-- ko if: !hasCheckbox -->
+                <span data-bind="text:heading"></span>
+                <!-- /ko -->
+                <!-- ko if: hasCheckbox -->
+                <span class="custom-control custom-checkbox ml-1" style="display: initial">
+                    <input type="checkbox" class="custom-control-input" data-bind="checked: checked, attr: { id: target + '-check-all' }">
+                    <label class="custom-control-label" data-bind="attr: {for: target + '-check-all'}">
                         <span data-bind="text:heading"></span>
-                        <!-- /ko -->
-                        <!-- ko if: hasCheckbox -->
-                        <span class="custom-control custom-checkbox ml-1" style="display: initial">
-                            <input type="checkbox" class="custom-control-input" data-bind="checked: checked, attr: { id: target + '-check-all' }">
-                            <label class="custom-control-label" data-bind="attr: {for: target + '-check-all'}">
-                                <span data-bind="text:heading"></span>
-                            </label>
-                        </span>
-                        <!-- /ko -->
-                    </legend>
+                    </label>
+                </span>
+                <!-- /ko -->   
+            </legend>
             <div class="collapse" data-bind="attr: {'id' : collapser.id}, class: cssClass">
                 <!-- ko template: { nodes: $componentTemplateNodes, data: data } --><!-- /ko -->
                 <div class="clear"></div>

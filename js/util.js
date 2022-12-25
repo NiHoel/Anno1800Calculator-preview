@@ -27,11 +27,14 @@ function removeSpaces(string) {
 }
 
 var formater = new Intl.NumberFormat(navigator.language || "en").format;
-export function formatNumber(num) {
+export function formatNumber(num, forceSign = false) {
     var rounded = Math.ceil(100 * parseFloat(num)) / 100;
     if (Math.abs(rounded) < EPSILON)
         rounded = 0;
-    return formater(rounded);
+    var str = formater(rounded);
+    if (forceSign && rounded > EPSILON)
+        str = '+' + str;
+    return str;
 }
 
 export class NumberInputHandler {
@@ -71,12 +74,8 @@ export class NumberInputHandler {
     }
 }
 
-export function formatPercentage(number) {
-    var str = window.formatNumber(Math.ceil(10 * parseFloat(number)) / 10) + ' %';
-    if (number > 0)
-        str = '+' + str;
-
-    return str;
+export function formatPercentage(number, forceSign = true) {
+    return window.formatNumber(Math.ceil(10 * parseFloat(number)) / 10, forceSign) + ' %';
 }
 
 export function delayUpdate(obs, val) {
