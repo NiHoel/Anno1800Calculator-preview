@@ -9,7 +9,7 @@ import { PublicConsumerBuilding, Module, Factory, Consumer, PalaceBuff } from '.
 import { ContractManager } from './trade.js'
 import {ResidenceEffectView} from './views.js'
 
-var ko = require( "knockout" );
+var ko = require("knockout");
 
 class Storage {
     /**
@@ -20,13 +20,20 @@ class Storage {
         this.key = key;
         var text = localStorage.getItem(key);
         this.json = text ? JSON.parse(text) : {};
+        this.map = new Map();
+
+        this.savingScheduled = false;
 
         this.length = 0;
-        for (var attr in this.json)
+        for (var attr in this.json) {
             this.length = this.length + 1;
+            this.map.set(attr, this.json[attr]);
+        }
     }
 
     setItem(itemKey, value) {
+        this.map.set(itemKey, value);
+
         if (this.json[itemKey] == null)
             this.length = this.length + 1;
 
@@ -35,10 +42,12 @@ class Storage {
     }
 
     getItem(itemKey) {
-        return this.json[itemKey];
+        return this.map.get(itemKey);
     }
 
     removeItem(itemKey) {
+        this.map.delete(itemKey);
+
         if (this.json[itemKey] != null)
             this.length = this.length - 1;
 
@@ -67,12 +76,20 @@ class Storage {
 
     clear() {
         this.json = {}
+        this.map = new Map();
         this.save();
         this.length = 0;
     }
 
     save() {
-        localStorage.setItem(this.key, JSON.stringify(this.json, null, 4));
+        if (this.savingScheduled)
+            return;
+
+        this.savingScheduled = true;
+        setTimeout(() => {
+            this.savingScheduled = false;
+            localStorage.setItem(this.key, JSON.stringify(this.json, null, 4));            
+        }, 0);
     }
 }
 

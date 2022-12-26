@@ -265,7 +265,7 @@
 
 
 
-                <div data-bind="if:  $root.dlcsMap.get('dlc7').checked() && $data.isFactory && $data.getProduct().exchangeWeight">
+                <div data-bind="if:  $root.dlcsMap.get('dlc7').checked() && $data.isFactory && $data.getProduct().exchangeWeight && $data.contractList">
                     <collapsible params="id: 'factory-config-trade-contracts', heading: $root.texts.docklands.name, collapsed: true, data: $data.contractList, summary: $data.contractList.amount, colorSummary: true">
                         <div data-bind="if: $data.exports().length || $data.imports().length">
                             <table class="table table-striped table-sm">
