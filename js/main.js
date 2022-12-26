@@ -84,7 +84,7 @@ function configUpgrade(configVersion) {
                         for (var n of l.luxuryNeeds)
                             n.checked(false);
 
-            for (var key of ["simpleView", "consumptionModifier", "additionalProduction", "tradeRoutes", "autoApplyExtraNeed", "autoApplyConsumptionUpgrades", "deriveResidentsPerHouse", "noOptionalNeeds"])
+            for (var key of ["simpleView", "hideNewWorldConstructionMaterial", "populationInput", "consumptionModifier", "additionalProduction", "tradeRoutes", "autoApplyExtraNeed", "autoApplyConsumptionUpgrades", "deriveResidentsPerHouse", "noOptionalNeeds"])
                 remove(key);
 
             for (var key of ["populationLevelAmount"])
