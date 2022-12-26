@@ -2,7 +2,7 @@
 
 var ko = require( "knockout" );
 
-export let versionCalculator = "v9.12";
+export let versionCalculator = "v9.13";
 export let isPreview = true;
 export let ACCURACY = 0.01;
 export let EPSILON = 0.0000001;
