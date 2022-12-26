@@ -63,14 +63,6 @@
                 </div>
             </div>
 
-            <!-- amount -->
-            <div>
-                <div class="ui-fchain-item-amount" href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
-                    <div class="ui-fchain-item-load"><span data-bind="text: formatNumber($data.instance().outputAmount())"></span><span> t/min</span></div>
-
-                </div>
-            </div>
-
             <div class="ui-fchain-item-module" data-bind="visible: !!$data.module || !!$data.palaceBuff">
                 <div style="flex: 100 1 auto;"></div>
 
@@ -113,6 +105,14 @@
                     <img class="icon-sm" src="../icons/icon_marketplace_2d_light.png" data-bind="attr: { src: $data.palaceBuff.icon ? $data.palaceBuff.icon  : null, alt: $data.palaceBuff.name, for: $data.guid + '-palaceBuff', title: $data.palaceBuff.name }" style="margin-right: 0.75em;margin-left: -0.25em;" />
                 </div>
                 <div style="flex: 100 1 auto;"></div>
+            </div>
+
+            <!-- amount -->
+            <div>
+                <div class="ui-fchain-item-amount" href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
+                    <div class="ui-fchain-item-load"><span data-bind="text: formatNumber($data.instance().outputAmount())"></span><span> t/min</span></div>
+
+                </div>
             </div>
         </div>
         
