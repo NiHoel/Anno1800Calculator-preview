@@ -48,58 +48,34 @@ export class DarkMode {
 }
 
 export class ViewMode {
-    constructor(firstRun) {
-        this.hiddenOptions = [
-            "additionalProduction",
-            "consumptionModifier",
-
-        ];
-
-        /*this.simpleViewSubscription = ko.computed(() => {
-            var checked = view.settings.simpleView.checked();
-
-            if (checked) {
-                view.settings.additionalProduction.checked(false);
-                view.settings.consumptionModifier.checked(true);
-                //view.settings.needUnlockConditions.checked(true);
-
-            }
-
-            for (var option of this.hiddenOptions)
-                if (view.settings[option])
-                    view.settings[option].visible(!checked);
-        });*/
-
-
-        this.hideSimple = false;
-        /*if (firstRun || localStorage.getItem("simpleView") == null) {
-            localStorage.setItem("simpleView", 0);
-
-            this.showOnStartup = true;
-
-            if (view.settings.additionalProduction.checked())
-                this.hideSimple = true;
-        }*/
-        this.full();
+    constructor() {
     }
 
-    simple() {
-        view.settings.simpleView.checked(true);
-    }
-
-    complex() {
-        view.settings.simpleView.checked(false);
-    }
-
-    full() {
-        view.settings.simpleView.checked(false);
-
-        view.settings.tradeRoutes.checked(true);
-        view.settings.additionalProduction.checked(true);
-        view.settings.consumptionModifier.checked(true);
+    start() {
         view.settings.missingBuildingsHighlight.checked(true);
-        //view.settings.needUnlockConditions.checked(true);
+        view.settings.utilizeExistingFactories.checked(true);
+        view.settings.needUnlockConditions.checked(true);
+    }
+
+    plan() {
         view.settings.decimalsForBuildings.checked(true);
+
+        for (var dlc of view.dlcs.values()) {
+            dlc.checked(true);
+        }
+
+        for (var dlc of [0, 2, 8, 11]) {
+            var d = view.dlcsMap.get("dlc" + dlc);
+            if (d)
+                d.checked(false);
+        }
+    }
+
+    master() {
+        for (var option of view.settings.options)
+            option.checked(true);
+
+        view.settings.hideProductionBoost.checked(false);
 
         for (var dlc of view.dlcs.values()) {
             dlc.checked(true);

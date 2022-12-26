@@ -67,13 +67,11 @@
                         <!-- ko if: $data.palaceBuff && $data.palaceBuff.visible() -->
                         <tr>
                             <!-- extra goods palace -->
-                            <td>
+                            <td colspan="2">
                                 <div class="inline-list">
                                     <div data-bind="component: {name: 'icon-checkbox', params: {asset: $data.palaceBuff, checked: $data.palaceBuffChecked, id: $data.guid + '-palaceBuff'}}"></div>
                                     <span class="ml-1" data-bind="text: $data.palaceBuff.name"></span>
                                 </div>
-                            </td>
-                            <td>
                             </td>
                             <td>
                                 <div data-bind="component: {name: 'additional-output', params: {amount: $data.palaceBuffExtraGoods}}"></div>
@@ -153,7 +151,7 @@
                     </collapsible>
                 </div>
                 <div data-bind="if: $data.tradeList != null && $data.tradeList.visible()">
-                    <collapsible params="id: 'factory-config-trade-routes', heading: $root.settings.tradeRoutes.name, collapsed: true, data: $data.tradeList, summary: $data.tradeList.amount, colorSummary: true">
+                    <collapsible params="id: 'factory-config-trade-routes', heading: $root.texts.tradeRoutes.name, collapsed: true, data: $data.tradeList, summary: $data.tradeList.amount, colorSummary: true">
                         <div class="mb-3 inline-list-stretched" data-bind="foreach: $data.npcRoutes">
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $data.trader.guid + '-npcRoute-checked' }">
@@ -458,7 +456,7 @@
                 </div>
 
 
-                <div data-bind="if: $data.isFactory && ($data.extraGoodProductionList.nonZero().length && $root.settings.additionalProduction.checked())">
+                <div data-bind="if: $data.isFactory && $data.extraGoodsDisplayAmount() > ACCURACY">
                     <collapsible params="id: 'factory-config-extraGoods', heading: $root.texts.extraGoods.name, collapsed: false, data: $data, checkbox: $data.extraGoodProductionList.checked, summary: $data.extraGoodsDisplayAmount">
 
                         <!--<h6><span data-bind="text: $root.texts.extraGoods.name">Extra Goods</span><span> </span><img width="35" height="35" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name}" /></h6>-->

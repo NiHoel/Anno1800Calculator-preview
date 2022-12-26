@@ -607,6 +607,19 @@ export let texts = {
         "japanese": "持続時間",
         "russian": "Длительность"
     },
+    "tradeRoutes": {
+        "english": "Trade Routes",
+        "chinese": "贸易航线",
+        "taiwanese": "貿易航線",
+        "italian": "Rotte commerciali",
+        "spanish": "Rutas de comercio",
+        "german": "Handelsrouten",
+        "polish": "Szlaki handlowe",
+        "french": "Routes commerciales",
+        "korean": "무역로",
+        "japanese": "取引ルート",
+        "russian": "Торговые маршруты"
+    },
     "docklands": {
         "english": "Docklands",
         //"guid": 410083,
@@ -737,29 +750,29 @@ export let texts = {
         english: "View Mode",
         german: "Ansichtsmodus"
     },
-    viewSimple: {
-        english: "Simple",
-        german: "Einfach",
+    viewStart: {
+        english: "Start",
+        german: "Starten",
     },
-    viewComplex: {
-        english: "Complex",
-        german: "Komplex"
+    viewPlan: {
+        english: "Plan",
+        german: "Planen"
     },
-    viewComplete: {
-        english: "Complete",
-        german: "Vollständig"
+    viewMaster: {
+        english: "Master",
+        german: "Meistern"
     },
-    viewSimpleDescription: {
-        english: "Default settings tailored to beginners, complex mechanics hidden. Uses houses as input.",
-        german: "Standardeinstellungen auf Einsteiger zugeschnitten, komplexe Mechaniken verborgen. Verwendet Häuser als Eingabe."
+    viewStartDescription: {
+        english: "Start from scratch and progress through the resident tiers.",
+        german: "Beginne von Vorne und schreite durch die Bevölkerungsstufen voran."
     },
-    viewComplexDescription: {
-        english: "Alle settings and mechanics available (as before).",
-        german: "Alle Einstellungen und Mechaniken verfügbar (wie bisher)."
+    viewPlanDescription: {
+        english: "The essential settings and DLCs are enabled to plan islands and huge cities.",
+        german: "Die essentiellen Einstellungen und DLCs sind aktiviert, um Inseln und rießige Städte zu planen."
     },
-    viewCompleteDescription: {
-        english: "Identical to 'complex', but all extensions activated by default.",
-        german: "Identisch zu 'komplex', aber alle Erweiterungen standardmäßig aktiviert."
+    viewMasterDescription: {
+        english: "All settings and DLCs are enabled.",
+        german: "Alle Einstellungen und DLCs sind aktiviert."
     },
     panoramaEffectNotConsidered: {
         english: "The panorama effect is not considered.",
@@ -1033,13 +1046,6 @@ Siehe folgenden Link für weitere Informationen: `,
 }
 
 export let options = {
-    "simpleView": {
-        "name": "Simple View",
-        "locaText": {
-            "english": "Simple view",
-            "german": "Einfache Ansicht"
-        }
-    },
     "decimalsForBuildings": {
         "name": "Show number of buildings with decimals",
         "locaText": {
@@ -1086,59 +1092,6 @@ export let options = {
             "german": "Vorhandene Fabriken voll auslasten selbst wenn die produzierte Menge nicht benötigt wird"
         }
     },
-    "consumptionModifier": {
-        "name": "Need Consumption",
-        "dialog": "good-consumption-island-upgrade-dialog",
-        "locaText": {
-            "english": "Newspaper",
-            //"guid": 14496,
-            "polish": "Gazeta",
-            "spanish": "Periódico",
-            "taiwanese": "報紙",
-            "german": "Zeitung",
-            "chinese": "报纸",
-            "italian": "Giornale",
-            "korean": "신문",
-            "french": "Journal",
-            "japanese": "新聞",
-            "russian": "Газета"
-        }
-    },
-    "additionalProduction": {
-        "name": "Extra Goods",
-        "dialog": "item-equipment-dialog",
-        "locaText": {
-            "english": "Extra Goods",
-            "chinese": "额外货物",
-            "taiwanese": "額外貨物",
-            "italian": "Merci aggiuntive",
-            "spanish": "Bienes extra",
-            "german": "Zusatzwaren",
-            "polish": "Dodatkowe towary",
-            "french": "Marchandises supplémentaires",
-            "korean": "추가 물품",
-            "japanese": "追加品物",
-            "russian": "Дополнительные товары"
-        }
-    },
-
-    "tradeRoutes": {
-        "name": "Trade Routes",
-        "dialog": "trade-routes-management-dialog",
-        "locaText": {
-            "english": "Trade Routes",
-            "chinese": "贸易航线",
-            "taiwanese": "貿易航線",
-            "italian": "Rotte commerciali",
-            "spanish": "Rutas de comercio",
-            "german": "Handelsrouten",
-            "polish": "Szlaki handlowe",
-            "french": "Routes commerciales",
-            "korean": "무역로",
-            "japanese": "取引ルート",
-            "russian": "Торговые маршруты"
-        }
-    },
     "needUnlockConditions": {
         "name": "Consider unlock conditions for needs",
         "locaText": {
@@ -1149,21 +1102,6 @@ export let options = {
 }
 
 export let serverOptions = {
-    "populationLevelAmount": {
-        "name": "PopulationLevel Amount",
-        "locaText": {
-            "english": "Update residents count",
-            "german": "Aktualisiere Einwohneranzahl",
-            "korean": "주민 수 가져오기"
-        }
-    },
-    "populationLevelLimit": {
-        "name": "PopulationLevel Limit",
-        "locaText": {
-            "english": "Update max. residents (skyscrapers not supported)",
-            "german": "Aktualisiere maximale Einwohnerzahl (Wolkenkratzer nicht unterstützt)"
-        }
-    },
     "populationLevelExistingBuildings": {
         "name": "PopulationLevel ExistingBuildings",
         "locaText": {

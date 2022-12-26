@@ -71,13 +71,13 @@
     <div id="content" data-bind="visible: true" style="display:none">
         <nav class="navbar navbar-expand-sm bg-dark inline-list-stretched">
             <div class="btn-group">
-                <button type="button" class="btn" data-bind="enable: $root.settings.consumptionModifier.checked()">
+                <button type="button" class="btn">
                     <img data-toggle="modal" data-target="#residence-effect-dialog" class="icon-navbar" src="icons/icon_marketplace_2d_light.png" data-bind="click: () => $root.island().prepareResidenceEffectView()" />
                 </button>
                 <button data-toggle="modal" data-target="#factory-choose-dialog" class="btn text-light">
                     <span class="fa fa-cogs"> </span>
                 </button>
-                <button type="button" class="btn" data-bind="visible: !$root.settings.simpleView.checked(), enable: $root.settings.additionalProduction.checked()">
+                <button type="button" class="btn">
                     <img data-toggle="modal" data-target="#item-equipment-dialog" class="icon-navbar" src="icons/icon_add_goods_socket_white.png" />
                 </button>
                 <button type="button" class="btn" data-bind="enable: $root.dlcsMap.get('dlc7').checked(), visible: $root.island().contractManager">
@@ -92,7 +92,7 @@
                     <button type="button" class="btn">
                         <img data-toggle="modal" data-target="#island-management-dialog" class="icon-navbar" src="icons/icon_map.png" />
                     </button>
-                    <button type="button" class="btn" data-bind="enable: $root.settings.tradeRoutes.checked()">
+                    <button type="button" class="btn">
                         <img data-toggle="modal" data-target="#trade-routes-management-dialog" class="icon-navbar" src="icons/icon_shiptrade.png" />
                     </button>
                 </div>

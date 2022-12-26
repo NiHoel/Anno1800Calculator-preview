@@ -59,27 +59,52 @@ function configUpgrade(configVersion) {
 
     try {
         configVersion = configVersion.replace(/[^.\d]/g, "").split(".").map(d => parseInt(d));
-
+        function isChecked(settingName) {
+            var val = localStorage.getItem(`settings.${settingName}`);
+            return val != null && parseInt(val);
+        }
+        function remove(settingName) {
+            localStorage.removeItem(`settings.${settingName}`);
+        }
 
         {
-            let id = "settings.contracts";
-            if (localStorage.getItem(id) != null && parseInt(localStorage.getItem(id))) {
+            let id = "contracts";
+            if (isChecked(id)) {
                 var dlc = view.dlcsMap.get("dlc7");
                 if (dlc)
                     dlc.checked(true);
             }
-            localStorage.removeItem(id);
+            remove(id);
         }
 
         if (configVersion[0] < 10) {
-            for (var isl of view.islands())
+            if (isChecked("noOptionalNeeds"))
+                for (var isl of view.islands())
+                    for (var l of isl.populationLevels)
+                        for (var n of l.luxuryNeeds)
+                            n.checked(false);
+
+            for (var key of ["simpleView", "consumptionModifier", "additionalProduction", "tradeRoutes", "autoApplyExtraNeed", "autoApplyConsumptionUpgrades", "deriveResidentsPerHouse", "noOptionalNeeds"])
+                remove(key);
+
+            for (var key of ["populationLevelAmount"])
+                localStorage.removeItem(`serverSettings.${key}`);
+
+            for (var isl of view.islands()) {
+                for (var b of isl.residenceBuildings) {
+                    for (var key of ["limitPerHouse", "limit", "fixLimitPerHouse"])
+                        isl.storage.removeItem(`${b.guid}.${key}`);
+                }
+
                 for (var l of isl.populationLevels) {
+                    for (var key of ["limitPerHouse", "limit", "fixLimitPerHouse", "amountPerHouse", "amount", "fixAmountPerHouse"])
+                        isl.storage.removeItem(`${l.guid}.${key}`);
 
                     for (let n of l.needs)
                         isl.storage.removeItem(`${l.guid}[${n.guid}].percentBoost`);
 
                 }
-
+            }
         }
     } catch (e) { console.warn(e); }
 }
@@ -276,33 +301,14 @@ class PopulationReader {
             for (let key in json) {
                 let asset = island.assetsMap.get(parseInt(key));
                 if (asset instanceof PopulationLevel) {
-                    if (asset.floorsSummedExistingBuildings && asset.hasSkyscrapers()) {
+                    if (!asset.canEdit()) {
                         continue; // do not update summary values if skyscrapers are used
                     }
 
                     if (json[key].existingBuildings && view.settings.populationLevelExistingBuildings.checked()) {
-                        asset.residence.existingBuildings(json[key].existingBuildings);
                         asset.existingBuildings(json[key].existingBuildings);
-
-
-                        if (json[key].limit && view.settings.populationLevelLimit.checked()) {
-                            asset.residence.limitPerHouse(json[key].limit / json[key].existingBuildings);
-                            asset.limitPerHouse(json[key].limit / json[key].existingBuildings);
-                        }
-
-                        if (json[key].amount && view.settings.populationLevelAmount.checked()) {
-                            view.settings.deriveResidentsPerHouse.checked(false);
-                            asset.amountPerHouse(json[key].amount / json[key].existingBuildings);
-                        }
                     }
 
-                    if (json[key].limit && view.settings.populationLevelLimit.checked()) {
-                        asset.limit(json[key].limit);
-                    }
-
-                    if (json[key].amount && view.settings.populationLevelAmount.checked()) {
-                        asset.amount(json[key].amount);
-                    }
 
                 } else if (asset instanceof Consumer) {
                     if (json[key].existingBuildings && view.settings.factoryExistingBuildings.checked())
@@ -547,7 +553,8 @@ function init(isFirstRun, configVersion) {
         publicRecipeBuildings: arrayToTemplate("publicRecipeBuildings")
     }
 
-    view.viewMode = new ViewMode(isFirstRun);
+    if(isFirstRun)
+        view.viewMode = new ViewMode(isFirstRun);
 
     ko.applyBindings(view, $(document.body)[0]);
 
@@ -570,15 +577,17 @@ function init(isFirstRun, configVersion) {
         });
 
     $('*').on('hidden.bs.modal', () => {
-        for (var dialog of ['contract-management', 'download', 'factory-choose', 'factory-config', 'island-management', 'island-rename', 'item-equipment', 'population-level-config', 'residence-effect', 'settings', 'trade-routes-management', 'view-mode', 'help'])
-            if ($('#' + dialog + '-dialog').attr('class').indexOf("show") != -1) {
+        for (var dialog of ['contract-management', 'download', 'factory-choose', 'factory-config', 'island-management', 'island-rename', 'item-equipment', 'population-level-config', 'residence-effect', 'settings', 'trade-routes-management', 'view-mode', 'help']) {
+            var classes = $('#' + dialog + '-dialog').attr('class');
+            if (classes != null && classes.indexOf("show") != -1) {
                 $('body').addClass('modal-open');
                 break;
             }
+        }
     });
 
 
-    if (view.viewMode.showOnStartup)
+    if (view.viewMode)
         $('#view-mode-dialog').modal("show");
 
     view.island().name.subscribe(val => { window.document.title = val; });
@@ -647,10 +656,10 @@ $(document).ready(function () {
         view.texts[attr] = new NamedElement({ name: attr, locaText: locaTexts[attr] });
     }
 
-    if(!isPreview)
+    if (!isPreview)
         // check version of calculator - display update and new feature notification
         checkAndShowNotifications();
-    else
+    else {
         $.notify({
             // options
             message: view.texts.newFeature.name()
@@ -660,6 +669,9 @@ $(document).ready(function () {
             placement: { align: 'center' },
             timer: 60000
         });
+        if (localStorage)
+            localStorage.setItem("versionCalculator", versionCalculator);
+    }
 
     //update links of download buttons
     $.getJSON("https://api.github.com/repos/NiHoel/Anno1800UXEnhancer/releases/latest").done((release) => {

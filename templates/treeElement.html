@@ -1,5 +1,5 @@
 <li>
-    <shadow href="#" class="tree-node" data-bind="click: () => {$root.selectedFactory($data.factory); $('#factory-config-dialog').modal('show');}" style="cursor: pointer">
+    <shadow href="#" class="tree-node" data-bind="click: () => {$root.selectedFactory($data.factory); $('#residence-effect-dialog').modal('hide'); setTimeout(() => {$('#factory-config-dialog').modal('show');}, 500);}" style="cursor: pointer">
         <factory-header params="data: $data.factory, button: false"></factory-header>
 
         <div class="ui-fchain-item-count mb-2">

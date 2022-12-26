@@ -23,7 +23,7 @@
                                     <input class="form-control" type="text" value="0" step="100" min="0" data-bind="value: $data.residentsInput, enable: $data.canEdit == null || $data.canEdit()" />
                                 </div>
                             </td>
-                            <td>
+                            <td data-bind="visible: $data.existingBuildings() > 0 && $data.canEdit()">
                                 <div class="inline-list" data-bind="foreach: $data.residence.effectCoverage">
                                     <div data-bind="attr: {title: formatPercentage(100 * $data.coverage()).substr(1) + ' ' + $data.residenceEffect.name()}">
                                         <img class="icon-sm" data-bind="attr: {src: $data.residenceEffect.icon}" />
@@ -31,7 +31,7 @@
                                 </div>
                             </td>
                             <td>
-                                <button type="button" class="btn btn-light btn-sm float-right" data-bind="enable: $root.settings.consumptionModifier.checked()">
+                                <button type="button" class="btn btn-light btn-sm float-right">
                                     <img data-toggle="modal" data-target="#residence-effect-dialog" class="icon-sm  icon-light" src="../icons/icon_marketplace_2d_light.png" data-bind="click: () => $data.prepareResidenceEffectView()" />
                                 </button>
                             </td>
@@ -58,7 +58,7 @@
                                         <img class="icon-sm icon-light" src="../icons/icon_resource_population.png" />
                                         <span class="ml-1" data-bind="text: formatNumber($data.residents())"></span>
                                     </td>
-                                    <td data-bind="if: $root.settings.consumptionModifier.checked()">
+                                    <td data-bind="if: $data.existingBuildings() > 0">
                                         <span data-bind="if: $data.panoramaCoverage() > 1 + ACCURACY / 100">
                                             <span class="fa fa-exclamation-triangle danger-icon" data-bind="attr: {title: '> 100% ' + $root.texts.panoramaEffect.name()}"></span>
                                         </span>
