@@ -32,7 +32,7 @@ export class ResidenceNeed {
             this.amount = ko.pureComputed(() => {
                 var newspaper = (100 + window.view.newspaperConsumption.amount()) / 100;
                 var total = this.residence.consumingLimit() * this.need.tpmin * newspaper;
-                return  total * (this.fulfillment() - this.substitution())
+                return total * (Math.max(0, this.fulfillment() - this.substitution()));
             });
         }
 
@@ -79,20 +79,18 @@ export class ResidenceNeed {
             }
 
             this.substitution(Math.min(1, suppliedByFulfillment - modifier / 100));
-        });
 
-        this.fulfillmentSubscription = ko.computed(() => {
-            if(this.need.isInactive()) {
+            if (this.need.isInactive()) {
                 this.fulfillment(0);
                 return;
             }
-            
-            if(!this.need.banned()){
+
+            if (!this.need.banned()) {
                 this.fulfillment(1);
                 return;
             }
 
-            this.fulfillment(this.substitution());
+            this.fulfillment(suppliedByFulfillment);
         });
 
     }

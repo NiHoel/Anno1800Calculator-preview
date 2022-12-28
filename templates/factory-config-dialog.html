@@ -456,7 +456,7 @@
                 </div>
 
 
-                <div data-bind="if: $data.isFactory && $data.extraGoodsDisplayAmount() > ACCURACY">
+                <div data-bind="if: $data.isFactory && $data.extraGoodProductionList && $data.extraGoodProductionList.amount() > ACCURACY">
                     <collapsible params="id: 'factory-config-extraGoods', heading: $root.texts.extraGoods.name, collapsed: false, data: $data, checkbox: $data.extraGoodProductionList.checked, summary: $data.extraGoodsDisplayAmount">
 
                         <!--<h6><span data-bind="text: $root.texts.extraGoods.name">Extra Goods</span><span> </span><img width="35" height="35" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name}" /></h6>-->

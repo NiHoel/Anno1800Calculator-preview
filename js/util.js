@@ -3,7 +3,7 @@
 var ko = require( "knockout" );
 
 export let versionCalculator = "v9.14";
-export let isPreview = true;
+export let isPreview = false;
 export let ACCURACY = 0.01;
 export let EPSILON = 0.0000001;
 export let ALL_ISLANDS = "All Islands";
