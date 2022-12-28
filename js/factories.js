@@ -375,7 +375,7 @@ export class Factory extends Consumer {
                 this.totalDemands() > EPSILON ||
                 this.externalProduction() > EPSILON ||
                 this.existingBuildings() > 0 ||
-                this.extraGoodProductionAmount() > EPSILON)
+                this.extraGoodProductionList.amount() > EPSILON)
                 return true;
 
             if (this.region && this.island.region && this.region != this.island.region)
