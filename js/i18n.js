@@ -831,8 +831,8 @@ Siehe folgenden Link für weitere Informationen: `,
         korean: "새로운 Anno1800 계산기 버전이 제공됩니다. 다운로드 버튼을 클릭하십시오."
     },
     newFeature: {
-        english: "IMPORTANT: Large parts of the calculator have been re-written - but not yet been thoroughly tested. Please report all bugs and calculation inaccuricies to: DuxVitae#7882 on discord.\nTODO: Validation",
-        german: "WICHTIG: Große Teile des Warenrechners wurden überarbeitet - aber noch nicht tiefgreifen getestet. Bitte meldet alle Bugs und Berechnungsungenauigkeiten an: DuxVitae#7882 auf Discord.\nTODO:Validierung",
+        english: "Game Update 16: New World Rising. The population section has completely changed and some new information must be entered to get correct results.",
+        german: "Game Update 16: Aufstieg der Neuen Welt. Der Abschnitt Bevölkerung wurde komplett überarbeitet und einige neue Informationen müssen eingegeben werden, um korrekte Ergebnisse zu erhalten.",
     },
     helpContent: {
         german:
