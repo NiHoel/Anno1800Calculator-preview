@@ -177,6 +177,17 @@ export class PublicConsumerBuilding extends Consumer {
     }
 }
 
+export class PowerPlant extends PublicConsumerBuilding {
+    constructor(config, assetsMap, island) {
+        super(config, assetsMap, island);
+
+        this.percentBoost = createIntInput(100, 1);
+        this.percentBoost.subscribe((val) => {
+            this.boost(val / 100);
+        });
+    }
+}
+
 export class PalaceBuff extends NamedElement {
     constructor(config, assetsMap) {
         super(config);
@@ -257,7 +268,9 @@ export class Factory extends Consumer {
 
 
         this.percentBoost = createIntInput(100, 1);
-        this.boost = ko.computed(() => parseInt(this.percentBoost()) / 100);
+        this.percentBoost.subscribe((val) => {
+            this.boost(val / 100);
+        });
 
         if (config.canClip)
             this.clipped = ko.observable(false);

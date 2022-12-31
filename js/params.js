@@ -33032,6 +33032,7 @@ if(window.params == null)window.params={
     ],
     "residenceEffects": [
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": -30,
@@ -33070,6 +33071,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -33185,6 +33187,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": -100,
@@ -33217,6 +33220,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": -100,
@@ -33259,6 +33263,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": -100,
@@ -33307,6 +33312,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -33413,6 +33419,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -33446,6 +33453,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -33503,6 +33511,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -33536,6 +33545,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -33573,6 +33583,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -33623,6 +33634,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -33657,6 +33669,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -33771,6 +33784,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -33884,6 +33898,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -33929,6 +33944,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": -100,
@@ -33966,6 +33982,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": -100,
@@ -34007,6 +34024,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -34045,6 +34063,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -34157,6 +34176,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -34205,6 +34225,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": -20,
@@ -34277,6 +34298,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": -30,
@@ -34349,6 +34371,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": -40,
@@ -34421,6 +34444,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -34534,6 +34558,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -34654,6 +34679,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -34774,6 +34800,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc3"
             ],
@@ -34808,6 +34835,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc3"
             ],
@@ -34841,6 +34869,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc3"
             ],
@@ -34874,6 +34903,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc3"
             ],
@@ -34909,6 +34939,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc3"
             ],
@@ -34953,6 +34984,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc3"
             ],
@@ -34992,6 +35024,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc9"
             ],
@@ -35033,6 +35066,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc10"
             ],
@@ -35078,6 +35112,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": -5,
@@ -35179,6 +35214,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -35211,6 +35247,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -35260,6 +35297,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -35293,6 +35331,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -35326,6 +35365,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -35441,6 +35481,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc1"
             ],
@@ -35488,6 +35529,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc3"
             ],
@@ -35522,6 +35564,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc3"
             ],
@@ -35556,6 +35599,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc3"
             ],
@@ -35589,6 +35633,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc3"
             ],
@@ -35623,6 +35668,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc6"
             ],
@@ -35657,6 +35703,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc6"
             ],
@@ -35690,6 +35737,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc6"
             ],
@@ -35723,6 +35771,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc6"
             ],
@@ -35757,6 +35806,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc9"
             ],
@@ -35798,6 +35848,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc9"
             ],
@@ -35839,6 +35890,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc9"
             ],
@@ -35879,6 +35931,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc9"
             ],
@@ -35919,6 +35972,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc9"
             ],
@@ -35952,6 +36006,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc6"
             ],
@@ -35992,6 +36047,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc6"
             ],
@@ -36025,6 +36081,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc6"
             ],
@@ -36065,6 +36122,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc6"
             ],
@@ -36128,6 +36186,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc8"
             ],
@@ -36210,6 +36269,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc8"
             ],
@@ -36257,6 +36317,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc9"
             ],
@@ -36377,6 +36438,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc9"
             ],
@@ -36497,6 +36559,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc9"
             ],
@@ -36617,6 +36680,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc9"
             ],
@@ -36737,6 +36801,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc9"
             ],
@@ -36857,6 +36922,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc9"
             ],
@@ -36986,6 +37052,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc9"
             ],
@@ -37115,6 +37182,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc9"
             ],
@@ -37244,6 +37312,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc9"
             ],
@@ -37373,6 +37442,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc9"
             ],
@@ -37502,6 +37572,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc8"
             ],
@@ -37555,6 +37626,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc8"
             ],
@@ -37608,6 +37680,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc8"
             ],
@@ -37665,6 +37738,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc4"
             ],
@@ -37762,6 +37836,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc4"
             ],
@@ -37851,6 +37926,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc9"
             ],
@@ -37947,6 +38023,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc9"
             ],
@@ -38002,6 +38079,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc8"
             ],
@@ -38111,6 +38189,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc8"
             ],
@@ -38213,6 +38292,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc8"
             ],
@@ -38315,6 +38395,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc8"
             ],
@@ -38417,6 +38498,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc8"
             ],
@@ -38534,6 +38616,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc8"
             ],
@@ -38594,6 +38677,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc8"
             ],
@@ -38647,6 +38731,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc8"
             ],
@@ -38706,6 +38791,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc8"
             ],
@@ -38766,6 +38852,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc8"
             ],
@@ -38825,6 +38912,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc8"
             ],
@@ -38878,6 +38966,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc8"
             ],
@@ -38937,6 +39026,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc8"
             ],
@@ -38989,6 +39079,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc8"
             ],
@@ -39048,6 +39139,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc8"
             ],
@@ -39108,6 +39200,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc8"
             ],
@@ -39167,6 +39260,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc8"
             ],
@@ -39226,6 +39320,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc8"
             ],
@@ -39285,6 +39380,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc8"
             ],
@@ -39344,6 +39440,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc8"
             ],
@@ -39401,6 +39498,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc9"
             ],
@@ -39451,6 +39549,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc9"
             ],
@@ -39497,6 +39596,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc9"
             ],
@@ -39547,6 +39647,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc9"
             ],
@@ -39598,6 +39699,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc9"
             ],
@@ -39645,6 +39747,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc9"
             ],
@@ -39695,6 +39798,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc9"
             ],
@@ -39745,6 +39849,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc9"
             ],
@@ -39796,6 +39901,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc9"
             ],
@@ -39846,6 +39952,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc9"
             ],
@@ -39897,6 +40004,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc9"
             ],
@@ -39948,6 +40056,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc9"
             ],
@@ -39994,6 +40103,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc9"
             ],
@@ -40044,6 +40154,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc9"
             ],
@@ -40095,6 +40206,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc9"
             ],
