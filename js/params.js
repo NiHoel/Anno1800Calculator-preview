@@ -2616,7 +2616,7 @@ if(window.params == null)window.params={
             ],
             "locaText": {
                 "brazilian": "Motor Assembly Line",
-                "chinese": "蒸汽机生产线",
+                "chinese": "马达生产线",
                 "english": "Motor Assembly Line",
                 "french": "Usine de moteurs",
                 "german": "Motorenfabrik",
@@ -2627,7 +2627,7 @@ if(window.params == null)window.params={
                 "portuguese": "Motor Assembly Line",
                 "russian": "Линия сборки двигателей",
                 "spanish": "Fábrica de motores",
-                "taiwanese": "蒸汽機生產線"
+                "taiwanese": "馬達生產線"
             },
             "maintenances": [
                 {
@@ -10323,8 +10323,8 @@ if(window.params == null)window.params={
             },
             "maintenances": [
                 {
-                    "Amount": 15,
-                    "InactiveAmount": 8,
+                    "Amount": 150,
+                    "InactiveAmount": 75,
                     "Product": 1010017
                 },
                 {
@@ -10382,8 +10382,8 @@ if(window.params == null)window.params={
             },
             "maintenances": [
                 {
-                    "Amount": 50,
-                    "InactiveAmount": 25,
+                    "Amount": 200,
+                    "InactiveAmount": 100,
                     "Product": 1010017
                 },
                 {
@@ -10441,8 +10441,8 @@ if(window.params == null)window.params={
             },
             "maintenances": [
                 {
-                    "Amount": 15,
-                    "InactiveAmount": 8,
+                    "Amount": 150,
+                    "InactiveAmount": 75,
                     "Product": 1010017
                 },
                 {
@@ -10500,8 +10500,8 @@ if(window.params == null)window.params={
             },
             "maintenances": [
                 {
-                    "Amount": 50,
-                    "InactiveAmount": 25,
+                    "Amount": 2000,
+                    "InactiveAmount": 1000,
                     "Product": 1010017
                 },
                 {
@@ -10559,8 +10559,8 @@ if(window.params == null)window.params={
             },
             "maintenances": [
                 {
-                    "Amount": 50,
-                    "InactiveAmount": 25,
+                    "Amount": 400,
+                    "InactiveAmount": 200,
                     "Product": 1010017
                 },
                 {
@@ -10612,8 +10612,8 @@ if(window.params == null)window.params={
             },
             "maintenances": [
                 {
-                    "Amount": 50,
-                    "InactiveAmount": 25,
+                    "Amount": 500,
+                    "InactiveAmount": 250,
                     "Product": 1010017
                 },
                 {
@@ -10766,8 +10766,8 @@ if(window.params == null)window.params={
             },
             "maintenances": [
                 {
-                    "Amount": 150,
-                    "InactiveAmount": 75,
+                    "Amount": 200,
+                    "InactiveAmount": 100,
                     "Product": 1010017
                 },
                 {
@@ -10879,8 +10879,8 @@ if(window.params == null)window.params={
             },
             "maintenances": [
                 {
-                    "Amount": 50,
-                    "InactiveAmount": 25,
+                    "Amount": 250,
+                    "InactiveAmount": 125,
                     "Product": 1010017
                 },
                 {
@@ -10926,7 +10926,7 @@ if(window.params == null)window.params={
                 "italian": "Impianto chimico: bobine di pellicola",
                 "japanese": "化学工場: フィルムリール",
                 "korean": "화학 공장: 필름 릴",
-                "polish": "Zakład chemiczny: błona zwojowa",
+                "polish": "Zakład chemiczny: rolki z filmem",
                 "russian": "Химический завод: Кинопленка",
                 "spanish": "Planta química: rollos de película",
                 "taiwanese": "化學廠：底片捲"
@@ -10942,7 +10942,7 @@ if(window.params == null)window.params={
                     "Product": 1010367
                 }
             ],
-            "name": "Chemical Plant: Roll Film",
+            "name": "Chemical Plant: Film Reels",
             "outputs": [
                 {
                     "Amount": 1,
@@ -10951,7 +10951,7 @@ if(window.params == null)window.params={
                 }
             ],
             "region": 5000001,
-            "tpmin": 0.5
+            "tpmin": 2
         },
         {
             "canClip": true,
@@ -10980,9 +10980,9 @@ if(window.params == null)window.params={
             "locaText": {
                 "chinese": "军火工厂：警察装备",
                 "english": "Arsenal: Police Equipment",
-                "french": "Laboratoire : équipement de police",
+                "french": "Arsenal : équipement de police",
                 "german": "Arsenal: Polizeiausrüstung",
-                "italian": "Laboratorio: equipaggiamento della polizia",
+                "italian": "Arsenale: equipaggiamento della polizia",
                 "japanese": "アーセナル: 警察装備",
                 "korean": "무기고: 경찰 장비",
                 "polish": "Laboratorium przemysłowe: wyposażenie policyjne",
@@ -11033,9 +11033,9 @@ if(window.params == null)window.params={
             ],
             "locaText": {
                 "chinese": "军火工厂：灭火器",
-                "english": "Arsenal: Fire Extinguisher",
+                "english": "Laboratory: Fire Extinguisher",
                 "french": "Laboratoire : extincteur",
-                "german": "Arsenal: Feuerlöscher",
+                "german": "Labor: Feuerlöscher",
                 "italian": "Laboratorio: estintore",
                 "japanese": "アーセナル: 消火器",
                 "korean": "무기고: 소화기",
@@ -11055,7 +11055,7 @@ if(window.params == null)window.params={
                     "Product": 1010367
                 }
             ],
-            "name": "Arsenal: Fire Extinguisher",
+            "name": "Laboratory: Fire Extinguisher",
             "outputs": [
                 {
                     "Amount": 1,
@@ -11092,9 +11092,9 @@ if(window.params == null)window.params={
             ],
             "locaText": {
                 "chinese": "军火工厂：药物",
-                "english": "Arsenal: Medicine",
+                "english": "Laboratory: Medicine",
                 "french": "Laboratoire : médicaments",
-                "german": "Arsenal: Medizin",
+                "german": "Labor: Medizin",
                 "italian": "Laboratorio: medicina",
                 "japanese": "アーセナル: 薬",
                 "korean": "무기고: 의약품",
@@ -11114,7 +11114,7 @@ if(window.params == null)window.params={
                     "Product": 5406
                 }
             ],
-            "name": "Arsenal: Medicine",
+            "name": "Laboratory: Medicine",
             "outputs": [
                 {
                     "Amount": 1,
@@ -11146,9 +11146,9 @@ if(window.params == null)window.params={
             ],
             "locaText": {
                 "chinese": "军火工厂：颜料",
-                "english": "Arsenal: Pigments",
+                "english": "Laboratory: Pigments",
                 "french": "Laboratoire : pigments",
-                "german": "Arsenal: Pigmente",
+                "german": "Labor: Pigmente",
                 "italian": "Laboratorio: pigmenti",
                 "japanese": "アーセナル: 顔料",
                 "korean": "무기고: 안료",
@@ -11168,7 +11168,7 @@ if(window.params == null)window.params={
                     "Product": 5406
                 }
             ],
-            "name": "Arsenal: Pigments",
+            "name": "Laboratory: Pigments",
             "outputs": [
                 {
                     "Amount": 1,
@@ -11177,13 +11177,13 @@ if(window.params == null)window.params={
                 }
             ],
             "region": 5000001,
-            "tpmin": 2
+            "tpmin": 1.3333333333333335
         },
         {
             "guid": 8027,
             "iconPath": "data/ui/2kimages/main/3dicons/icon_niter.png",
             "locaText": {
-                "chinese": "供电牧场",
+                "chinese": "通电牧场",
                 "english": "Powered Pasture",
                 "french": "Pâturage alimenté",
                 "german": "Elektrifizierte Weide",
@@ -11191,9 +11191,9 @@ if(window.params == null)window.params={
                 "japanese": "電力のある牧草地",
                 "korean": "동력식 목초지",
                 "polish": "Zasilane pastwisko",
-                "russian": "Электрифицированное пастбище",
+                "russian": "Электрифиц. пастбище",
                 "spanish": "Pasto eléctrico",
-                "taiwanese": "供電牧場"
+                "taiwanese": "通電牧場"
             },
             "maintenances": [
             ],
@@ -11212,17 +11212,17 @@ if(window.params == null)window.params={
             "guid": 8002,
             "iconPath": "data/ui/2kimages/main/3dicons/icon_sheep_milk.png",
             "locaText": {
-                "chinese": "供电牧场",
-                "english": "Powered Pasture",
-                "french": "Pâturage alimenté",
-                "german": "Elektrifiziertes Rindergehege",
-                "italian": "Pascolo alimentato",
-                "japanese": "電力のある牧草地",
-                "korean": "동력식 목초지",
-                "polish": "Zasilane pastwisko",
-                "russian": "Электрифицированное пастбище",
-                "spanish": "Pasto eléctrico",
-                "taiwanese": "供電牧場"
+                "chinese": "牧场",
+                "english": "Pasture",
+                "french": "Pâturage",
+                "german": "Weide",
+                "italian": "Pascolo",
+                "japanese": "牛の牧草地",
+                "korean": "목초지",
+                "polish": "Pastwisko",
+                "russian": "Пастбище",
+                "spanish": "Pasto",
+                "taiwanese": "牧場"
             },
             "maintenances": [
             ],
@@ -11242,7 +11242,7 @@ if(window.params == null)window.params={
             "guid": 8026,
             "iconPath": "data/ui/2kimages/main/3dicons/production_goods/icon_nandu_feathers.png",
             "locaText": {
-                "chinese": "供电牧场",
+                "chinese": "通电牧场",
                 "english": "Powered Pasture",
                 "french": "Pâturage alimenté",
                 "german": "Elektrifizierte Weide",
@@ -11250,9 +11250,9 @@ if(window.params == null)window.params={
                 "japanese": "電力のある牧草地",
                 "korean": "동력식 목초지",
                 "polish": "Zasilane pastwisko",
-                "russian": "Электрифицированное пастбище",
+                "russian": "Электрифиц. пастбище",
                 "spanish": "Pasto eléctrico",
-                "taiwanese": "供電牧場"
+                "taiwanese": "通電牧場"
             },
             "maintenances": [
             ],
@@ -13401,8 +13401,7 @@ if(window.params == null)window.params={
             ],
             "factories": [
                 1010286,
-                1010326,
-                5862
+                1010326
             ],
             "guid": 191353,
             "iconPath": "data/ui/2kimages/main/3dicons/specialists/systemic/icon_normal_dressed_401.png",
@@ -13449,7 +13448,7 @@ if(window.params == null)window.params={
                 "korean": "수석 전기 공학자",
                 "polish": "Wiodący elektro-inżynier",
                 "portuguese": "Leading Electrical Engineer",
-                "russian": "Превосходный инженер-электротехник",
+                "russian": "Превосходный инженер-электрик",
                 "spanish": "Ingeniero eléctrico jefe",
                 "taiwanese": "頂尖電氣工程師"
             },
@@ -15010,17 +15009,17 @@ if(window.params == null)window.params={
             "guid": 7225,
             "iconPath": "data/ui/2kimages/main/3dicons/specialists/systemic/icon_inuit_specialist_1003_a.png",
             "locaText": {
-                "chinese": "Bait Specialist",
+                "chinese": "诱饵专家",
                 "english": "Bait Specialist",
-                "french": "Bait Specialist",
-                "german": "Bait Specialist",
-                "italian": "Bait Specialist",
-                "japanese": "Bait Specialist",
-                "korean": "Bait Specialist",
-                "polish": "Bait Specialist",
-                "russian": "Bait Specialist",
-                "spanish": "Bait Specialist",
-                "taiwanese": "Bait Specialist"
+                "french": "Spécialiste des appâts",
+                "german": "Köderspezialist",
+                "italian": "Specialista in esche",
+                "japanese": "餌の専門家",
+                "korean": "미끼 전문가",
+                "polish": "Specjalista od przynęt",
+                "russian": "Специалист по наживке",
+                "spanish": "Especialista en cebo",
+                "taiwanese": "誘餌專家"
             },
             "name": "Bait Specialist",
             "replaceInputs": [
@@ -22525,9 +22524,11 @@ if(window.params == null)window.params={
                 135150,
                 135130,
                 1414,
-                5389,
                 5400,
+                5389,
                 6280,
+                5390,
+                5392,
                 5393,
                 5394,
                 5397,
@@ -22536,7 +22537,6 @@ if(window.params == null)window.params={
                 114408,
                 117702,
                 117701,
-                5390,
                 270042
             ]
         }
@@ -25016,7 +25016,7 @@ if(window.params == null)window.params={
                 "korean": "고급 무기",
                 "polish": "Zaawansowane uzbrojenie",
                 "portuguese": "Advanced Weapons",
-                "russian": "Усовершенствованное оружие",
+                "russian": "Усовершенств. оружие",
                 "spanish": "Armas avanzadas",
                 "taiwanese": "先進武器"
             },
@@ -28948,7 +28948,7 @@ if(window.params == null)window.params={
             "dlcs": [
                 "dlc12"
             ],
-            "exchangeWeight": 1804.3562264999996,
+            "exchangeWeight": 1811.3562264999996,
             "guid": 5400,
             "iconPath": "data/ui/2kimages/main/3dicons/recipes/icon_pigments.png",
             "locaText": {
@@ -28978,7 +28978,7 @@ if(window.params == null)window.params={
             "guid": 5390,
             "iconPath": "data/ui/2kimages/main/3dicons/production_goods/icon_motor.png",
             "locaText": {
-                "chinese": "蒸汽机",
+                "chinese": "马达",
                 "english": "Motor",
                 "french": "Moteur",
                 "german": "Motor",
@@ -28988,7 +28988,7 @@ if(window.params == null)window.params={
                 "polish": "Motor",
                 "russian": "Двигатель",
                 "spanish": "Motor",
-                "taiwanese": "蒸汽機"
+                "taiwanese": "馬達"
             },
             "mainFactory": 5659,
             "name": "Motor",
@@ -29000,7 +29000,7 @@ if(window.params == null)window.params={
             "dlcs": [
                 "dlc12"
             ],
-            "exchangeWeight": 9128.714114499999,
+            "exchangeWeight": 9135.714114499999,
             "guid": 5391,
             "iconPath": "data/ui/2kimages/main/3dicons/production_goods/icon_scooter.png",
             "locaText": {
@@ -29026,7 +29026,7 @@ if(window.params == null)window.params={
             "dlcs": [
                 "dlc12"
             ],
-            "exchangeWeight": 2792.1209715,
+            "exchangeWeight": 2691.3209715000003,
             "guid": 5392,
             "iconPath": "data/ui/2kimages/main/3dicons/production_goods/icon_film_role.png",
             "locaText": {
@@ -31327,7 +31327,7 @@ if(window.params == null)window.params={
             },
             "maintenances": [
                 {
-                    "Amount": 100,
+                    "Amount": 1000,
                     "Product": 1010017
                 },
                 {
@@ -34410,7 +34410,7 @@ if(window.params == null)window.params={
                 "chinese": "亚美莉亚女士的必要禁酒措施",
                 "english": "Ms. Amelia's Essential Prohibition Measures",
                 "french": "Mesures essentielles de prohibition par Mme Amélia",
-                "german": "Ms. Amelias wesentliche Prohibitionsmaßnahmen",
+                "german": "Ms. Amelias wesentliche Prohibitions-maßnahmen",
                 "italian": "Misure essenziali di proibizionismo della signorina Amelia",
                 "japanese": "ミス・アメリアの必須禁酒手段",
                 "korean": "아멜리아의 필수 금지 조치",
